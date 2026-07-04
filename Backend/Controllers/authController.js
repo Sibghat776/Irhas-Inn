@@ -195,7 +195,7 @@ export const resendOtp = async (req, res, next) => {
     await user.save();
     const isSent = await sendWhatsAppOTP(user.phoneNo, otp);
     if (!isSent) {
-      return next(createError(500, "Failed to resend OTP!"));
+      console.warn("WhatsApp OTP failed on resend, falling back to email.");
     }
 
     if (identifier.includes("@")) {

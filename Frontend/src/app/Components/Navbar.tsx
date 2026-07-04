@@ -57,6 +57,7 @@ const Navbar: React.FC = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [cartCount, setCartCount] = useState(0);
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
   const [isAppInstalled, setIsAppInstalled] = useState(false);
@@ -73,6 +74,26 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const updateCartCount = () => {
+      try {
+        const cart = JSON.parse(localStorage.getItem("zeef_store_cart") ?? "[]");
+        const total = cart.reduce((sum: number, item: any) => sum + (item.quantity || 1), 0);
+        setCartCount(total);
+      } catch {
+        setCartCount(0);
+      }
+    };
+    updateCartCount();
+    window.addEventListener("storage", updateCartCount);
+    // Poll every second to catch same-tab updates
+    const interval = setInterval(updateCartCount, 1000);
+    return () => {
+      window.removeEventListener("storage", updateCartCount);
+      clearInterval(interval);
+    };
   }, []);
 
   useEffect(() => {
@@ -276,13 +297,18 @@ const Navbar: React.FC = () => {
               key={i}
               href={item.href}
               className={clsx(
-                "text-sm font-semibold transition-colors duration-300 pb-1 border-b-2 border-transparent",
+                "relative text-sm font-semibold transition-colors duration-300 pb-1 border-b-2 border-transparent",
                 isScrolled || !isHomePage
                   ? "text-gray-700 hover:text-[#0856DF] hover:border-[#0856DF]"
                   : "text-white/90 hover:text-white hover:border-white",
               )}
             >
               {item.name}
+              {item.name === "Cart" && cartCount > 0 && (
+                <span className="absolute -top-2 -right-3 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold px-1">
+                  {cartCount}
+                </span>
+              )}
             </Link>
           ))}
 
@@ -372,6 +398,11 @@ const Navbar: React.FC = () => {
                         className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg hover:bg-blue-50 text-green-500 hover:text-green-600 transition-colors whitespace-nowrap"
                       >
                         <ShoppingCart size={16} /> Cart
+                        {cartCount > 0 && (
+                          <span className="ml-auto min-w-[20px] h-5 flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold px-1">
+                            {cartCount}
+                          </span>
+                        )}
                       </Link>
                       {isAdmin && (
                         <button
@@ -530,6 +561,11 @@ const Navbar: React.FC = () => {
                       className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm font-semibold text-gray-700 hover:text-[#0856DF] hover:bg-blue-50 transition-colors"
                     >
                       <ShoppingCart size={16} /> Cart
+                      {cartCount > 0 && (
+                        <span className="ml-auto min-w-[20px] h-5 flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold px-1">
+                          {cartCount}
+                        </span>
+                      )}
                     </Link>
                   </div>
 

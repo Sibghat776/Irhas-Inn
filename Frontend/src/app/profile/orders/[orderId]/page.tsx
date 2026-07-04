@@ -7,8 +7,67 @@ import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "@/app/Redux/store";
 import { startLoading, stopLoading } from "@/app/Redux/Features/uiSlice";
-import { ArrowLeft, Package, MapPin, CreditCard, CheckCircle, Clock } from "lucide-react";
+import { ArrowLeft, Package, MapPin, CreditCard, CheckCircle, Clock, Star } from "lucide-react";
 import { baseUrl, showToast } from "@/app/utils/commonFunctions";
+
+const RatingForm = ({ productId, productName }: { productId: string; productName: string }) => {
+  const [star, setStar] = useState(0);
+  const [hover, setHover] = useState(0);
+  const [comment, setComment] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!star) return showToast("Please select a star rating", "error");
+    setLoading(true);
+    try {
+      await axios.put(`${baseUrl}product/productRatings/${productId}`, { star, comment }, { withCredentials: true });
+      showToast("Rating submitted!", "success");
+      setSubmitted(true);
+    } catch (err: any) {
+      showToast(err?.response?.data?.message || "Failed to submit rating", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (submitted) return (
+    <div className="mt-3 text-sm text-green-600 font-semibold flex items-center gap-1">
+      <CheckCircle size={14} /> Rating submitted for {productName}
+    </div>
+  );
+
+  return (
+    <div className="mt-3 border-t border-gray-100 pt-3">
+      <p className="text-xs font-bold text-gray-600 mb-2">Rate this product</p>
+      <div className="flex gap-1 mb-2">
+        {[1, 2, 3, 4, 5].map((s) => (
+          <button key={s} type="button"
+            onClick={() => setStar(s)}
+            onMouseEnter={() => setHover(s)}
+            onMouseLeave={() => setHover(0)}
+          >
+            <Star size={22} className={`transition-colors ${s <= (hover || star) ? "fill-amber-400 text-amber-400" : "text-gray-300"}`} />
+          </button>
+        ))}
+      </div>
+      <textarea
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
+        placeholder="Write a comment (optional)"
+        rows={2}
+        className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2 resize-none focus:outline-none focus:border-[#0856DF] mb-2"
+      />
+      <button
+        onClick={handleSubmit}
+        disabled={loading}
+        className="px-4 py-2 bg-[#0856DF] text-white text-sm font-semibold rounded-xl hover:bg-[#0645c8] disabled:opacity-60 transition"
+      >
+        {loading ? "Submitting..." : "Submit Rating"}
+      </button>
+    </div>
+  );
+};
 
 const STEPS = ["Pending", "Processing", "Shipped", "Out for Delivery", "Delivered"];
 
@@ -169,6 +228,9 @@ const OrderTrackingPage = () => {
                     {item.selectedColor && <span className="rounded-full border border-slate-200 bg-white px-3 py-1">Color: {item.selectedColor}</span>}
                     {item.selectedSize && <span className="rounded-full border border-slate-200 bg-white px-3 py-1">Size: {item.selectedSize}</span>}
                   </div>
+                  {order.status === "Delivered" && productId && (
+                    <RatingForm productId={productId} productName={product.name || "Product"} />
+                  )}
                 </div>
               );
             })}

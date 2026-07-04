@@ -24,7 +24,15 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 // CORS configuration (Apne Frontend URL se '*' replace kar dein)
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || true,
+    origin: (origin, callback) => {
+      const allowed = [
+        "http://localhost:3000",
+        "http://localhost:3001",
+        process.env.FRONTEND_URL,
+      ].filter(Boolean);
+      if (!origin || allowed.includes(origin)) return callback(null, true);
+      callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   }),

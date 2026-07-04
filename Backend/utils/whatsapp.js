@@ -29,8 +29,10 @@ export const initWhatsAppClient = () => {
     }),
     authTimeoutMs: 90000,
     qrMaxRetries: 10,
-    // Web version ko latest rakhna zaroori hai
-    webVersionOverride: "2.3000.1017320448-alpha",
+    webVersion: "2.3000.1042626022",
+    webVersionCache: {
+      type: "local",
+    },
     puppeteer: {
       headless: "new",
       executablePath:
@@ -90,8 +92,7 @@ export const initWhatsAppClient = () => {
   client.on("disconnected", (reason) => {
     isClientReady = false;
     console.log("❌ Disconnected. Reason:", reason);
-    // Restarting logic if disconnected
-    setTimeout(() => client.initialize(), 5000);
+    setTimeout(() => initWhatsAppClient(), 5000);
   });
 
   client.initialize().catch((err) => console.error("Init Error:", err));

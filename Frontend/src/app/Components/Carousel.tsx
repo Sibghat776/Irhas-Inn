@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Slide {
@@ -43,6 +44,7 @@ const slides: Slide[] = [
 ];
 
 const Carousel = () => {
+  const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [animating, setAnimating] = useState(false);
 
@@ -117,10 +119,14 @@ const Carousel = () => {
 
           {/* Action Call-to-Buttons */}
           <div className="flex flex-wrap items-center gap-4 pt-4 animate-delayFadeIn">
-            <button className="px-8 py-3.5 rounded-xl font-bold text-white bg-[linear-gradient(90deg,#061F95,#0856DF)] shadow-xl shadow-[#061F95]/30 hover:shadow-[#0856DF]/40 hover:scale-[1.03] active:scale-[0.98] transition-all duration-300">
+            <button
+              onClick={() => router.push("/productsPage")}
+              className="px-8 py-3.5 rounded-xl font-bold text-white bg-[linear-gradient(90deg,#061F95,#0856DF)] shadow-xl shadow-[#061F95]/30 hover:shadow-[#0856DF]/40 hover:scale-[1.03] active:scale-[0.98] transition-all duration-300">
               Explore Now
             </button>
-            <button className="px-8 py-3.5 rounded-xl font-bold text-white border-2 border-white/20 bg-white/5 backdrop-blur-md hover:bg-white hover:text-[#041241] hover:border-white transition-all duration-300">
+            <button
+              onClick={() => document.getElementById("collection")?.scrollIntoView({ behavior: "smooth" })}
+              className="px-8 py-3.5 rounded-xl font-bold text-white border-2 border-white/20 bg-white/5 backdrop-blur-md hover:bg-white hover:text-[#041241] hover:border-white transition-all duration-300">
               View Details
             </button>
           </div>

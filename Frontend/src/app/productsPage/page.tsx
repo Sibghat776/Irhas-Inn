@@ -162,90 +162,85 @@ const ProductsPage: React.FC<ProductsPageProps> = ({
     <>
       <Navbar />
 
-      <section className="relative min-h-screen pt-28 pb-20 bg-gradient-to-b from-gray-400 via-white to-white">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_70%)] pointer-events-none"></div>
-
-        <div className="relative max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h1 className="text-3xl md:text-5xl font-extrabold tracking-wide text-white drop-shadow-2xl">
+      <section className="py-20 pt-28 bg-gradient-to-b from-gray-400 via-white to-white min-h-screen">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16 space-y-3">
+            <span className="text-[#EDAE17] text-xs font-black uppercase tracking-[0.3em] inline-block">
+              {categoryName ? "Category" : "All Products"}
+            </span>
+            <h1 className="text-3xl md:text-5xl font-black text-[#041241] tracking-tight">
               {categoryName || title}
             </h1>
-            {categoryName && (
-              <p className="mt-4 text-sm md:text-base text-gray-300 uppercase tracking-widest">
-                Category — {categoryName}
-              </p>
-            )}
           </div>
 
           {loading ? (
-            <div className="text-center py-20">
-              <p className="text-gray-300 text-lg">Loading products...</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="rounded-[32px] border border-slate-200 bg-white shadow-lg overflow-hidden">
+                  <div className="h-72 bg-slate-100 animate-pulse" />
+                  <div className="p-5 space-y-3">
+                    <div className="h-4 w-3/4 rounded-full bg-slate-200 animate-pulse" />
+                    <div className="h-4 w-1/2 rounded-full bg-slate-200 animate-pulse" />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : products.length === 0 ? (
             <div className="text-center py-20">
-              <p className="text-gray-300 text-lg">
-                No products available at the moment.
-              </p>
-              <p className="text-gray-500 text-sm mt-2">
-                Please check back soon.
-              </p>
+              <p className="text-slate-500 text-lg">No products available in this category.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
               {products.map((prod) => {
-                const originalPrice = prod.price + 100;
-                const imgUrl = prod.images?.[0]?.url || "/carousel/Pens.avif";
-
+                const prodAny = prod as any;
                 return (
                   <div
                     key={prod._id}
-                    className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] transition-all duration-500 hover:-translate-y-3 hover:shadow-[0_35px_90px_rgba(0,0,0,0.85)]"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => router.push(`/product/${prod._id}`)}
+                    onKeyDown={(e) => { if (e.key === "Enter") router.push(`/product/${prod._id}`); }}
+                    className="cursor-pointer overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_20px_60px_rgba(6,18,75,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_30px_90px_rgba(6,18,75,0.16)]"
                   >
-                    <div className="relative h-72 overflow-hidden">
-                      <img
-                        src={imgUrl}
-                        alt={prod.name}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
-                    </div>
+                    <ProductCardImageCarousel
+                      images={prod.images}
+                      label={prodAny.category?.name ?? "Product"}
+                    />
 
-                    <div className="p-6 text-center">
-                      <h3 className="text-xl font-bold text-white tracking-wide mb-1">
-                        {prod.name}
-                      </h3>
-
-                      <div className="flex justify-center items-center gap-3 mt-2">
-                        <span className="text-sm text-gray-400 line-through">
-                          Rs {originalPrice.toLocaleString()}
+                    <div className="space-y-4 p-5 text-[#041241]">
+                      <div className="flex items-center justify-between gap-3 text-sm">
+                        <span className="inline-flex items-center rounded-full border border-[#0856DF]/20 bg-[#0856DF]/10 px-3 py-1 font-semibold text-[#0856DF]">
+                          {prodAny.brand ?? "ZeeF"}
                         </span>
-                        <span className="text-lg font-semibold text-green-400">
-                          Rs {prod.price.toLocaleString()}
+                        <span className="text-slate-500 text-xs">
+                          {prodAny.stock > 0 ? `${prodAny.stock} in stock` : "Out of stock"}
                         </span>
                       </div>
-
-                      <p className="text-sm text-gray-300 mt-3 line-clamp-3">
-                        {prod.description}
+                      <div className="space-y-1">
+                        <h3 className="text-xl font-black leading-tight">{prod.name}</h3>
+                        <p className="text-sm text-slate-600 line-clamp-3">{prod.description}</p>
+                      </div>
+                      <p className="text-2xl font-black text-[#041241]">
+                        Rs {prod.price.toLocaleString()}
                       </p>
-
-                      <div className="mt-5 flex items-center justify-center gap-3">
-                        <button
-                          onClick={() => addToCart(prod)}
-                          className="inline-flex items-center gap-2 bg-white text-[#041241] px-4 py-2 rounded-lg font-semibold shadow hover:shadow-lg transition transform hover:-translate-y-0.5"
-                        >
-                          Add to Cart
-                        </button>
-
-                        <button
-                          onClick={() => buyNow(prod)}
-                          className="inline-flex items-center gap-2 bg-[#0856DF] text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-[#0645c8] transition transform hover:-translate-y-0.5"
-                        >
-                          Buy Now
-                        </button>
-                      </div>
                     </div>
 
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15),transparent_70%)] pointer-events-none"></div>
+                    <div className="grid gap-3 border-t border-slate-200/70 bg-[#F7F7FA] p-5">
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); buyNow(prod); }}
+                        className="inline-flex min-h-[48px] items-center justify-center rounded-2xl bg-[#0856DF] px-4 text-sm font-semibold text-white transition hover:bg-[#0645c8]"
+                      >
+                        Buy Now
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); addToCart(prod); }}
+                        className="inline-flex min-h-[48px] items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 text-sm font-semibold text-[#041241] transition hover:border-[#0856DF] hover:bg-[#f3f8ff]"
+                      >
+                        Add to Cart
+                      </button>
+                    </div>
                   </div>
                 );
               })}
