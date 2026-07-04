@@ -16,7 +16,7 @@ WORKDIR /app
 RUN mkdir -p /app/.wwebjs_auth && chown -R node:node /app/.wwebjs_auth
 
 COPY package.json package-lock.json ./
-RUN npm install --omit=dev --no-optional
+RUN npm install --omit=dev
 
 COPY . .
 
