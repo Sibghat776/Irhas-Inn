@@ -1,0 +1,70 @@
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import { connectDB } from "./utils/commonFunctions.js";
+import helmet from "helmet";
+import { authRoute } from "./Routes/authRoute.js";
+import { initWhatsAppClient } from "./utils/whatsapp.js";
+import { productRouter } from "./Routes/productRoute.js";
+import { categoryRoute } from "./Routes/categoryRoute.js";
+import { orderRoute } from "./Routes/orderRoute.js";
+import { cartRoute } from "./Routes/cartRoute.js";
+import { notificationRoute } from "./Routes/notificationRoute.js";
+import cookieParser from "cookie-parser";
+
+dotenv.config();
+
+const app = express();
+
+// Middlewares
+app.use(cookieParser());
+app.use(express.json({ limit: "50mb" })); // Badi requests ke liye limit badha di
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
+// CORS configuration (Apne Frontend URL se '*' replace kar dein)
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || true,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  }),
+);
+
+app.use(helmet());
+
+// Routes
+app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/product", productRouter);
+app.use("/api/v1/category", categoryRoute);
+app.use("/api/v1/order", orderRoute);
+app.use("/api/v1/cart", cartRoute);
+app.use("/api/v1/notifications", notificationRoute);
+
+// Server Start and DB Connection (No if condition)
+(async () => {
+  try {
+    await connectDB();
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+      initWhatsAppClient(); // WhatsApp Client ko server start hone ke baad initialize karein
+    });
+    app.set("trust proxy", 1);
+  } catch (err) {
+    console.error("DB connection failed:", err);
+    process.exit(1);
+  }
+})();
+
+// Error Handler (Always last)
+app.use((err, req, res, next) => {
+  const errorStatus = err.status || 500;
+  const errorMessage = err.message || "Something went Wrong";
+  res.status(errorStatus).json({
+    success: false,
+    status: errorStatus,
+    message: errorMessage,
+    stack: process.env.NODE_ENV === "development" ? err.stack : {},
+  });
+});
+export default app;

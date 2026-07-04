@@ -1,0 +1,22 @@
+[phases.setup]
+nixPkgs = [
+  "chromium",
+  "nss",
+  "nspr",
+  "atk",
+  "cups",
+  "libdrm",
+  "libxkbcommon",
+  "pango",
+  "cairo",
+  "xorg.libXcomposite",
+  "xorg.libXdamage",
+  "xorg.libXext",
+  "xorg.libXfixes",
+  "xorg.libXrandr",
+  "xorg.libgbm",
+]
+
+[variables]
+PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = "1"
+CHROME_BIN = "/usr/bin/chromium"
