@@ -111,13 +111,16 @@ const Signup = () => {
         formData.append(key, value);
       });
 
-      if (profilePic)         formData.append("profilePic", profilePic);
+      if (profilePic) formData.append("profilePic", profilePic);
 
       const res = await axios.post(`${baseUrl}auth/register`, formData);
       console.log(res?.data);
 
       dispatch(loginFailure(""));
-      showToast("OTP sent successfully! Please verify your account.", "success");
+      showToast(
+        "OTP sent successfully! Please verify your account.",
+        "success",
+      );
       dispatch(closeSignup());
       const identifier = email || phoneNo;
       router.push(`/otpPage?identifier=${encodeURIComponent(identifier)}`);
@@ -134,10 +137,9 @@ const Signup = () => {
     dispatch(loginRequest());
 
     try {
-      const res = await axios.post(
-        `${baseUrl}auth/google`,
-        { credential: response.credential },
-      );
+      const res = await axios.post(`${baseUrl}auth/google`, {
+        credential: response.credential,
+      });
 
       dispatch(loginSuccess(res.data.data));
 
