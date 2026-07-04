@@ -111,4 +111,4 @@ const useFetch = <T = any>(url: string) => {
 
 export default useFetch;
 
-export const baseUrl = "http://localhost:5000/api/v1/";
+export const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1/";
