@@ -97,7 +97,7 @@ const useFetch = <T = any>(url: string) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get<T>(url, { withCredentials: true });
+      const res = await axios.get<T>(url);
       setData(res.data);
     } catch (err) {
       setError(err as AxiosError);

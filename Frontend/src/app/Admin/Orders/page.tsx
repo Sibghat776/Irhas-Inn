@@ -63,9 +63,7 @@ const OrdersPage = () => {
     setIsDeleting(true);
 
     try {
-      await axios.delete(`${baseUrl}order/deleteOrder/${orderId}`, {
-        withCredentials: true,
-      });
+      await axios.delete(`${baseUrl}order/deleteOrder/${orderId}`);
       setOrders((prev) => prev.filter((order) => order._id !== orderId));
       showToast("Order deleted successfully", "success");
       reFetch();

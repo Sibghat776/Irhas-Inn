@@ -173,7 +173,7 @@ const Navbar: React.FC = () => {
 
   const handleLogout = async () => {
     dispatch(logout());
-    await axios.get(`${baseUrl}auth/logout`, { withCredentials: true });
+    await axios.get(`${baseUrl}auth/logout`);
     setUserMenuOpen(false);
     setMenuOpen(false);
     window.location.reload();

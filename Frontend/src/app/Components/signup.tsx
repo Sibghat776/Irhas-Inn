@@ -111,11 +111,9 @@ const Signup = () => {
         formData.append(key, value);
       });
 
-      if (profilePic) formData.append("profilePic", profilePic);
+      if (profilePic)         formData.append("profilePic", profilePic);
 
-      const res = await axios.post(`${baseUrl}auth/register`, formData, {
-        withCredentials: true,
-      });
+      const res = await axios.post(`${baseUrl}auth/register`, formData);
       console.log(res?.data);
 
       dispatch(loginFailure(""));
@@ -139,7 +137,6 @@ const Signup = () => {
       const res = await axios.post(
         `${baseUrl}auth/google`,
         { credential: response.credential },
-        { withCredentials: true },
       );
 
       dispatch(loginSuccess(res.data.data));

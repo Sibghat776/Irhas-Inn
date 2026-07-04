@@ -85,7 +85,9 @@ const CartPage = () => {
                   quantity: item.quantity,
                 })),
               },
-              { withCredentials: true }, // Ensures session/auth tokens pass through cookies
+              {
+                withCredentials : true,
+              }
             );
             console.log(
               "[Cart Frontend]: Sync successful. Clearing local cart.",
@@ -207,7 +209,6 @@ const CartPage = () => {
         await axios.post(
           `${baseUrl}cart/`,
           { productId, quantity: 1 },
-          { withCredentials: true },
         );
         await reFetch();
         showToast("Added to cart", "success");
