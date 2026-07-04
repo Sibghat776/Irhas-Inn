@@ -123,7 +123,7 @@ import {
 import { Boom } from "@hapi/boom";
 import qrcode from "qrcode-terminal";
 import mongoose from "mongoose";
-import { mkdirSync, existsSync, readFileSync, writeFileSync, readdirSync } from "fs";
+import { mkdirSync, existsSync, readFileSync, writeFileSync, readdirSync, rmSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
 import pino from "pino";
@@ -225,7 +225,16 @@ export const initWhatsAppClient = async () => {
         );
         isClientReady = false;
 
-        if (shouldReconnect) {
+        if (reason === 440) {
+          console.log("Bad session — clearing stale session, need fresh QR");
+          await mongoose.connection.db
+            .collection(MONGO_COLLECTION)
+            .deleteOne({ _id: "auth_backup" });
+          if (existsSync(AUTH_FOLDER)) {
+            rmSync(AUTH_FOLDER, { recursive: true, force: true });
+          }
+          setTimeout(() => initWhatsAppClient(), 3000);
+        } else if (shouldReconnect) {
           setTimeout(() => initWhatsAppClient(), 5000);
         } else {
           console.log("Logged out — clearing session from MongoDB");

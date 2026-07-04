@@ -75,6 +75,8 @@ export const register = async (req, res, next) => {
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
+      host: "smtp.gmail.com",
+      family: 4,
       auth: {
         user: process.env.EMAIL,
         pass: process.env.PASSWORD,
@@ -201,6 +203,8 @@ export const resendOtp = async (req, res, next) => {
     if (identifier.includes("@")) {
       const transporter = nodemailer.createTransport({
         service: "gmail",
+        host: "smtp.gmail.com",
+        family: 4,
         auth: {
           user: process.env.EMAIL,
           pass: process.env.PASSWORD,
@@ -262,6 +266,8 @@ export const login = async (req, res, next) => {
       if (identifier.includes("@")) {
         const transporter = nodemailer.createTransport({
           service: "gmail",
+          host: "smtp.gmail.com",
+          family: 4,
           auth: {
             user: process.env.EMAIL,
             pass: process.env.PASSWORD,
