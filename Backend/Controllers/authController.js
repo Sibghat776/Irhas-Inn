@@ -2,13 +2,11 @@ import Users from "../Models/Users.js";
 import { createError, createSuccess } from "../utils/commonFunctions.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { generateOTP } from "../utils/sendEmail.js"; // OTP generator utility
+import { generateOTP, sendEmail } from "../utils/sendEmail.js"; // OTP generator + centralized email sender
 import { OAuth2Client } from "google-auth-library";
 import twilio from "twilio";
-import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import { sendWhatsAppOTP } from "../utils/whatsapp.js";
-import { sendEmail } from "../utils/sendEmail.js";
 import { uploadToCloudinary } from "../utils/cloudinary.js";
 dotenv.config();
 
@@ -17,6 +15,10 @@ const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const adminEmails = process.env.ADMIN_EMAILS
   ? process.env.ADMIN_EMAILS.split(",")
   : [];
+
+// Reusable OTP email body builder — keeps the nice formatting in one place
+const buildOtpEmailText = (otp) =>
+  `Dear Valued Customer,\n\nWelcome to ZF Store! 🛍️\nWe're thrilled to have you on board.\n\nTo complete your registration, please use the One-Time Password (OTP) below:\n\n\n🔐 Your OTP Code: ${otp}\n━━━━━━━━━━━━━━━\n\n⏳ This OTP is valid for 10 minutes only.\n🔒 Do NOT share this code with anyone.\n\nOnce verified, you'll be able to:\n✅ Browse our latest collections\n✅ Place orders with ease\n✅ Track your deliveries in real time\n✅ Enjoy exclusive deals & offers\n\nIf you did not request this, please ignore this email or contact our support team immediately.\n\n📧 Support: ullahsibghat786@gmail.com\n📱 WhatsApp: +92 323 2603877\n\nThank you for choosing ZF Store — where quality meets style. 🌟\n\nWarm Regards,\nZF Store Team 🛍️\nwww.ZFStore.com`;
 
 // ==========================================
 // 1. REGISTER (With WhatsApp Phone Verification)
@@ -73,28 +75,11 @@ export const register = async (req, res, next) => {
       console.warn("WhatsApp OTP failed, but user saved. OTP sent via email.");
     }
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      host: "smtp.gmail.com",
-      family: 4,
-      auth: {
-        user: process.env.EMAIL,
-        pass: process.env.PASSWORD,
-      },
-    });
-
-    const mailOptions = {
-      from: `${process.env.EMAIL}`,
-      to: email,
-      subject: "OTP for Email Verification",
-      text: `Dear Valued Customer,\n\nWelcome to ZF Store! 🛍️\nWe're thrilled to have you on board.\n\nTo complete your registration, please use the One-Time Password (OTP) below:\n\n\n🔐 Your OTP Code: ${otp}\n━━━━━━━━━━━━━━━\n\n⏳ This OTP is valid for 10 minutes only.\n🔒 Do NOT share this code with anyone.\n\nOnce verified, you'll be able to:\n✅ Browse our latest collections\n✅ Place orders with ease\n✅ Track your deliveries in real time\n✅ Enjoy exclusive deals & offers\n\nIf you did not request this, please ignore this email or contact our support team immediately.\n\n📧 Support: ullahsibghat786@gmail.com\n📱 WhatsApp: +92 323 2603877\n\nThank you for choosing ZF Store — where quality meets style. 🌟\n\nWarm Regards,\nZF Store Team 🛍️\nwww.ZFStore.com`,
-    };
-
     try {
-      const info = await transporter.sendMail(mailOptions);
-      console.log("Email sent: " + info.response);
+      await sendEmail(email, "OTP for Email Verification", buildOtpEmailText(otp));
+      console.log("Email sent to", email);
     } catch (error) {
-      console.error("Email Error:", error);
+      console.error("Email Error:", error.message || error);
     }
 
     const data = createSuccess(
@@ -201,27 +186,11 @@ export const resendOtp = async (req, res, next) => {
     }
 
     if (identifier.includes("@")) {
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        host: "smtp.gmail.com",
-        family: 4,
-        auth: {
-          user: process.env.EMAIL,
-          pass: process.env.PASSWORD,
-        },
-      });
-      const mailOptions = {
-        from: `${process.env.EMAIL}`,
-        to: identifier,
-        subject: "OTP for Email Verification",
-        text: `Dear Valued Customer,\n\nWelcome to ZF Store! 🛍️\nWe're thrilled to have you on board.\n\nTo complete your registration, please use the One-Time Password (OTP) below:\n\n\n🔐 Your OTP Code: ${otp}\n━━━━━━━━━━━━━━━\n\n⏳ This OTP is valid for 10 minutes only.\n🔒 Do NOT share this code with anyone.\n\nOnce verified, you'll be able to:\n✅ Browse our latest collections\n✅ Place orders with ease\n✅ Track your deliveries in real time\n✅ Enjoy exclusive deals & offers\n\nIf you did not request this, please ignore this email or contact our support team immediately.\n\n📧 Support: ${process.env.EMAIL}`,
-      };
-
       try {
-        const info = await transporter.sendMail(mailOptions);
-        console.log("Email sent: " + info.response);
+        await sendEmail(identifier, "OTP for Email Verification", buildOtpEmailText(otp));
+        console.log("Email sent to", identifier);
       } catch (error) {
-        console.error("Email Error:", error);
+        console.error("Email Error:", error.message || error);
       }
     } else {
       await sendWhatsAppOTP(user.phoneNo, otp);
@@ -264,28 +233,11 @@ export const login = async (req, res, next) => {
       user.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
       await user.save();
       if (identifier.includes("@")) {
-        const transporter = nodemailer.createTransport({
-          service: "gmail",
-          host: "smtp.gmail.com",
-          family: 4,
-          auth: {
-            user: process.env.EMAIL,
-            pass: process.env.PASSWORD,
-          },
-        });
-
-        const mailOptions = {
-          from: `${process.env.EMAIL}`,
-          to: identifier,
-          subject: "OTP for Email Verification",
-          text: `Dear Valued Customer,\n\nWelcome to ZF Store! 🛍️\nWe're thrilled to have you on board.\n\nTo complete your registration, please use the One-Time Password (OTP) below:\n\n\n🔐 Your OTP Code: ${otp}\n━━━━━━━━━━━━━━━\n\n⏳ This OTP is valid for 10 minutes only.\n🔒 Do NOT share this code with anyone.\n\nOnce verified, you'll be able to:\n✅ Browse our latest collections\n✅ Place orders with ease\n✅ Track your deliveries in real time\n✅ Enjoy exclusive deals & offers\n\nIf you did not request this, please ignore this email or contact our support team immediately.\n\n📧 Support: ullahsibghat786@gmail.com\n📱 WhatsApp: +92 323 2603877\n\nThank you for choosing ZF Store — where quality meets style. 🌟\n\nWarm Regards,\nZF Store Team 🛍️\nwww.ZFStore.com`,
-        };
-
         try {
-          const info = await transporter.sendMail(mailOptions);
-          console.log("Email sent: " + info.response);
+          await sendEmail(identifier, "OTP for Email Verification", buildOtpEmailText(otp));
+          console.log("Email sent to", identifier);
         } catch (error) {
-          console.error("Email Error:", error);
+          console.error("Email Error:", error.message || error);
         }
       } else {
         await sendWhatsAppOTP(user.phoneNo, otp);
@@ -340,7 +292,6 @@ export const googleAuth = async (req, res, next) => {
     const payload = ticket.getPayload();
     const { email, name, picture, sub } = payload;
 
-    // Find User
     // Find User
     let user = await Users.findOne({ email });
 

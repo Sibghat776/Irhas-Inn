@@ -1,24 +1,28 @@
-import { Resend } from "resend";
+import { SMTPClient } from "emailjs";
 import dotenv from "dotenv";
-dotenv.config();
+import dns from "node:dns";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+dotenv.config();
+dns.setDefaultResultOrder("ipv4first");
 
 export const sendEmail = async (to, subject, text) => {
+  const client = new SMTPClient({
+    user: process.env.EMAIL,
+    password: process.env.PASSWORD,
+    host: "smtp.gmail.com",
+    ssl: true,
+    port: 465,
+    timeout: 15000,
+  });
+
   try {
-    const { data, error } = await resend.emails.send({
-      from:  `Sibghat Ullah ${process.env.EMAIL}`, // temporary sender until you verify your own domain
+    const message = await client.sendAsync({
+      text,
+      from: `Sibghat Ullah <${process.env.EMAIL}>`,
       to,
       subject,
-      text,
     });
-
-    if (error) {
-      console.error("Error sending email: ", error);
-      throw new Error(error.message || "Email send failed");
-    }
-
-    console.log("Email sent: ", data.id);
+    console.log("Email sent: ", message.header["message-id"]);
     return true;
   } catch (err) {
     console.error("Error sending email: ", err.message || err);
