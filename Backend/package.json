@@ -36,6 +36,7 @@
     "pino": "^10.3.1",
     "puppeteer": "^25.3.0",
     "qrcode-terminal": "^0.12.0",
+    "resend": "^6.17.1",
     "slugify": "^1.6.9",
     "twilio": "^6.0.2",
     "unzipper": "^0.12.5",
