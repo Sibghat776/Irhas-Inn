@@ -137,6 +137,19 @@ const MONGO_COLLECTION = "baileys_sessions";
 // ==========================================
 // 💾 RESTORE AUTH FROM MONGO
 // ==========================================
+async function clearAuthBackup() {
+  try {
+    await mongoose.connection.db
+      .collection(MONGO_COLLECTION)
+      .deleteOne({ _id: "auth_backup" });
+  } catch (err) {
+    console.error("Failed to delete stale WhatsApp auth backup from MongoDB:", err.message);
+  }
+  if (existsSync(AUTH_FOLDER)) {
+    rmSync(AUTH_FOLDER, { recursive: true, force: true });
+  }
+}
+
 async function restoreFromMongo() {
   try {
     const collection = mongoose.connection.db.collection(MONGO_COLLECTION);
@@ -146,7 +159,13 @@ async function restoreFromMongo() {
     if (!existsSync(AUTH_FOLDER)) mkdirSync(AUTH_FOLDER, { recursive: true });
 
     for (const [name, data] of Object.entries(doc.files)) {
-      writeFileSync(join(AUTH_FOLDER, name), Buffer.from(data, "base64"));
+      try {
+        writeFileSync(join(AUTH_FOLDER, name), Buffer.from(data, "base64"));
+      } catch (err) {
+        console.error("Invalid WhatsApp auth backup file:", name, err.message);
+        await clearAuthBackup();
+        return;
+      }
     }
     console.log("💾 WhatsApp session restored from MongoDB");
   } catch (err) {
@@ -218,7 +237,11 @@ export const initWhatsAppClient = async () => {
       }
 
       if (connection === "close") {
-        const reason = lastDisconnect?.error?.output?.statusCode;
+        const reason =
+          lastDisconnect?.error?.output?.statusCode ||
+          lastDisconnect?.error?.output?.payload?.statusCode ||
+          lastDisconnect?.reason ||
+          lastDisconnect?.error?.message;
         const shouldReconnect = reason !== DisconnectReason.loggedOut;
         console.log(
           `❌ Disconnected. Reason: ${reason}. Reconnect: ${shouldReconnect}`,
@@ -227,20 +250,13 @@ export const initWhatsAppClient = async () => {
 
         if (reason === 440) {
           console.log("Bad session — clearing stale session, need fresh QR");
-          await mongoose.connection.db
-            .collection(MONGO_COLLECTION)
-            .deleteOne({ _id: "auth_backup" });
-          if (existsSync(AUTH_FOLDER)) {
-            rmSync(AUTH_FOLDER, { recursive: true, force: true });
-          }
+          await clearAuthBackup();
           setTimeout(() => initWhatsAppClient(), 3000);
         } else if (shouldReconnect) {
           setTimeout(() => initWhatsAppClient(), 5000);
         } else {
           console.log("Logged out — clearing session from MongoDB");
-          await mongoose.connection.db
-            .collection(MONGO_COLLECTION)
-            .deleteOne({ _id: "auth_backup" });
+          await clearAuthBackup();
         }
       }
 

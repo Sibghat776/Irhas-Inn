@@ -65,6 +65,7 @@ export const verifyAdmin = (req, res, next) => {
 
 export const connectDB = async () => {
   const cached = global.mongoose || {};
+  if (!global.mongoose) global.mongoose = cached;
   if (cached.conn) {
     return cached.conn;
   }
@@ -73,14 +74,33 @@ export const connectDB = async () => {
     const MONGO = process.env.MONGO;
     if (!MONGO) throw createError(500, "MongoDB URI not found in env");
 
+    mongoose.set("strictQuery", false);
+
     cached.promise = mongoose
       .connect(MONGO, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
+        connectTimeoutMS: 10000,
+        serverSelectionTimeoutMS: 5000,
+        socketTimeoutMS: 45000,
+        maxPoolSize: 10,
       })
       .then((mongooseInstance) => {
+        mongoose.connection.on("disconnected", () => {
+          console.warn("⚠️ MongoDB disconnected, attempting to reconnect...");
+        });
+        mongoose.connection.on("reconnected", () => {
+          console.log("✅ MongoDB reconnected");
+        });
+        mongoose.connection.on("error", (err) => {
+          console.error("MongoDB connection error:", err.message);
+        });
         console.log("✅ New DB Connected");
         return mongooseInstance;
+      })
+      .catch((err) => {
+        console.error("MongoDB initial connection error:", err.message);
+        throw err;
       });
   }
   cached.conn = await cached.promise;
