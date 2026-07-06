@@ -168,7 +168,7 @@ const Signup = () => {
               <Loader2 className="w-12 h-12 text-neutral-900 animate-spin relative z-10 stroke-[1.5]" />
             </div>
             <h3 className="text-neutral-900 font-semibold tracking-tight text-lg">
-              ZF Authenticating
+              ZeeF Store Authenticating
             </h3>
             <p className="text-neutral-500 text-xs mt-1 leading-relaxed">
               Loading...

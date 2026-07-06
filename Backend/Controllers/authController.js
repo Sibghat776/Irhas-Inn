@@ -17,8 +17,100 @@ const adminEmails = process.env.ADMIN_EMAILS
   : [];
 
 // Reusable OTP email body builder — keeps the nice formatting in one place
+// Plain text version (fallback for email clients that don't render HTML)
 const buildOtpEmailText = (otp) =>
-  `Dear Valued Customer,\n\nWelcome to ZF Store! 🛍️\nWe're thrilled to have you on board.\n\nTo complete your registration, please use the One-Time Password (OTP) below:\n\n\n🔐 Your OTP Code: ${otp}\n━━━━━━━━━━━━━━━\n\n⏳ This OTP is valid for 10 minutes only.\n🔒 Do NOT share this code with anyone.\n\nOnce verified, you'll be able to:\n✅ Browse our latest collections\n✅ Place orders with ease\n✅ Track your deliveries in real time\n✅ Enjoy exclusive deals & offers\n\nIf you did not request this, please ignore this email or contact our support team immediately.\n\n📧 Support: ullahsibghat786@gmail.com\n📱 WhatsApp: +92 323 2603877\n\nThank you for choosing ZF Store — where quality meets style. 🌟\n\nWarm Regards,\nZF Store Team 🛍️\nwww.ZFStore.com`;
+  `Hello,\n\nYour verification code for ZeeF Store is: ${otp}\n\nThis code will expire in 10 minutes. If you did not request this, you can safely ignore this email.\n\nZeeF Store Support\n${process.env.EMAIL}`;
+
+// HTML themed version
+const buildOtpEmailHtml = (otp) => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ZeeF Trendy Store Verification</title>
+<style>
+  @media only screen and (max-width: 520px) {
+    .container { width: 100% !important; border-radius: 0 !important; }
+    .inner-padding { padding: 28px 20px !important; }
+    .otp-box { padding: 14px 20px !important; }
+    .otp-code { font-size: 26px !important; letter-spacing: 4px !important; }
+    .header-pad { padding: 22px 20px !important; }
+    .footer-pad { padding: 18px 20px 24px 20px !important; }
+  }
+</style>
+</head>
+<body style="margin:0; padding:0; background-color:#f0f0f2; font-family: Arial, Helvetica, sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f0f0f2; padding: 40px 12px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" class="container" width="480" cellpadding="0" cellspacing="0" style="width:480px; max-width:480px; background-color:#ffffff; border-radius:16px; overflow:hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08);">
+
+          <!-- Header with colorful gradient -->
+          <tr>
+            <td class="header-pad" style="background: linear-gradient(135deg, #7b2ff7 0%, #f107a3 50%, #d4af37 100%); padding: 32px 32px;" align="center">
+              <span style="color:#ffffff; font-size:24px; font-weight:bold; letter-spacing:1.5px; font-family: Arial, Helvetica, sans-serif; text-shadow: 0 1px 3px rgba(0,0,0,0.2);">ZeeF Trendy Store</span>
+            </td>
+          </tr>
+
+          <!-- Colorful accent line -->
+          <tr>
+            <td style="height:5px; background: linear-gradient(90deg, #f107a3, #d4af37, #00b8a9, #7b2ff7);"></td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td class="inner-padding" style="padding: 40px 36px 28px 36px;">
+              <p style="margin:0 0 4px 0; color:#111111; font-size:17px; font-weight:600;">Verify your identity</p>
+              <p style="margin:0 0 28px 0; color:#666666; font-size:14.5px; line-height:1.7;">
+                Use the code below to complete your request. This code is valid for the next <strong style="color:#333;">10 minutes</strong>.
+              </p>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="padding: 4px 0 32px 0;">
+                    <div class="otp-box" style="display:inline-block; background: linear-gradient(135deg, #fdf3fb 0%, #fdf6e3 100%); border: 1.5px solid #d4af37; border-radius:10px; padding: 18px 42px;">
+                      <span class="otp-code" style="font-size:32px; font-weight:bold; letter-spacing:8px; color:#7b2ff7; font-family: 'Courier New', monospace;">${otp}</span>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#fafafa; border-radius:8px; border-left: 4px solid #00b8a9;">
+                <tr>
+                  <td style="padding:16px 18px;">
+                    <p style="margin:0 0 6px 0; color:#888888; font-size:13px; line-height:1.6;">
+                      🔒 For your security, never share this code with anyone. ZeeF Trendy Store staff will never ask for it.
+                    </p>
+                    <p style="margin:0; color:#999999; font-size:13px; line-height:1.6;">
+                      Didn't request this? You can safely ignore this email.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding: 0 36px;">
+              <hr style="border:none; border-top:1px solid #eeeeee; margin:0;" />
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td class="footer-pad" style="padding: 22px 36px 30px 36px;" align="center">
+              <p style="margin:0 0 6px 0; color:#999999; font-size:12.5px;">Need help? Contact us at <a href="mailto:${process.env.EMAIL}" style="color:#f107a3; text-decoration:none; font-weight:600;">${process.env.EMAIL}</a></p>
+              <p style="margin:0; color:#c2c2c2; font-size:12px;">© ${new Date().getFullYear()} ZeeF Trendy Store. All rights reserved.</p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`;
 
 // ==========================================
 // 1. REGISTER (With WhatsApp Phone Verification)
@@ -76,7 +168,12 @@ export const register = async (req, res, next) => {
     }
 
     try {
-      await sendEmail(email, "OTP for Email Verification", buildOtpEmailText(otp));
+      await sendEmail(
+        email,
+        "OTP for Email Verification",
+        buildOtpEmailText(otp),
+        buildOtpEmailHtml(otp),
+      );
       console.log("Email sent to", email);
     } catch (error) {
       console.error("Email Error:", error.message || error);
@@ -84,7 +181,9 @@ export const register = async (req, res, next) => {
 
     const data = createSuccess(
       201,
-      isSent ? "Verification OTP Send to your Whatsapp and Email" : "Verification OTP sent to your Email (WhatsApp unavailable)",
+      isSent
+        ? "Verification OTP Send to your Whatsapp and Email"
+        : "Verification OTP sent to your Email (WhatsApp unavailable)",
       userDetails,
     );
     res.json(data);
@@ -152,8 +251,7 @@ export const verifyOtp = async (req, res, next) => {
       .cookie("access_token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite:
-          process.env.NODE_ENV === "production" ? "none" : "lax",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         maxAge: 3 * 24 * 60 * 60 * 1000,
       })
       .status(200)
@@ -187,7 +285,12 @@ export const resendOtp = async (req, res, next) => {
 
     if (identifier.includes("@")) {
       try {
-        await sendEmail(identifier, "OTP for Email Verification", buildOtpEmailText(otp));
+        await sendEmail(
+          identifier,
+          "OTP for Email Verification",
+          buildOtpEmailText(otp),
+          buildOtpEmailHtml(otp),
+        );
         console.log("Email sent to", identifier);
       } catch (error) {
         console.error("Email Error:", error.message || error);
@@ -234,7 +337,12 @@ export const login = async (req, res, next) => {
       await user.save();
       if (identifier.includes("@")) {
         try {
-          await sendEmail(identifier, "OTP for Email Verification", buildOtpEmailText(otp));
+          await sendEmail(
+            identifier,
+            "OTP for Email Verification",
+            buildOtpEmailText(otp),
+            buildOtpEmailHtml(otp),
+          );
           console.log("Email sent to", identifier);
         } catch (error) {
           console.error("Email Error:", error.message || error);
@@ -261,8 +369,7 @@ export const login = async (req, res, next) => {
       .cookie("access_token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite:
-          process.env.NODE_ENV === "production" ? "none" : "lax",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         path: "/",
         maxAge: 3 * 24 * 60 * 60 * 1000,
       })
@@ -335,8 +442,7 @@ export const googleAuth = async (req, res, next) => {
       .cookie("access_token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite:
-          process.env.NODE_ENV === "production" ? "none" : "lax",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         path: "/",
         maxAge: 3 * 24 * 60 * 60 * 1000,
       })
@@ -429,7 +535,9 @@ export const contactUs = async (req, res, next) => {
     const { name, email, message } = req.body;
 
     if (!name || !email || !message) {
-      return next(createError(400, "All fields (name, email, message) are required"));
+      return next(
+        createError(400, "All fields (name, email, message) are required"),
+      );
     }
 
     console.log(`[Contact] Message from ${name} (${email}): ${message}`);
