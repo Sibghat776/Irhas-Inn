@@ -42,6 +42,8 @@ const NotificationsPage = () => {
     }
   };
 
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
+
   useEffect(() => {
     fetchNotifications();
   }, [fetchNotifications]);
@@ -57,8 +59,6 @@ const NotificationsPage = () => {
       window.dispatchEvent(new Event("notifications-read"));
     }
   }, [unreadCount]);
-
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-400 via-white to-gray-100 px-4 pt-24 pb-6">
