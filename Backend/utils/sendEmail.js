@@ -1,44 +1,44 @@
-import { SMTPClient } from "emailjs";
+import nodemailer from "nodemailer";
 import dotenv from "dotenv";
-import dns from "node:dns";
 
 dotenv.config();
-dns.setDefaultResultOrder("ipv4first");
 
-// Client ko bar bar create karne ki bajaye ek hi baar banayein (connection reuse)
-const client = new SMTPClient({
-  user: process.env.EMAIL,
-  password: process.env.PASSWORD,
-  host: "smtp.gmail.com",
-  ssl: true,
-  port: 465,
-  timeout: 15000,
-});
+let transporter = null;
 
-/**
- * sendEmail - ab HTML support ke sath multipart (text + html) email bhejta hai
- * @param {string} to
- * @param {string} subject
- * @param {string} text - plain text fallback (hamesha zaroori hai)
- * @param {string} [html] - optional HTML version
- */
+const getTransporter = () => {
+  if (!transporter) {
+    const password = process.env.PASSWORD.replace(/\s/g, "");
+    
+    transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.EMAIL,
+        pass: password,
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
+  }
+  return transporter;
+};
+
 export const sendEmail = async (to, subject, text, html) => {
   try {
-    const message = await client.sendAsync({
-      text,
+    const transporter = getTransporter();
+    
+    const mailOptions = {
       from: `ZeeF Trendy Store <${process.env.EMAIL}>`,
       to,
       subject,
-      "reply-to": process.env.EMAIL,
-      // Agar html diya gaya hai to proper multipart/alternative bana ke bhejo
-      attachment: html
-        ? [
-            { data: text, alternative: false },
-            { data: html, alternative: true },
-          ]
-        : undefined,
-    });
-    console.log("Email sent: ", message.header["message-id"]);
+      text,
+      html,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log("Email sent successfully to:", to);
     return true;
   } catch (err) {
     console.error("Error sending email: ", err.message || err);

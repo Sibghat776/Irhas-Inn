@@ -20,7 +20,7 @@ const Footer: React.FC<FooterProps> = () => {
                 {/* Logo and About */}
                 <div>
                     <img
-                        src="/carousel/Logo.png"
+                        src="/Logo.png"
                         alt="Logo"
                         className="mb-4 w-[120px] h-auto"
                     />
