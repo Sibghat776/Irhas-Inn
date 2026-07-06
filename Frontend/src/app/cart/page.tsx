@@ -209,9 +209,11 @@ const CartPage = () => {
         await axios.post(
           `${baseUrl}cart/`,
           { productId, quantity: 1 },
+          { withCredentials: true },
         );
         await reFetch();
         showToast("Added to cart", "success");
+        window.dispatchEvent(new Event("cart-updated"));
       } catch (err: any) {
         console.error("Add suggested to cart error", err);
         showToast(
@@ -279,6 +281,7 @@ const CartPage = () => {
           { withCredentials: true },
         );
         await reFetch();
+        window.dispatchEvent(new Event("cart-updated"));
       } catch (err: any) {
         console.error("[Cart Update Error]:", err);
         showToast(
@@ -292,6 +295,7 @@ const CartPage = () => {
       );
       setCartItems(updated);
       setLocalCart(updated);
+      window.dispatchEvent(new Event("cart-updated"));
     }
   };
 
@@ -304,6 +308,7 @@ const CartPage = () => {
           withCredentials: true,
         });
         await reFetch();
+        window.dispatchEvent(new Event("cart-updated"));
       } catch (err: any) {
         console.error("[Cart Delete Error]:", err);
         showToast(
@@ -316,6 +321,7 @@ const CartPage = () => {
       setCartItems(updated);
       setLocalCart(updated);
       setIsEmpty(updated.length === 0);
+      window.dispatchEvent(new Event("cart-updated"));
     }
   };
 
@@ -326,6 +332,7 @@ const CartPage = () => {
       try {
         await axios.delete(`${baseUrl}cart/`, { withCredentials: true });
         await reFetch();
+        window.dispatchEvent(new Event("cart-updated"));
       } catch (err: any) {
         console.error("[Cart Clear Error]:", err);
         showToast(
@@ -337,6 +344,7 @@ const CartPage = () => {
       setCartItems([]);
       setLocalCart([]);
       setIsEmpty(true);
+      window.dispatchEvent(new Event("cart-updated"));
     }
   };
 

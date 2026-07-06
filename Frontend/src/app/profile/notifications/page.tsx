@@ -36,6 +36,7 @@ const NotificationsPage = () => {
       await axios.patch(`${baseUrl}notifications/mark-as-read`, {}, { withCredentials: true });
       console.log("[Notifications] Marked all as read");
       setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+      window.dispatchEvent(new Event("notifications-read"));
     } catch (err: any) {
       console.error("[Notifications] Mark as read error:", err);
     }
@@ -44,6 +45,18 @@ const NotificationsPage = () => {
   useEffect(() => {
     fetchNotifications();
   }, [fetchNotifications]);
+
+  useEffect(() => {
+    if (notifications.length > 0 && unreadCount > 0) {
+      markAsRead();
+    }
+  }, [notifications]);
+
+  useEffect(() => {
+    if (unreadCount === 0 && notifications.length > 0) {
+      window.dispatchEvent(new Event("notifications-read"));
+    }
+  }, [unreadCount]);
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 

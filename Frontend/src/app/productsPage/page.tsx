@@ -131,6 +131,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({
           { withCredentials: true },
         );
         showToast("Added to cart", "success");
+        window.dispatchEvent(new Event("cart-updated"));
       } catch (err: any) {
         console.error("Add to cart error", err);
         showToast(err?.response?.data?.message || "Failed to add to cart", "error");

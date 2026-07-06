@@ -103,6 +103,7 @@ const ProductDetailPage: React.FC = () => {
     if (auth.username) {
       try {
         await axios.post(`${baseUrl}cart`, payload, { withCredentials: true });
+        window.dispatchEvent(new Event("cart-updated"));
         showToast(
           `${product.name} added to cart${selectedColor || selectedSize ? ` (${[selectedColor, selectedSize].filter(Boolean).join(" / ")})` : ""}`,
           "success",

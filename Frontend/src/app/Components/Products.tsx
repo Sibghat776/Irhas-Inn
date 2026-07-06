@@ -121,8 +121,10 @@ const Products: React.FC = () => {
         await axios.post(
           `${baseUrl}cart`,
           { productId: product._id, quantity: 1 },
+          { withCredentials: true },
         );
         showToast(`${product.name} added to cart`, "success");
+        window.dispatchEvent(new Event("cart-updated"));
         return;
       } catch (err: any) {
         console.error(err);

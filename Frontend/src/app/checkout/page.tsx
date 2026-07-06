@@ -94,6 +94,7 @@ const CheckoutPage = () => {
                 quantity: item.quantity,
               })),
             },
+            { withCredentials: true },
           );
           setLocalCart([]);
         }

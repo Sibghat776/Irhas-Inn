@@ -138,7 +138,6 @@ export const register = async (req, res, next) => {
         createError(400, "Password should contain minimum 6 letters!"),
       );
     }
-
     // Hash password
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
@@ -252,6 +251,7 @@ export const verifyOtp = async (req, res, next) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        path: "/",
         maxAge: 3 * 24 * 60 * 60 * 1000,
       })
       .status(200)

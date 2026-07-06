@@ -77,6 +77,7 @@ const Navbar: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (authData.username) return;
     const updateCartCount = () => {
       try {
         const cart = JSON.parse(localStorage.getItem("zeef_store_cart") ?? "[]");
@@ -88,13 +89,30 @@ const Navbar: React.FC = () => {
     };
     updateCartCount();
     window.addEventListener("storage", updateCartCount);
-    // Poll every second to catch same-tab updates
     const interval = setInterval(updateCartCount, 1000);
     return () => {
       window.removeEventListener("storage", updateCartCount);
       clearInterval(interval);
     };
-  }, []);
+  }, [authData.username]);
+
+  useEffect(() => {
+    if (!authData.username) return;
+    const fetchBackendCart = async () => {
+      try {
+        const res = await axios.get(`${baseUrl}cart/`, { withCredentials: true });
+        const items = res.data.data || [];
+        const total = items.reduce((sum: number, item: any) => sum + (item.quantity || 1), 0);
+        setCartCount(total);
+      } catch {
+        /* ignore */
+      }
+    };
+    fetchBackendCart();
+    const handleCartUpdate = () => fetchBackendCart();
+    window.addEventListener("cart-updated", handleCartUpdate);
+    return () => window.removeEventListener("cart-updated", handleCartUpdate);
+  }, [authData.username]);
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (event: any) => {
@@ -218,27 +236,17 @@ const Navbar: React.FC = () => {
     if (authData.username) {
       fetchUnreadCount();
       const interval = setInterval(fetchUnreadCount, 30000);
-      return () => clearInterval(interval);
+      const handleRead = () => { setUnreadCount(0); };
+      window.addEventListener("notifications-read", handleRead);
+      return () => {
+        clearInterval(interval);
+        window.removeEventListener("notifications-read", handleRead);
+      };
     }
   }, [authData.username, fetchUnreadCount]);
 
-  // Mark notifications as read when user menu opens
-  const handleUserMenuToggle = async () => {
-    const willOpen = !userMenuOpen;
-    setUserMenuOpen(willOpen);
-    if (willOpen && unreadCount > 0) {
-      try {
-        await axios.patch(
-          `${baseUrl}notifications/mark-as-read`,
-          {},
-          { withCredentials: true },
-        );
-        console.log("[Navbar] Notifications marked as read");
-        setUnreadCount(0);
-      } catch {
-        /* ignore */
-      }
-    }
+  const handleUserMenuToggle = () => {
+    setUserMenuOpen((prev) => !prev);
   };
 
   const handleAdminPage = () => {
