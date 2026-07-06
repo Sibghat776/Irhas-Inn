@@ -1,44 +1,26 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-let transporter = null;
-
-const getTransporter = () => {
-  if (!transporter) {
-    const password = process.env.PASSWORD.replace(/\s/g, "");
-    
-    transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: process.env.EMAIL,
-        pass: password,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    });
-  }
-  return transporter;
-};
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendEmail = async (to, subject, text, html) => {
   try {
-    const transporter = getTransporter();
-    
-    const mailOptions = {
-      from: `ZeeF Trendy Store <${process.env.EMAIL}>`,
+    const { data, error } = await resend.emails.send({
+      from: "ZeeF Trendy Store <onboarding@resend.dev>", // apna verified domain aane ke baad change karein
       to,
       subject,
       text,
       html,
-    };
+    });
 
-    await transporter.sendMail(mailOptions);
-    console.log("Email sent successfully to:", to);
+    if (error) {
+      console.error("Error sending email: ", error);
+      throw error;
+    }
+
+    console.log("Email sent successfully to:", to, "| ID:", data?.id);
     return true;
   } catch (err) {
     console.error("Error sending email: ", err.message || err);
