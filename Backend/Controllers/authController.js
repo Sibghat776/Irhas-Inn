@@ -245,7 +245,6 @@ export const verifyOtp = async (req, res, next) => {
     );
 
     const { password, ...userDetails } = user._doc;
-
     return res
       .cookie("access_token", token, {
         httpOnly: true,
