@@ -75,7 +75,7 @@ const MyOrdersPage = () => {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <span className="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-1 rounded-md">
-                        #{order._id.slice(-8)}
+                        #{order.serialNumber || order._id.slice(-8)}
                       </span>
                       <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${statusColor[order.status] || "bg-gray-100 text-gray-700"}`}>
                         {order.status || "Pending"}

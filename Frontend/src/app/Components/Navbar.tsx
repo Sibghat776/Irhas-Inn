@@ -120,7 +120,7 @@ const Navbar: React.FC = () => {
       setDeferredPrompt(event);
     };
 
-    const handleAppInstalled = () => {
+    const handleAppInstalled : any= () => {
       setIsAppInstalled(true);
       setDeferredPrompt(null);
     };

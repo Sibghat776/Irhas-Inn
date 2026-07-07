@@ -115,6 +115,23 @@ const Login = () => {
         { withCredentials: true },
       );
       if (res?.data?.requiresVerification) {
+        const otpSent = res?.data?.otpSent;
+
+        if (!otpSent) {
+          dispatch(
+            loginFailure(
+              "Failed to send verification OTP. Please try again later.",
+            ),
+          );
+          showToast(
+            "Failed to send OTP. Please try again later.",
+            "error",
+            "dark",
+          );
+          dispatch(closeLogin());
+          return;
+        }
+
         dispatch(
           loginFailure(
             "Account not verified! Please verify your account before logging in.",

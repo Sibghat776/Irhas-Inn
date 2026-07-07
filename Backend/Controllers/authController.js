@@ -19,7 +19,7 @@ const adminEmails = process.env.ADMIN_EMAILS
 // Reusable OTP email body builder — keeps the nice formatting in one place
 // Plain text version (fallback for email clients that don't render HTML)
 const buildOtpEmailText = (otp) =>
-  `Hello,\n\nYour verification code for ZeeF Store is: ${otp}\n\nThis code will expire in 10 minutes. If you did not request this, you can safely ignore this email.\n\nZeeF Store Support\n${process.env.EMAIL}`;
+  `Hello,\n\nYour verification code for ZeeF Trendy Store is: ${otp}\n\nThis code will expire in 10 minutes. If you did not request this, you can safely ignore this email.\n\nNeed help? Contact us at ${process.env.EMAIL}\n\nZeeF Trendy Store`;
 
 // HTML themed version
 const buildOtpEmailHtml = (otp) => `
@@ -80,7 +80,7 @@ const buildOtpEmailHtml = (otp) => `
                 <tr>
                   <td style="padding:16px 18px;">
                     <p style="margin:0 0 6px 0; color:#888888; font-size:13px; line-height:1.6;">
-                      🔒 For your security, never share this code with anyone. ZeeF Trendy Store staff will never ask for it.
+                      For your security, never share this code with anyone. ZeeF Trendy Store staff will never ask for it.
                     </p>
                     <p style="margin:0; color:#999999; font-size:13px; line-height:1.6;">
                       Didn't request this? You can safely ignore this email.
@@ -100,6 +100,7 @@ const buildOtpEmailHtml = (otp) => `
           <tr>
             <td class="footer-pad" style="padding: 22px 36px 30px 36px;" align="center">
               <p style="margin:0 0 6px 0; color:#999999; font-size:12.5px;">Need help? Contact us at <a href="mailto:${process.env.EMAIL}" style="color:#f107a3; text-decoration:none; font-weight:600;">${process.env.EMAIL}</a></p>
+              <p style="margin:0 0 6px 0; color:#c2c2c2; font-size:11.5px;">Karachi, Pakistan</p>
               <p style="margin:0; color:#c2c2c2; font-size:12px;">© ${new Date().getFullYear()} ZeeF Trendy Store. All rights reserved.</p>
             </td>
           </tr>
@@ -158,14 +159,10 @@ export const register = async (req, res, next) => {
     });
     await newUser.save();
 
-    const isSent = await sendWhatsAppOTP(phoneNo, otp);
+    const whatsappSent = await sendWhatsAppOTP(phoneNo, otp);
     const { password: _, otpExpires, otp: __, ...userDetails } = newUser._doc;
 
-    // Do NOT delete user if WhatsApp fails - OTP is also sent via email
-    if (!isSent) {
-      console.warn("WhatsApp OTP failed, but user saved. OTP sent via email.");
-    }
-
+    let emailSent = false;
     try {
       await sendEmail(
         email,
@@ -173,17 +170,25 @@ export const register = async (req, res, next) => {
         buildOtpEmailText(otp),
         buildOtpEmailHtml(otp),
       );
+      emailSent = true;
       console.log("Email sent to", email);
     } catch (error) {
       console.error("Email Error:", error.message || error);
     }
 
+    const otpSent = emailSent || whatsappSent;
+
+    if (!otpSent) {
+      await Users.findByIdAndDelete(newUser._id);
+      return next(createError(500, "Failed to send OTP. Please try again."));
+    }
+
     const data = createSuccess(
       201,
-      isSent
-        ? "Verification OTP Send to your Whatsapp and Email"
+      whatsappSent
+        ? "Verification OTP sent to your WhatsApp and Email"
         : "Verification OTP sent to your Email (WhatsApp unavailable)",
-      userDetails,
+      { ...userDetails, otpSent },
     );
     res.json(data);
   } catch (error) {
@@ -334,6 +339,10 @@ export const login = async (req, res, next) => {
       user.otp = otp;
       user.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
       await user.save();
+
+      let emailSent = false;
+      let whatsappSent = false;
+
       if (identifier.includes("@")) {
         try {
           await sendEmail(
@@ -342,18 +351,25 @@ export const login = async (req, res, next) => {
             buildOtpEmailText(otp),
             buildOtpEmailHtml(otp),
           );
+          emailSent = true;
           console.log("Email sent to", identifier);
         } catch (error) {
           console.error("Email Error:", error.message || error);
         }
       } else {
-        await sendWhatsAppOTP(user.phoneNo, otp);
+        whatsappSent = await sendWhatsAppOTP(user.phoneNo, otp);
       }
+
+      const otpSent = identifier.includes("@") ? emailSent : whatsappSent;
+
       return res.status(200).json({
         success: false,
         requiresVerification: true,
+        otpSent,
         identifier: identifier,
-        message: "Account not verified!",
+        message: otpSent
+          ? "OTP sent successfully!"
+          : "Failed to send OTP. Please try again.",
       });
     }
     const { password: _, otp, otpExpires, ...userDetails } = user._doc;

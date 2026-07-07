@@ -177,6 +177,7 @@ const OrdersPage = () => {
       <table className="w-full text-left">
         <thead>
           <tr className="text-xs font-black uppercase tracking-[0.15em] text-zinc-500 border-b-4 border-black bg-zinc-50">
+            <th className="p-4">#</th>
             <th className="p-4">Order ID</th>
             <th className="p-4">Customer</th>
             <th className="p-4">Total</th>
@@ -189,7 +190,7 @@ const OrdersPage = () => {
         <tbody className="text-sm font-bold uppercase">
           {loading ? (
             <tr>
-              <td colSpan={6} className="p-8 text-center">
+              <td colSpan={7} className="p-8 text-center">
                 <p className="text-black font-bold uppercase">
                   Loading orders...
                 </p>
@@ -199,6 +200,7 @@ const OrdersPage = () => {
             orders.map((order) => (
               <Fragment key={order._id}>
                 <tr className="border-b-2 border-zinc-100 hover:bg-zinc-50 transition-colors">
+                  <td className="p-4 text-black font-mono font-bold text-orange-500">{order.serialNumber || "—"}</td>
                   <td className="p-4 text-black break-words">{order._id}</td>
                   <td className="p-4 text-black">
                     {order.user?.username || order.user?.email || "Unknown"}
@@ -300,7 +302,7 @@ const OrdersPage = () => {
                 {expandedOrderIds[order._id] ? (
                   <tr className="bg-slate-50">
                     <td
-                      colSpan={7}
+                      colSpan={8}
                       className="p-4 text-sm uppercase font-normal text-slate-700"
                     >
                       <div className="grid gap-4 md:grid-cols-2">
@@ -408,7 +410,7 @@ const OrdersPage = () => {
             ))
           ) : (
             <tr>
-              <td colSpan={6} className="p-8 text-center">
+              <td colSpan={7} className="p-8 text-center">
                 <p className="text-black font-bold uppercase">
                   No orders found.
                 </p>

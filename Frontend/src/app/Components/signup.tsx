@@ -117,6 +117,17 @@ const Signup = () => {
       console.log(res?.data);
 
       dispatch(loginFailure(""));
+
+      const otpSent = res?.data?.data?.otpSent;
+
+      if (!otpSent) {
+        showToast(
+          "Failed to send verification OTP. Please try again.",
+          "error",
+        );
+        return;
+      }
+
       showToast(
         "OTP sent successfully! Please verify your account.",
         "success",

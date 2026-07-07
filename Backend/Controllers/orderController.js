@@ -16,6 +16,22 @@ const populateOrder = (query) =>
       },
     });
 
+// Helper: Assign serial numbers to old orders missing them
+const assignMissingSerialNumbers = async () => {
+  const ordersWithoutSerial = await Order.find({ serialNumber: { $exists: false } }).sort({ createdAt: 1 });
+  if (ordersWithoutSerial.length === 0) return;
+
+  const lastOrder = await Order.findOne({ serialNumber: { $exists: true } }).sort({ serialNumber: -1 });
+  let currentSerial = lastOrder ? lastOrder.serialNumber : 1000;
+
+  for (const order of ordersWithoutSerial) {
+    currentSerial++;
+    order.serialNumber = currentSerial;
+    await order.save({ validateBeforeSave: false });
+  }
+  console.log(`[Migration] Assigned serial numbers to ${ordersWithoutSerial.length} old orders`);
+};
+
 // ==========================================
 // 1. CREATE ORDER
 // ==========================================
@@ -48,7 +64,12 @@ export const createOrder = async (req, res, next) => {
       }
     }
 
+    // Generate serial number
+    const lastOrder = await Order.findOne({ serialNumber: { $exists: true, $ne: null } }).sort({ serialNumber: -1 });
+    const serialNumber = (lastOrder && typeof lastOrder.serialNumber === "number") ? lastOrder.serialNumber + 1 : 1001;
+
     const order = await Order.create({
+      serialNumber,
       user: req.user.id,
       orderItems,
       shippingAddress,
@@ -89,6 +110,8 @@ export const createOrder = async (req, res, next) => {
 export const getMyOrders = async (req, res, next) => {
   try {
     console.log(`[Order Route]: Fetching orders for user ${req.user.id}`);
+
+    await assignMissingSerialNumbers();
 
     const orders = await populateOrder(
       Order.find({ user: req.user.id }).sort({ createdAt: -1 }),
@@ -133,6 +156,8 @@ export const getOrderById = async (req, res, next) => {
 // ==========================================
 export const getAllOrders = async (req, res, next) => {
   try {
+    await assignMissingSerialNumbers();
+
     const orders = await populateOrder(Order.find({}).sort({ createdAt: -1 }));
 
     return res

@@ -146,7 +146,14 @@ const OrderTrackingPage = () => {
                 {order.status}
               </span>
             </div>
-            <p className="text-sm font-mono text-gray-400">#{order._id}</p>
+            <div className="flex items-center gap-3">
+              {order.serialNumber && (
+                <span className="text-sm font-mono font-bold text-[#0856DF] bg-blue-50 px-2 py-0.5 rounded">
+                  #{order.serialNumber}
+                </span>
+              )}
+              <p className="text-sm font-mono text-gray-400">{order._id}</p>
+            </div>
           </div>
 
           {/* Tracking Stepper */}
