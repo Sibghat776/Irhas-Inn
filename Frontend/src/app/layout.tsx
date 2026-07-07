@@ -95,7 +95,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: "XQ9XT4PPXNKkXi5RGvB8azuTuEeTCL4UTkikRn2BEks",
+    google: "h9HbGrTmTRWd0g2xeUlfvs1qhHcTSm-DFmqRqLPdRlU",
   },
   category: "e-commerce",
 };
