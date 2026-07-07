@@ -40,7 +40,10 @@ export const metadata: Metadata = {
   applicationName: "ZeeF Trendy Store",
   manifest: "/manifest.json",
   icons: {
-    icon: "/Logo.png",
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/Logo.png", type: "image/png", sizes: "192x192" },
+    ],
     apple: "/Logo.png",
   },
   appleWebApp: {
@@ -92,7 +95,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: "O7tMFq5hf-oGfMl6diWnTNPK3H60yPhvrAoWcJuZH2o",
+    google: "h9HbGrTmTRWd0g2xeUlfvs1qhHcTSm-DFmqRqLPdRlU",
   },
   category: "e-commerce",
 };
