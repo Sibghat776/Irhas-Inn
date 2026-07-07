@@ -15,6 +15,7 @@ import {
   Tags,
   Users,
 } from "lucide-react";
+import { parse } from "path";
 
 const sidebarLinks = [
   {
@@ -66,6 +67,9 @@ const Sidebar = () => {
   const pathname = usePathname();
   const [adminName, setAdminName] = useState("Super Admin");
   const [adminRole, setAdminRole] = useState("Admin");
+  const storedUser =
+    typeof window !== "undefined" ? window.localStorage.getItem("user") : null;
+  const parsed = JSON.parse(storedUser as string);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -89,22 +93,28 @@ const Sidebar = () => {
     <aside className="w-72 bg-black text-white flex flex-col h-screen fixed top-0 left-0 z-50">
       <div className="h-24 flex items-center justify-between px-6 border-b-2 border-zinc-800">
         <Link href="/" className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-white text-black font-black flex items-center justify-center border-2 border-zinc-600 uppercase">
-            ZF
-          </div>
+          <img src={"/Logo.png"} className="w-12 h-12 bg-white text-black font-black flex items-center justify-center border-2 border-zinc-600 uppercase"/>
+
           <div>
-            <p className="text-xl font-black tracking-tight uppercase">ZeeF</p>
-            <p className="text-xs text-zinc-400 uppercase tracking-[0.2em]">Store Home</p>
+            <p className="text-xl font-black tracking-tight uppercase">
+              ZeeF Store
+            </p>
+            <p className="text-xs text-zinc-400 uppercase tracking-[0.2em]">
+              Store Home
+            </p>
           </div>
         </Link>
       </div>
 
       <nav className="flex-1 overflow-y-auto py-8 px-6 space-y-3">
-        <p className="text-xs font-black text-zinc-600 uppercase tracking-[0.2em] mb-6">Menu</p>
+        <p className="text-xs font-black text-zinc-600 uppercase tracking-[0.2em] mb-6">
+          Menu
+        </p>
 
         {sidebarLinks.map((link) => {
           const Icon = link.icon;
-          const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+          const isActive =
+            pathname === link.href || pathname.startsWith(link.href + "/");
 
           return (
             <Link
@@ -121,10 +131,14 @@ const Sidebar = () => {
                   isActive ? "scale-110" : "group-hover:scale-110"
                 }`}
               />
-              <span className={`text-sm font-bold tracking-wide uppercase ${isActive ? "text-black" : "text-zinc-300"}`}>
+              <span
+                className={`text-sm font-bold tracking-wide uppercase ${isActive ? "text-black" : "text-zinc-300"}`}
+              >
                 {link.name}
               </span>
-              {isActive && <ChevronRight className="w-4 h-4 ml-auto text-black" />}
+              {isActive && (
+                <ChevronRight className="w-4 h-4 ml-auto text-black" />
+              )}
             </Link>
           );
         })}
@@ -133,11 +147,19 @@ const Sidebar = () => {
       <div className="p-6 border-t-2 border-zinc-800">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 bg-white flex items-center justify-center text-black font-black text-lg border-2 border-zinc-600 rounded-full">
-            {adminName.charAt(0).toUpperCase()}
+            {parsed.profilePic ? (
+              <img src={`${parsed.profilePic}`} className="w-full h-full object-cover rounded-full" alt="" />
+            ) : (
+              <span>{adminName.charAt(0).toUpperCase()}</span>
+            )}
           </div>
           <div className="text-left">
-            <p className="text-sm font-black text-white uppercase tracking-wider">{adminName}</p>
-            <p className="text-xs text-zinc-500 font-bold tracking-widest">{adminRole}</p>
+            <p className="text-sm font-black text-white uppercase tracking-wider">
+              {adminName}
+            </p>
+            <p className="text-xs text-zinc-500 font-bold tracking-widest">
+              {adminRole}
+            </p>
           </div>
         </div>
         <div className="mt-4 border-t border-zinc-800 pt-4">
