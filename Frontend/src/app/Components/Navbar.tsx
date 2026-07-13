@@ -577,6 +577,15 @@ const Navbar: React.FC = () => {
                     </Link>
                   </div>
 
+
+                  {deferredPrompt && !isAppInstalled && (
+                    <button
+                      onClick={handleInstallClick}
+                      className="w-full py-2.5 px-4 rounded-lg text-center text-sm font-semibold bg-[#0856DF] text-white hover:bg-[#064ec4] transition-colors"
+                    >
+                      Download App
+                    </button>
+                  )}
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       onClick={() => {
