@@ -10,8 +10,8 @@ import { categoryRoute } from "./Routes/categoryRoute.js";
 import { orderRoute } from "./Routes/orderRoute.js";
 import { cartRoute } from "./Routes/cartRoute.js";
 import { notificationRoute } from "./Routes/notificationRoute.js";
+import { pushNotificationRoute } from "./Routes/pushNotificationRoute.js";
 import cookieParser from "cookie-parser";
-
 dotenv.config();
 
 const app = express();
@@ -47,6 +47,7 @@ app.use("/api/v1/category", categoryRoute);
 app.use("/api/v1/order", orderRoute);
 app.use("/api/v1/cart", cartRoute);
 app.use("/api/v1/notifications", notificationRoute);
+app.use("/api/v1/push", pushNotificationRoute);
 
 // Server Start and DB Connection (No if condition)
 (async () => {

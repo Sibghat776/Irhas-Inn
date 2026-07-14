@@ -3,6 +3,8 @@ import rateLimit from "express-rate-limit";
 import mongoose from "mongoose";
 dotenv.config();
 import jwt from "jsonwebtoken";
+import dns from "dns";
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 export const createError = (status, message) => {
   const err = new Error();

@@ -23,6 +23,11 @@ export default function ClientLayout({
   const dispatch = useDispatch();
   const { loading } = useSelector((state: RootState) => state.ui);
 
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js");
+    }
+  }, []);
   // Verification helper for PWA Service Worker registration status
   useEffect(() => {
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {

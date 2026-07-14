@@ -4,6 +4,7 @@ import "./globals.css";
 import Providers from "./Redux/Providers/provider";
 import ClientLayout from "./ClientLayout";
 import GoogleProvider from "./GoogleProvider";
+import NotificationPrompt from "./Components/NotificationPrompt";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -106,6 +107,8 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+
+
 export default function RootLayout({
   children,
 }: {
@@ -150,6 +153,7 @@ export default function RootLayout({
         <Providers>
           <GoogleProvider>
             <ClientLayout>{children}</ClientLayout>
+            <NotificationPrompt />
           </GoogleProvider>
         </Providers>
       </body>

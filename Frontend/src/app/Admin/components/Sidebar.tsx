@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BarChart3,
+  Bell,
   ChevronRight,
   Home,
   LayoutDashboard,
@@ -15,7 +16,6 @@ import {
   Tags,
   Users,
 } from "lucide-react";
-import { parse } from "path";
 
 const sidebarLinks = [
   {
@@ -50,6 +50,12 @@ const sidebarLinks = [
   },
   { name: "Users", icon: Users, color: "text-green-500", href: "/Admin/Users" },
   {
+    name: "Notifications",
+    icon: Bell,
+    color: "text-red-500",
+    href: "/Admin/Notifications",
+  },
+  {
     name: "Analytics",
     icon: BarChart3,
     color: "text-cyan-500",
@@ -67,9 +73,7 @@ const Sidebar = () => {
   const pathname = usePathname();
   const [adminName, setAdminName] = useState("Super Admin");
   const [adminRole, setAdminRole] = useState("Admin");
-  const storedUser =
-    typeof window !== "undefined" ? window.localStorage.getItem("user") : null;
-  const parsed = JSON.parse(storedUser as string);
+  const [profilePic, setProfilePic] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -81,6 +85,9 @@ const Sidebar = () => {
             setAdminName(parsed.username);
           }
           setAdminRole(parsed?.isAdmin ? "Super Admin" : "Admin");
+          if (parsed?.profilePic) {
+            setProfilePic(parsed.profilePic);
+          }
         } catch {
           setAdminName("Admin");
           setAdminRole("Admin");
@@ -93,7 +100,10 @@ const Sidebar = () => {
     <aside className="w-72 bg-black text-white flex flex-col h-screen fixed top-0 left-0 z-50">
       <div className="h-24 flex items-center justify-between px-6 border-b-2 border-zinc-800">
         <Link href="/" className="flex items-center gap-3">
-          <img src={"/Logo.png"} className="w-12 h-12 bg-white text-black font-black flex items-center justify-center border-2 border-zinc-600 uppercase"/>
+          <img
+            src={"/Logo.png"}
+            className="w-12 h-12 bg-white text-black font-black flex items-center justify-center border-2 border-zinc-600 uppercase"
+          />
 
           <div>
             <p className="text-xl font-black tracking-tight uppercase">
@@ -120,16 +130,14 @@ const Sidebar = () => {
             <Link
               key={link.name}
               href={link.href}
-              className={`w-full flex items-center gap-4 px-4 py-3.5 transition-all duration-200 group border-2 ${
-                isActive
-                  ? "bg-white text-black border-white shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)]"
-                  : "bg-black text-zinc-400 border-transparent hover:border-zinc-800 hover:bg-zinc-900"
-              }`}
+              className={`w-full flex items-center gap-4 px-4 py-3.5 transition-all duration-200 group border-2 ${isActive
+                ? "bg-white text-black border-white shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)]"
+                : "bg-black text-zinc-400 border-transparent hover:border-zinc-800 hover:bg-zinc-900"
+                }`}
             >
               <Icon
-                className={`w-5 h-5 ${link.color} transition-transform duration-300 ${
-                  isActive ? "scale-110" : "group-hover:scale-110"
-                }`}
+                className={`w-5 h-5 ${link.color} transition-transform duration-300 ${isActive ? "scale-110" : "group-hover:scale-110"
+                  }`}
               />
               <span
                 className={`text-sm font-bold tracking-wide uppercase ${isActive ? "text-black" : "text-zinc-300"}`}
@@ -147,8 +155,12 @@ const Sidebar = () => {
       <div className="p-6 border-t-2 border-zinc-800">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 bg-white flex items-center justify-center text-black font-black text-lg border-2 border-zinc-600 rounded-full">
-            {parsed.profilePic ? (
-              <img src={`${parsed.profilePic}`} className="w-full h-full object-cover rounded-full" alt="" />
+            {profilePic ? (
+              <img
+                src={profilePic}
+                className="w-full h-full object-cover rounded-full"
+                alt=""
+              />
             ) : (
               <span>{adminName.charAt(0).toUpperCase()}</span>
             )}

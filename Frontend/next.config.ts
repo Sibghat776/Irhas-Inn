@@ -9,6 +9,9 @@ const withPWA = withPWAInit({
   workboxOptions: {
     cleanupOutdatedCaches: true,
   },
+  customWorkerSrc: "worker",
+  customWorkerDest: "public",
+  customWorkerPrefix: "push",
 });
 
 const nextConfig: NextConfig = {
