@@ -41,23 +41,33 @@ export async function subscribe(): Promise<boolean> {
   }
   // Wait until the Service Worker is ready (active).
   registration = await navigator.serviceWorker.ready;
+
+  console.log('🟢 Service Worker ready, proceeding with subscription');
   // Existing subscription check
   let subscription = await registration.pushManager.getSubscription();
 
   if (!subscription) {
-    // If VAPID key is missing or placeholder, call subscribe without the key.
-    const hasValidKey = VAPID_PUBLIC_KEY && VAPID_PUBLIC_KEY !== "YOUR_VAPID_PUBLIC_KEY_HERE";
-    if (hasValidKey) {
-      const appServerKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
-      subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: appServerKey as BufferSource,
-      });
-    } else {
-      subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-      });
+    try {
+      // If VAPID key is missing or placeholder, call subscribe without the key.
+      const hasValidKey = VAPID_PUBLIC_KEY && VAPID_PUBLIC_KEY !== "YOUR_VAPID_PUBLIC_KEY_HERE";
+      if (hasValidKey) {
+        const appServerKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: appServerKey as BufferSource,
+        });
+      } else {
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+        });
+      }
+      console.log('🟢 Subscription created', subscription);
+    } catch (err) {
+      console.error('❌ Subscription failed', err);
+      throw new Error(err instanceof Error ? err.message : String(err));
     }
+  } else {
+    console.log('🟢 Existing subscription found');
   }
 
   // Send subscription to backend
@@ -68,7 +78,13 @@ export async function subscribe(): Promise<boolean> {
     body: JSON.stringify(subscription),
   });
 
-  if (!res.ok) throw new Error("Failed to save subscription on server");
+  if (!res.ok) {
+    const errMsg = await res.text();
+    console.error('❌ Backend subscribe error', errMsg);
+    throw new Error(`Failed to save subscription on server: ${errMsg}`);
+  }
+
+  console.log('✅ Subscription saved on server');
   return true;
 }
 

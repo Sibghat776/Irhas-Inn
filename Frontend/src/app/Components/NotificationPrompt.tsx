@@ -16,12 +16,14 @@ export default function NotificationPrompt() {
         try {
             await subscribe();
             setStatus("granted");
+            showToast("Notifications enabled", "success");
         } catch (err) {
             console.error(err);
             const msg = err instanceof Error ? err.message : String(err);
             showToast(`Failed to enable notifications: ${msg}`, "error");
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     if (status === "granted" || status === "unsupported") return null; // Already allowed ya support nahi
