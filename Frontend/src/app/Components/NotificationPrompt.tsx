@@ -1,7 +1,7 @@
 // src/components/NotificationPrompt.tsx
 "use client";
 import { useEffect, useState } from "react";
-import { checkPermissionStatus, subscribe } from "../utils/notificationClient";
+import { checkPermissionStatus, subscribe } from "../utils/notificationClient"; import { showToast } from "../utils/commonFunctions";
 
 export default function NotificationPrompt() {
     const [status, setStatus] = useState<string>("default");
@@ -18,7 +18,8 @@ export default function NotificationPrompt() {
             setStatus("granted");
         } catch (err) {
             console.error(err);
-            alert("Notification enable nahi ho payi");
+            const msg = err instanceof Error ? err.message : String(err);
+            showToast(`Failed to enable notifications: ${msg}`, "error");
         }
         setLoading(false);
     };
@@ -27,13 +28,13 @@ export default function NotificationPrompt() {
 
     return (
         <div className="fixed bottom-4 right-4 bg-white shadow-lg rounded-lg p-4 border z-50">
-            <p className="text-sm mb-2">Naye offers aur updates ke liye notifications on karein 🔔</p>
+            <p className="text-sm mb-2">Enable notifications for new offers and updates 🔔</p>
             <button
                 onClick={handleEnable}
                 disabled={loading}
                 className="bg-black text-white px-4 py-2 rounded text-sm"
             >
-                {loading ? "Enable ho raha hai..." : "Notifications On Karein"}
+                {loading ? "Enabling..." : "Enable Notifications"}
             </button>
         </div>
     );

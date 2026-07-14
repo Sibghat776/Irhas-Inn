@@ -2,7 +2,8 @@
 "use client";
 import { useState } from "react";
 import axios from "axios";
-import { baseUrl } from "@/app/utils/commonFunctions";
+import { baseUrl, showToast } from "@/app/utils/commonFunctions";
+import { checkPermissionStatus, subscribe } from "../../utils/notificationClient";
 
 const BASE_URL = baseUrl || "http://localhost:5000/api/v1";
 
@@ -14,14 +15,14 @@ export default function AdminNotificationPage() {
     const [result, setResult] = useState<any>(null);
 
     const handleSend = async () => {
-        if (!title || !body) return alert("Title aur message likho");
+        if (!title || !body) return showToast("Please enter title and message", "error");
 
         setLoading(true);
         setResult(null);
 
         try {
             const { data } = await axios.post(
-                `${BASE_URL}push/send`, // ✅ Fixed URL - "notifications" hata diya
+                `${BASE_URL}push/send`,
                 { title, body, link },
                 {
                     headers: { "Content-Type": "application/json" },
@@ -37,10 +38,8 @@ export default function AdminNotificationPage() {
                 setLink("/");
             }
         } catch (err: any) {
-            setResult({
-                message:
-                    err?.response?.data?.message || "Kuch ghalat ho gaya, dobara try karein",
-            });
+            showToast(err?.response?.data?.message || "Something went wrong", "error");
+            setResult(null);
         }
 
         setLoading(false);
@@ -49,7 +48,7 @@ export default function AdminNotificationPage() {
     return (
         <div className="max-w-md mx-auto p-6">
             <h1 className="text-xl font-black uppercase tracking-tight mb-6">
-                Push Notification Bhejo
+                Send Push Notification
             </h1>
 
             <div className="space-y-3">
@@ -78,7 +77,7 @@ export default function AdminNotificationPage() {
                     disabled={loading}
                     className="bg-black text-white font-bold uppercase tracking-wide px-4 py-3 rounded w-full disabled:opacity-50"
                 >
-                    {loading ? "Bhej Raha Hai..." : "Sab Subscribers Ko Bhejo 🚀"}
+                    {loading ? "Sending..." : "Send Notification"}
                 </button>
             </div>
 

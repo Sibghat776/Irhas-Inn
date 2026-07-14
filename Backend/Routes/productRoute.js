@@ -19,7 +19,7 @@ productRouter.post(
   upload.array("images", 5),
   addProduct,
 );
-productRouter.get("/getProduct/:id", verifyToken, getProductById);
+productRouter.get("/getProduct/:id", getProductById);
 productRouter.get("/getAllProducts", getProducts);
 productRouter.put("/updateProduct/:id", verifyToken, verifyAdmin, updateProduct);
 productRouter.delete("/deleteProduct/:id", verifyToken, verifyAdmin, deleteProduct);

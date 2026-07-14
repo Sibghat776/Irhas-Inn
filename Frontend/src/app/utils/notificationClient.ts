@@ -27,22 +27,40 @@ export async function subscribe(): Promise<boolean> {
     throw new Error("Push notifications not supported in this browser");
   }
 
+  // If permission was previously denied, give a clear message.
+  if (Notification.permission === "denied") {
+    throw new Error("Notification permission previously denied. Please enable it in your browser settings.");
+  }
   const permission = await requestPermission();
   if (permission !== "granted") throw new Error("Permission denied");
 
-  const registration = await navigator.serviceWorker.ready;
-
-  // Existing subscription check karo
+  // Ensure a Service Worker is registered and active.
+  let registration = await navigator.serviceWorker.getRegistration();
+  if (!registration) {
+    await navigator.serviceWorker.register('/sw.js');
+  }
+  // Wait until the Service Worker is ready (active).
+  registration = await navigator.serviceWorker.ready;
+  // Existing subscription check
   let subscription = await registration.pushManager.getSubscription();
 
   if (!subscription) {
-    subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as BufferSource,
-    });
+    // If VAPID key is missing or placeholder, call subscribe without the key.
+    const hasValidKey = VAPID_PUBLIC_KEY && VAPID_PUBLIC_KEY !== "YOUR_VAPID_PUBLIC_KEY_HERE";
+    if (hasValidKey) {
+      const appServerKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: appServerKey as BufferSource,
+      });
+    } else {
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+      });
+    }
   }
 
-  // Backend ko bhejo
+  // Send subscription to backend
   const res = await fetch(`${BASE_URL}/push/subscribe`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
