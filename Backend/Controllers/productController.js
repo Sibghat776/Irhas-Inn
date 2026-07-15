@@ -1,6 +1,7 @@
 import { Product } from "../Models/Product.js";
 import { Category } from "../Models/Category.js";
 import { createError, createSuccess } from "../utils/commonFunctions.js";
+import { queueSocialPost } from "./socialPostController.js";
 import {
   uploadToCloudinary,
   deleteFromCloudinary,
@@ -97,6 +98,7 @@ export const addProduct = async (req, res, next) => {
     } catch (uploadError) {
       return next(createError(500, "Image upload failed"));
     }
+    console.log('📸 Uploaded image URLs:', uploadedImages.map(img => img.url));
 
     // Generate unique slug
     const slug = await generateSlug(name);
@@ -130,6 +132,11 @@ export const addProduct = async (req, res, next) => {
       .populate("category", "name slug")
       .populate("user", "username email");
 
+    console.log('✅ Product created, ID:', product._id);
+    console.log('🛎️ Enqueuing social media post job');
+    queueSocialPost(product._id).catch(err => {
+      console.error('❌ Failed to enqueue social post job:', err);
+    });
     res
       .status(201)
       .json(

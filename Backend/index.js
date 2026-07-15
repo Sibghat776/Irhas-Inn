@@ -56,7 +56,10 @@ app.use("/api/v1/push", pushNotificationRoute);
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
-      initWhatsAppClient(); // WhatsApp Client ko server start hone ke baad initialize karein
+      // Initialize WhatsApp client only if explicitly enabled via .env
+      if (process.env.ENABLE_WHATSAPP === 'true') {
+        initWhatsAppClient(); // WhatsApp Client ko server start hone ke baad initialize karein
+      }
     });
     app.set("trust proxy", 1);
   } catch (err) {

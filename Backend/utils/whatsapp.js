@@ -133,6 +133,11 @@ let sock = null;
 
 const AUTH_FOLDER = join(tmpdir(), "baileys_auth_zeef");
 const MONGO_COLLECTION = "baileys_sessions";
+// Ensure the auth folder exists so Baileys can read/write creds without ENOENT errors
+if (!existsSync(AUTH_FOLDER)) {
+  mkdirSync(AUTH_FOLDER, { recursive: true });
+}
+
 
 // ==========================================
 // 💾 RESTORE AUTH FROM MONGO
@@ -207,7 +212,13 @@ export const initWhatsAppClient = async () => {
     // Restore session from MongoDB first
     await restoreFromMongo();
 
-    const { state, saveCreds } = await useMultiFileAuthState(AUTH_FOLDER);
+    let state, saveCreds;
+    try {
+      ({ state, saveCreds } = await useMultiFileAuthState(AUTH_FOLDER));
+    } catch (authErr) {
+      console.warn('WhatsApp auth state init failed, skipping WhatsApp client:', authErr.message);
+      return; // skip further initialization
+    }
     const { version, isLatest } = await fetchLatestBaileysVersion();
     console.log(`Using Baileys v${version}, isLatest: ${isLatest}`);
 
