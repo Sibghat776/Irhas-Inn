@@ -51,6 +51,11 @@ export const sendPushToUser = async (userId, { title, body, link = "/" }) => {
       } catch (err) {
         if (err.statusCode === 410 || err.statusCode === 404) {
           invalidEndpoints.push(sub.endpoint);
+        } else {
+          console.error(
+            `⚠️ sendPushToUser failed (status ${err?.statusCode}) for ${sub.endpoint}:`,
+            err?.body || err?.message
+          );
         }
       }
     })
@@ -96,6 +101,11 @@ export const sendPushToAdmins = async ({ title, body, link = "/" }) => {
       } catch (err) {
         if (err.statusCode === 410 || err.statusCode === 404) {
           invalidEndpoints.push(sub.endpoint);
+        } else {
+          console.error(
+            `⚠️ sendPushToAdmins failed (status ${err?.statusCode}) for ${sub.endpoint}:`,
+            err?.body || err?.message
+          );
         }
       }
     })
@@ -138,6 +148,11 @@ export const sendPushNotification = async (req, res, next) => {
           // 410 Gone ya 404 = subscription expired/invalid, delete karo
           if (err.statusCode === 410 || err.statusCode === 404) {
             invalidEndpoints.push(sub.endpoint);
+          } else {
+            console.error(
+              `⚠️ sendPushNotification failed (status ${err?.statusCode}) for ${sub.endpoint}:`,
+              err?.body || err?.message
+            );
           }
         }
       })

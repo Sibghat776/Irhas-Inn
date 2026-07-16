@@ -15,7 +15,17 @@ export const sendToSubscription = async (subscription, payload) => {
       p256dh: subscription.p256dh,
     },
   };
-  return webpush.sendNotification(pushSubscription, JSON.stringify(payload));
+
+  try {
+    return await webpush.sendNotification(pushSubscription, JSON.stringify(payload));
+  } catch (err) {
+    console.error("❌ webpush.sendNotification failed for endpoint:", subscription.endpoint);
+    console.error("   statusCode:", err?.statusCode);
+    console.error("   body      :", err?.body);
+    console.error("   message   :", err?.message);
+    console.error("   full error:", err);
+    throw err;
+  }
 };
 
 export default webpush;
