@@ -253,7 +253,7 @@ const Products: React.FC = () => {
                       <h3 className="text-xl font-black leading-tight">
                         {product.name}
                       </h3>
-                      <p className="text-sm leading-6 text-slate-600 line-clamp-3">
+                      <p className="text-sm leading-6 text-slate-600 line-clamp-3 whitespace-pre-wrap break-words">
                         {product.description}
                       </p>
                     </div>

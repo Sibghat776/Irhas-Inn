@@ -306,7 +306,7 @@ const ProductDetailPage: React.FC = () => {
                     <span className="text-sm">{product.sold ?? 0} sold</span>
                     <span className="text-sm">{product.stock ?? 0} in stock</span>
                   </div>
-                  <p className="max-w-2xl text-base leading-8 text-slate-600">
+                  <p className="max-w-2xl whitespace-pre-wrap break-words text-base leading-8 text-slate-600">
                     {product.description}
                   </p>
                 </div>
@@ -412,7 +412,7 @@ const ProductDetailPage: React.FC = () => {
 
                 <div className="rounded-3xl bg-[#F7F7FA] p-5 text-sm text-slate-600">
                   <p className="font-semibold text-slate-900">Product Details</p>
-                  <p className="mt-2">{product.description}</p>
+                  <p className="mt-2 whitespace-pre-wrap break-words">{product.description}</p>
                 </div>
               </div>
             </div>

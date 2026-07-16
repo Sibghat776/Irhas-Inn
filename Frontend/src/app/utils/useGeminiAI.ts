@@ -39,28 +39,30 @@ function buildPrompt(
         : "item";
 
   const base = [
-    `You are an expert e-commerce copywriter for an online store called "ZeeF Trendy Store".`,
-    `Write a compelling, professional, marketing-focused and complete SEO-optimized description for the following ${subject}.`,
+    `You are a fun, relatable e-commerce copywriter for an online store called "ZeeF Trendy Store".`,
+    `Write a HUMANIZED, conversational, viral-style description for the following ${subject} — like a real person hyping it up to a friend, NOT a corporate robot.`,
     `${subject === "product" ? "Product" : subject === "category" ? "Category" : "Item"} Name: "${name}".`,
   ];
 
   if (extraContext && extraContext.trim()) {
     base.push(
-      `Additional details to incorporate naturally: ${extraContext.trim()}.`,
+      `Additional details to weave in naturally: ${extraContext.trim()}.`,
     );
   }
 
   base.push(
-    `Requirements:`,
-    `- Output plain text only. No markdown, no asterisks, no hashtags, no bullet symbols, no code blocks, no emojis.`,
-    `- No headings or labels, just flowing descriptive paragraphs.`,
-    `- Keep it between 40 and 110 words.`,
-    `- Highlight key benefits and selling points.`,
-    `- Use a confident, persuasive, customer-friendly tone.`,
-    `- Return ONLY the description text, nothing else.`,
-    `- Ensure the description is complete, detailed, and reaches at least 80 words.`,
-    `- Do not truncate the response.`,
-    `- Return ONLY the description text, nothing else.`,
+    `Tone & style requirements:`,
+    `- Write like a human, not a robot. Conversational, casual, and binge-worthy.`,
+    `- Use personality words people actually say out loud, like "obsessed", "game-changer", "honestly", "literally".`,
+    `- Build urgency and desire in the closing lines (make the reader want to grab it NOW).`,
+    `- Keep the language simple and easy English that anyone can read.`,
+    `- Formatting requirements:`,
+    `- Use 3 to 5 professional, modern emojis placed strategically (not excessive, not zero).`,
+    `- Write 180 to 280 words — full and complete, never truncated.`,
+    `- Use short, punchy paragraphs (2-3 lines each) separated by line breaks for readability.`,
+    `- NO markdown formatting at all: no asterisks, no hashtags, no bullet symbols, no code blocks, no headings, no labels.`,
+    `- Return ONLY the description text, nothing else. No intro, no "Here is your description".`,
+    `- Do not truncate. Make it complete and reach at least 180 words.`,
   );
 
   return base.join("\n");
@@ -70,8 +72,6 @@ function cleanText(raw: string): string {
   if (!raw) return "";
 
   return raw
-    .replace(/```[\s\S]*?```/g, (m) => m.replace(/```/g, ""))
-    .replace(/```/g, "")
     .replace(/^#+\s*/gm, "")
     .replace(/^\s*[-*+]\s+/gm, "")
     .replace(/^\s*(\d+\.)\s+/gm, "")
@@ -80,10 +80,14 @@ function cleanText(raw: string): string {
     .replace(/\*(.+?)\*/g, "$1")
     .replace(/_(.+?)_/g, "$1")
     .replace(/`([^`]+)`/g, "$1")
-    .replace(/[#*_>`~]/g, "")
     .replace(/\r/g, "")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
+}
+
+function countWords(text: string): number {
+  const matches = text.trim().match(/\S+/g);
+  return matches ? matches.length : 0;
 }
 
 export function useGeminiAI(
@@ -133,8 +137,10 @@ export function useGeminiAI(
         const model = client.getGenerativeModel({
           model: modelName || DEFAULT_MODEL,
           generationConfig: {
-            temperature: temperature ?? 0.8, // 0.7 behtar balance deta hai
-            maxOutputTokens: maxOutputTokens ?? 300, // 256 se badhakar 800-1000 karein
+            temperature: temperature ?? 0.9,
+            maxOutputTokens: maxOutputTokens ?? 800,
+            topP: 0.95,
+            topK: 40,
           },
         });
 
@@ -146,6 +152,12 @@ export function useGeminiAI(
 
         if (!cleaned) {
           throw new Error("Received an empty response from Gemini");
+        }
+
+        if (countWords(cleaned) < 80) {
+          throw new Error(
+            "The generated description was too short. Please try generating again.",
+          );
         }
 
         setLastResult(cleaned);

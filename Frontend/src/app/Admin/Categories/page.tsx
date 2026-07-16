@@ -452,9 +452,9 @@ const CategoriesPage = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, description: e.target.value })
                   }
-                  className="w-full rounded-xl border border-slate-300 bg-white p-3 text-sm font-medium outline-none transition focus:border-[#0856DF] focus:ring-2 focus:ring-[#0856DF]/15 resize-none"
+                  className="w-full whitespace-pre-wrap break-words rounded-xl border border-slate-300 bg-white p-3 text-sm font-medium outline-none transition focus:border-[#0856DF] focus:ring-2 focus:ring-[#0856DF]/15 resize-none"
                   placeholder="Enter category description"
-                  rows={4}
+                  rows={6}
                   disabled={isSubmitting}
                 />
                 <div className="mt-2">

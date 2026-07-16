@@ -676,8 +676,8 @@ const ProductsPage = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, description: e.target.value })
                   }
-                  className="w-full max-w-xl rounded-xl border border-slate-300 bg-white p-3 text-sm font-medium leading-relaxed outline-none transition focus:border-[#0856DF] focus:ring-2 focus:ring-[#0856DF]/15 resize-none"
-                  rows={4}
+                  className="w-full max-w-xl whitespace-pre-wrap break-words rounded-xl border border-slate-300 bg-white p-3 text-sm font-medium leading-relaxed outline-none transition focus:border-[#0856DF] focus:ring-2 focus:ring-[#0856DF]/15 resize-none"
+                  rows={6}
                 />
                 <div className="mt-2">
                   <AiGeneratorButton
