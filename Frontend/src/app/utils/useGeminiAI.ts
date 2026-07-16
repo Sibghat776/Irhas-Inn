@@ -24,7 +24,7 @@ export interface UseGeminiAIResult {
 }
 
 // ✅ Google's currently supported active model
-const DEFAULT_MODEL = "gemini-3.5-flash";
+const DEFAULT_MODEL = "gemini-2.5-flash";
 
 function buildPrompt(
   name: string,
