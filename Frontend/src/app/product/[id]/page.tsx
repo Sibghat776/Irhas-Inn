@@ -19,6 +19,7 @@ import {
   Star,
   CheckCircle,
   MessageSquare,
+  Truck,
 } from "lucide-react";
 
 interface Review {
@@ -289,6 +290,9 @@ const ProductDetailPage: React.FC = () => {
                     <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-600">
                       <Tag size={14} /> {product.brand ?? "ZeeF"}
                     </span>
+                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-600">
+                      <Truck size={13} /> Free Shipping
+                    </span>
                   </div>
                   <h1 className="text-4xl font-black tracking-tight text-[#041241]">
                     {product.name}
@@ -313,9 +317,17 @@ const ProductDetailPage: React.FC = () => {
                   <p className="text-sm uppercase tracking-[0.3em] text-slate-400">
                     Price
                   </p>
-                  <p className="text-5xl font-black text-[#041241]">
-                    Rs {product.price.toLocaleString()}
-                  </p>
+                  <div className="flex items-end gap-3">
+                    <p className="text-5xl font-black text-[#041241]">
+                      Rs {product.price.toLocaleString()}
+                    </p>
+                    <p className="pb-2 text-xl font-medium text-slate-400 line-through">
+                      Rs {Math.round(product.price * 1.4).toLocaleString()}
+                    </p>
+                    <span className="mb-3 inline-block rounded-full bg-[#0856DF]/10 px-3 py-1 text-xs font-semibold text-[#0856DF]">
+                      Save 40%
+                    </span>
+                  </div>
                 </div>
 
                 {availableColors.length > 0 || availableSizes.length > 0 ? (

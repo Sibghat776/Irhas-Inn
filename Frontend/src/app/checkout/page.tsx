@@ -178,7 +178,7 @@ const CheckoutPage = () => {
       (sum, item) => sum + item.price * item.quantity,
       0,
     );
-    const shippingPrice = cartItems.length > 0 ? 200 : 0;
+    const shippingPrice = 0;
     return {
       itemsPrice,
       shippingPrice,
@@ -481,7 +481,9 @@ const CheckoutPage = () => {
                 </div>
                 <div className="flex justify-between text-slate-600">
                   <span>Shipping</span>
-                  <span>Rs {totals.shippingPrice.toLocaleString()}</span>
+                  <span className="font-semibold text-emerald-600">
+                    Free Shipping
+                  </span>
                 </div>
                 <div className="flex justify-between border-t border-slate-200 pt-4 font-black text-[#041241]">
                   <span>Total</span>

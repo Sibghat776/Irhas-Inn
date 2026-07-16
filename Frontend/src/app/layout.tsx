@@ -5,6 +5,7 @@ import Providers from "./Redux/Providers/provider";
 import ClientLayout from "./ClientLayout";
 import GoogleProvider from "./GoogleProvider";
 import NotificationPrompt from "./Components/NotificationPrompt";
+import RouteProgressBar from "./Components/RouteProgressBar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -154,6 +155,7 @@ export default function RootLayout({
           <GoogleProvider>
             <ClientLayout>{children}</ClientLayout>
             <NotificationPrompt />
+            <RouteProgressBar />
           </GoogleProvider>
         </Providers>
       </body>

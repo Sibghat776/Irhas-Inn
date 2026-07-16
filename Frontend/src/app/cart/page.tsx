@@ -256,8 +256,8 @@ const CartPage = () => {
     );
     return {
       itemsPrice,
-      shippingPrice: cartItems.length > 0 ? 200 : 0,
-      totalPrice: itemsPrice + (cartItems.length > 0 ? 200 : 0),
+      shippingPrice: 0,
+      totalPrice: itemsPrice,
     };
   }, [cartItems]);
 
@@ -568,7 +568,9 @@ const CartPage = () => {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Shipping</span>
-                  <span>Rs {totals.shippingPrice.toLocaleString()}</span>
+                  <span className="font-semibold text-emerald-600">
+                    Free Shipping
+                  </span>
                 </div>
                 <div className="border-t border-slate-200 pt-4 text-lg font-black text-[#041241] flex justify-between">
                   <span>Total</span>

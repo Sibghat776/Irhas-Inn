@@ -11,7 +11,7 @@ import useFetch, {
   showToast,
 } from "../utils/commonFunctions";
 import { RootState } from "../Redux/store";
-import { ArrowLeft, ArrowRight, ShoppingCart, ShoppingBag, Star } from "lucide-react";
+import { ArrowLeft, ArrowRight, ShoppingCart, ShoppingBag, Star, Truck } from "lucide-react";
 
 interface ApiProduct {
   _id: string;
@@ -244,6 +244,10 @@ const Products: React.FC = () => {
                         <Star size={14} />
                         {product.averageRating?.toFixed(1) ?? "4.8"}
                       </span>
+                      <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-600">
+                        <Truck size={12} />
+                        Free Shipping
+                      </span>
                     </div>
                     <div className="space-y-2">
                       <h3 className="text-xl font-black leading-tight">
@@ -258,9 +262,17 @@ const Products: React.FC = () => {
                         <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
                           Price
                         </p>
-                        <p className="text-2xl font-black text-[#041241]">
-                          Rs {product.price.toLocaleString()}
-                        </p>
+                        <div className="flex items-end gap-2">
+                          <p className="text-2xl font-black text-[#041241]">
+                            Rs {product.price.toLocaleString()}
+                          </p>
+                          <p className="pb-1 text-sm font-medium text-slate-400 line-through">
+                            Rs {Math.round(product.price * 1.4).toLocaleString()}
+                          </p>
+                        </div>
+                        <span className="mt-1 inline-block rounded-full bg-[#0856DF]/10 px-2 py-0.5 text-[10px] font-semibold text-[#0856DF]">
+                          Save 40%
+                        </span>
                       </div>
                       <div className="text-right text-xs text-slate-500">
                         <p>{product.stock ?? 0} in stock</p>

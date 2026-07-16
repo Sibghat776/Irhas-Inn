@@ -10,6 +10,7 @@ import {
   showToast,
 } from "../utils/commonFunctions";
 import axios from "axios";
+import { Truck } from "lucide-react";
 
 import Navbar from "../Components/Navbar";
 import Contact from "../Components/Contact";
@@ -175,7 +176,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({
           </div>
 
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-8">
               {Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} className="rounded-[32px] border border-slate-200 bg-white shadow-lg overflow-hidden">
                   <div className="h-72 bg-slate-100 animate-pulse" />
@@ -191,7 +192,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({
               <p className="text-slate-500 text-lg">No products available in this category.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-8">
               {products.map((prod) => {
                 const prodAny = prod as any;
                 return (
@@ -216,14 +217,28 @@ const ProductsPage: React.FC<ProductsPageProps> = ({
                         <span className="text-slate-500 text-xs">
                           {prodAny.stock > 0 ? `${prodAny.stock} in stock` : "Out of stock"}
                         </span>
+                        <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-600">
+                          <Truck size={12} />
+                          Free Shipping
+                        </span>
                       </div>
                       <div className="space-y-1">
                         <h3 className="text-xl font-black leading-tight">{prod.name}</h3>
                         <p className="text-sm text-slate-600 line-clamp-3">{prod.description}</p>
                       </div>
-                      <p className="text-2xl font-black text-[#041241]">
-                        Rs {prod.price.toLocaleString()}
-                      </p>
+                      <div>
+                        <div className="flex items-end gap-2">
+                          <p className="text-2xl font-black text-[#041241]">
+                            Rs {prod.price.toLocaleString()}
+                          </p>
+                          <p className="pb-1 text-sm font-medium text-slate-400 line-through">
+                            Rs {Math.round(prod.price * 1.4).toLocaleString()}
+                          </p>
+                        </div>
+                        <span className="mt-1 inline-block rounded-full bg-[#0856DF]/10 px-2 py-0.5 text-[10px] font-semibold text-[#0856DF]">
+                          Save 40%
+                        </span>
+                      </div>
                     </div>
 
                     <div className="grid gap-3 border-t border-slate-200/70 bg-[#F7F7FA] p-5">
