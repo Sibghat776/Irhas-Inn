@@ -62,7 +62,7 @@ function buildPrompt(
     `- Use short, punchy paragraphs (2-3 lines each) separated by line breaks for readability.`,
     `- NO markdown formatting at all: no asterisks, no hashtags, no bullet symbols, no code blocks, no headings, no labels.`,
     `- Return ONLY the description text, nothing else. No intro, no "Here is your description".`,
-    `- Do not truncate. Make it complete and reach at least 180 words.`,
+    `- Do not truncate. Make it complete and reach at least 280 words.`,
   );
 
   return base.join("\n");
