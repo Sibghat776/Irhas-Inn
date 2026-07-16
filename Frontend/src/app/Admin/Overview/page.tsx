@@ -58,100 +58,105 @@ const OverviewPage = () => {
   ];
 
   return (
-    <div className="space-y-10">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {stats.map((stat, idx) => (
           <div
             key={idx}
-            className="bg-white border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
+            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md"
           >
-            <div className="flex justify-between items-start mb-6">
+            <div className="flex items-start justify-between">
               <div>
-                <p className="text-xs font-black text-zinc-500 uppercase tracking-widest">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                   {stat.title}
                 </p>
-                <h3 className="text-4xl font-black text-black mt-2">{stat.value}</h3>
+                <h3 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+                  {stat.value}
+                </h3>
               </div>
-              <div className="p-3 border-2 border-black bg-zinc-50">
-                <stat.icon className={`w-8 h-8 ${stat.color}`} />
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-50">
+                <stat.icon className={`h-6 w-6 ${stat.color}`} />
               </div>
             </div>
-            <div className="flex items-center gap-2 mt-4 pt-4 border-t-2 border-zinc-100">
+            <div className="mt-4 flex items-center gap-2 border-t border-slate-100 pt-3">
               <span
-                className={`text-sm font-black ${stat.trend.startsWith("+") ? "text-emerald-500" : "text-red-500"}`}
+                className={`text-sm font-semibold ${stat.trend.startsWith("+") ? "text-emerald-600" : "text-red-600"}`}
               >
                 {stat.trend}
               </span>
-              <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
-                vs last month
-              </span>
+              <span className="text-xs text-slate-400">vs last month</span>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-        <div className="lg:col-span-2 bg-white border-4 border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-          <div className="flex justify-between items-center mb-8 pb-4 border-b-4 border-black">
-            <h3 className="text-2xl font-black uppercase tracking-tight">Recent Orders</h3>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+            <h3 className="text-lg font-bold text-slate-900">Recent Orders</h3>
             <button
               onClick={() => router.push("/Admin/Orders")}
-              className="text-sm font-black text-black hover:text-white hover:bg-black border-2 border-black px-4 py-2 uppercase tracking-widest transition-colors"
+              className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-50"
             >
               View All
             </button>
           </div>
-          <table className="w-full text-left">
-            <thead>
-              <tr className="text-xs font-black uppercase tracking-widest text-zinc-400 border-b-2 border-black">
-                <th className="pb-4">ID</th>
-                <th className="pb-4">Customer</th>
-                <th className="pb-4">Amount</th>
-                <th className="pb-4">Status</th>
-              </tr>
-            </thead>
-            <tbody className="text-sm font-bold uppercase">
-              {(ordersLoading ? Array.from({ length: 3 }) : orders.slice(0, 5)).map((order: any, idx: number) => (
-                <tr
-                  key={order?._id ?? idx}
-                  className="border-b border-zinc-200 hover:bg-zinc-50 transition-colors"
-                >
-                  <td className="py-5 text-black">{order?._id ? order._id.slice(-8) : "Loading..."}</td>
-                  <td className="py-5">{order?.user?.username || order?.user?.email || "—"}</td>
-                  <td className="py-5">Rs {order?.totalPrice?.toLocaleString() || "—"}</td>
-                  <td className="py-5">
-                    <span className="px-3 py-1 border-2 border-black text-xs font-black bg-zinc-100">
-                      {order?.paymentStatus || "pending"}
-                    </span>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[520px] text-left">
+              <thead>
+                <tr className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <th className="px-6 py-3">ID</th>
+                  <th className="px-6 py-3">Customer</th>
+                  <th className="px-6 py-3">Amount</th>
+                  <th className="px-6 py-3">Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="text-sm">
+                {(ordersLoading ? Array.from({ length: 3 }) : orders.slice(0, 5)).map((order: any, idx: number) => (
+                  <tr key={order?._id ?? idx} className="border-t border-slate-100 hover:bg-slate-50">
+                    <td className="px-6 py-4 font-mono text-slate-900">
+                      {order?._id ? order._id.slice(-8) : "Loading..."}
+                    </td>
+                    <td className="px-6 py-4 font-medium text-slate-700">
+                      {order?.user?.username || order?.user?.email || "—"}
+                    </td>
+                    <td className="px-6 py-4 font-semibold text-slate-900">
+                      Rs {order?.totalPrice?.toLocaleString() || "—"}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
+                        {order?.paymentStatus || "pending"}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <div className="bg-black text-white p-8 border-4 border-black shadow-[8px_8px_0px_0px_rgba(200,200,200,1)]">
-          <h3 className="text-2xl font-black uppercase tracking-tight mb-8 pb-4 border-b-4 border-zinc-800">Quick Actions</h3>
-          <div className="space-y-4">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h3 className="mb-4 text-lg font-bold text-slate-900">Quick Actions</h3>
+          <div className="space-y-3">
             <button
               onClick={() => router.push("/Admin/Products")}
-              className="w-full flex items-center justify-between p-4 bg-zinc-900 border-2 border-zinc-800 hover:border-white hover:bg-white hover:text-black transition-all group"
+              className="flex w-full items-center justify-between rounded-xl border border-slate-200 p-4 text-left transition hover:border-[#0856DF] hover:bg-[#0856DF]/5"
             >
-              <div className="flex items-center gap-4">
-                <PackageSearch className="w-6 h-6 text-blue-500" />
-                <span className="font-black uppercase tracking-wider text-sm">Add Product</span>
+              <div className="flex items-center gap-3">
+                <PackageSearch className="h-5 w-5 text-[#0856DF]" />
+                <span className="text-sm font-semibold text-slate-700">Add Product</span>
               </div>
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="h-5 w-5 text-slate-400" />
             </button>
             <button
               onClick={() => router.push("/Admin/Categories")}
-              className="w-full flex items-center justify-between p-4 bg-zinc-900 border-2 border-zinc-800 hover:border-white hover:bg-white hover:text-black transition-all group"
+              className="flex w-full items-center justify-between rounded-xl border border-slate-200 p-4 text-left transition hover:border-[#0856DF] hover:bg-[#0856DF]/5"
             >
-              <div className="flex items-center gap-4">
-                <MessageCircle className="w-6 h-6 text-green-500" />
-                <span className="font-black uppercase tracking-wider text-sm">Update Categories</span>
+              <div className="flex items-center gap-3">
+                <MessageCircle className="h-5 w-5 text-emerald-500" />
+                <span className="text-sm font-semibold text-slate-700">Update Categories</span>
               </div>
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="h-5 w-5 text-slate-400" />
             </button>
           </div>
         </div>

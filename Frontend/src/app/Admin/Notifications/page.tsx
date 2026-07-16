@@ -46,46 +46,68 @@ export default function AdminNotificationPage() {
     };
 
     return (
-        <div className="max-w-md mx-auto p-6">
-            <h1 className="text-xl font-black uppercase tracking-tight mb-6">
-                Send Push Notification
-            </h1>
+        <div className="mx-auto max-w-lg">
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+                <div className="mb-6">
+                    <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+                        Send Push Notification
+                    </h1>
+                    <p className="mt-1 text-sm text-slate-500">
+                        Broadcast a message to all subscribed devices.
+                    </p>
+                </div>
 
-            <div className="space-y-3">
-                <input
-                    placeholder="Title (e.g. Naya Sale Live!)"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="border-2 border-zinc-300 p-3 w-full rounded focus:border-black outline-none"
-                />
-                <textarea
-                    placeholder="Message"
-                    value={body}
-                    onChange={(e) => setBody(e.target.value)}
-                    rows={4}
-                    className="border-2 border-zinc-300 p-3 w-full rounded focus:border-black outline-none"
-                />
-                <input
-                    placeholder="Link (e.g. /sale)"
-                    value={link}
-                    onChange={(e) => setLink(e.target.value)}
-                    className="border-2 border-zinc-300 p-3 w-full rounded focus:border-black outline-none"
-                />
+                <div className="space-y-4">
+                    <div>
+                        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-600">
+                            Title
+                        </label>
+                        <input
+                            placeholder="e.g. Naya Sale Live!"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            className="w-full rounded-xl border border-slate-300 bg-white p-3 text-sm font-medium outline-none transition placeholder:text-slate-400 focus:border-[#0856DF] focus:ring-2 focus:ring-[#0856DF]/15"
+                        />
+                    </div>
+                    <div>
+                        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-600">
+                            Message
+                        </label>
+                        <textarea
+                            placeholder="Write your notification message..."
+                            value={body}
+                            onChange={(e) => setBody(e.target.value)}
+                            rows={4}
+                            className="w-full rounded-xl border border-slate-300 bg-white p-3 text-sm font-medium outline-none transition placeholder:text-slate-400 focus:border-[#0856DF] focus:ring-2 focus:ring-[#0856DF]/15 resize-none"
+                        />
+                    </div>
+                    <div>
+                        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-600">
+                            Link
+                        </label>
+                        <input
+                            placeholder="e.g. /sale"
+                            value={link}
+                            onChange={(e) => setLink(e.target.value)}
+                            className="w-full rounded-xl border border-slate-300 bg-white p-3 text-sm font-medium outline-none transition placeholder:text-slate-400 focus:border-[#0856DF] focus:ring-2 focus:ring-[#0856DF]/15"
+                        />
+                    </div>
 
-                <button
-                    onClick={handleSend}
-                    disabled={loading}
-                    className="bg-black text-white font-bold uppercase tracking-wide px-4 py-3 rounded w-full disabled:opacity-50"
-                >
-                    {loading ? "Sending..." : "Send Notification"}
-                </button>
+                    <button
+                        onClick={handleSend}
+                        disabled={loading}
+                        className="w-full rounded-xl bg-[#0856DF] px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0645c8] disabled:opacity-50"
+                    >
+                        {loading ? "Sending..." : "Send Notification"}
+                    </button>
+                </div>
+
+                {result && (
+                    <pre className="mt-4 overflow-x-auto rounded-xl bg-slate-900 p-4 text-xs text-slate-100">
+                        {JSON.stringify(result, null, 2)}
+                    </pre>
+                )}
             </div>
-
-            {result && (
-                <pre className="mt-4 text-sm bg-zinc-100 p-3 rounded overflow-x-auto">
-                    {JSON.stringify(result, null, 2)}
-                </pre>
-            )}
         </div>
     );
 }

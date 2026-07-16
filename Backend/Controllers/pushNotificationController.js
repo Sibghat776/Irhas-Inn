@@ -1,5 +1,5 @@
 import { PushSubscription } from "../Models/PushSubscription.js";
-import { Users } from "../Models/Users.js";
+import Users from "../Models/Users.js";
 import { createError, createSuccess } from "../utils/commonFunctions.js";
 import { sendToSubscription } from "../utils/webpush.js";
 

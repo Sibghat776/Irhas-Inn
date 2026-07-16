@@ -8,6 +8,7 @@ import {
   Upload,
   AlertCircle,
   DockIcon,
+  Search,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import useFetch, { baseUrl, showToast } from "@/app/utils/commonFunctions";
@@ -355,46 +356,47 @@ const ProductsPage = () => {
     : [];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-4xl font-black uppercase tracking-tight">
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
             Product Catalog
           </h2>
-          <p className="text-zinc-500 font-bold text-sm mt-1">
+          <p className="mt-1 text-sm text-slate-500">
             Manage your product inventory
           </p>
         </div>
-        <div className="flex items-center gap-4 border-4 border-black bg-black text-white px-3 py-2 font-black uppercase tracking-widest text-xs">
-          <div className="flex items-center gap-2 border-4 border-white bg-white text-black px-6 py-3 font-black uppercase tracking-widest text-xs ">
-            <DockIcon className="w-4 h-4" /> Total products : {products.length}
-          </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600">
+            <DockIcon className="h-4 w-4 text-[#0856DF]" /> Total: {products.length}
+          </span>
           <button
             onClick={handleOpenModal}
-            className="flex items-center gap-4 border-4 border-white bg-black text-white px-6 py-3 font-black uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-all duration-300 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+            className="inline-flex items-center gap-2 rounded-xl bg-[#0856DF] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0645c8]"
           >
-            <Plus className="w-4 h-4" /> New Product
+            <Plus className="h-4 w-4" /> New Product
           </button>
         </div>
       </div>
 
       {/* Search Bar */}
-      <div className="flex gap-4">
+      <div className="relative">
+        <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
         <input
           type="text"
           placeholder="Search products..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="flex-1 border-4 border-black p-3 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full rounded-xl border border-slate-300 bg-white py-2.5 pl-10 pr-4 text-sm font-medium text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-[#0856DF] focus:ring-2 focus:ring-[#0856DF]/15"
         />
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto border-4 border-black bg-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-        <table className="w-full text-left border-collapse">
+      <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <table className="w-full min-w-[760px] text-left">
           <thead>
-            <tr className="bg-black text-white border-b-4 border-black text-xs font-black uppercase tracking-widest">
+            <tr className="border-b border-slate-200 text-xs font-semibold uppercase tracking-wide text-slate-500">
               <th className="p-4">Product Name</th>
               <th className="p-4">Category</th>
               <th className="p-4 text-center">Price</th>
@@ -403,86 +405,82 @@ const ProductsPage = () => {
               <th className="p-4 text-center">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y-2 divide-zinc-200">
+          <tbody className="divide-y divide-slate-100">
             {productsLoading ? (
               <tr>
-                <td colSpan={6} className="p-8 text-center">
-                  <p className="text-black font-bold uppercase">
-                    Loading products...
-                  </p>
+                <td colSpan={6} className="p-10 text-center">
+                  <p className="text-sm font-medium text-slate-500">Loading products...</p>
                 </td>
               </tr>
             ) : filteredProducts.length > 0 ? (
               filteredProducts.map((product) => (
-                <tr
-                  key={product._id}
-                  className="hover:bg-zinc-50 transition-colors"
-                >
+                <tr key={product._id} className="transition-colors hover:bg-slate-50">
                   <td className="p-4">
                     <div className="flex items-center gap-3">
                       {product.images?.[0] ? (
                         <img
                           src={product.images[0].url}
                           alt={product.name}
-                          className="w-12 h-12 object-cover border-2 border-black rounded"
+                          className="h-11 w-11 rounded-lg border border-slate-200 object-cover"
                         />
                       ) : (
-                        <div className="w-12 h-12 bg-zinc-200 border-2 border-black flex items-center justify-center">
-                          <Upload size={20} className="text-zinc-400" />
+                        <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-slate-200 bg-slate-100">
+                          <Upload size={18} className="text-slate-400" />
                         </div>
                       )}
-                      <div>
-                        <p className="font-black text-black uppercase text-sm">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold text-slate-900">
                           {product.name}
                         </p>
-                        <p className="text-xs text-zinc-500 mt-1 line-clamp-1">
+                        <p className="truncate text-xs text-slate-500">
                           {product.description}
                         </p>
                       </div>
                     </div>
                   </td>
                   <td className="p-4">
-                    <span className="font-semibold text-zinc-700">
+                    <span className="font-medium text-slate-700">
                       {categories.find(
                         (c) => c._id === (product?.category as any)?._id,
                       )?.name || "Uncategorized"}
                     </span>
                   </td>
                   <td className="p-4 text-center">
-                    <p className="font-black text-black">Rs {product.price}</p>
+                    <p className="font-semibold text-slate-900">Rs {product.price}</p>
                   </td>
                   <td className="p-4 text-center">
                     <span
-                      className={`inline-flex items-center px-3 py-1 font-black text-xs uppercase border-2 ${
+                      className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${
                         product.stock > 20
-                          ? "bg-emerald-100 text-emerald-700 border-emerald-700"
+                          ? "bg-emerald-50 text-emerald-700"
                           : product.stock > 0
-                            ? "bg-yellow-100 text-yellow-700 border-yellow-700"
-                            : "bg-red-100 text-red-700 border-red-700"
+                            ? "bg-amber-50 text-amber-700"
+                            : "bg-red-50 text-red-700"
                       }`}
                     >
                       {product.stock}
                     </span>
                   </td>
                   <td className="p-4 text-center">
-                    <p className="font-black text-black">
+                    <p className="font-semibold text-slate-900">
                       {product.averageRating
                         ? product.averageRating.toFixed(1)
-                        : "—"}{" "}
-                      ⭐
+                        : "—"}
                     </p>
                   </td>
                   <td className="p-4">
                     <div className="flex justify-center gap-2">
                       <button
                         onClick={() => handleEditProduct(product)}
-                        className="p-2 bg-blue-100 text-blue-600 hover:bg-blue-600 hover:text-white transition-all border-2 border-blue-600 font-bold"
+                        className="rounded-lg border border-blue-200 bg-blue-50 p-2 text-blue-600 transition hover:bg-blue-600 hover:text-white"
+                        aria-label="Edit"
                       >
                         <Edit size={16} />
                       </button>
                       <button
                         onClick={() => setDeleteId(product._id)}
-                        className="p-2 bg-red-100 text-red-600 hover:bg-red-600 hover:text-white transition-all border-2 border-red-600 font-bold"
+                        className="rounded-lg border border-red-200 bg-red-50 p-2 text-red-600 transition hover:bg-red-600 hover:text-white"
+                        aria-label="Delete"
                       >
                         <Trash2 size={16} />
                       </button>
@@ -492,8 +490,8 @@ const ProductsPage = () => {
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="p-8 text-center">
-                  <p className="text-black font-bold uppercase">
+                <td colSpan={6} className="p-10 text-center">
+                  <p className="text-sm font-medium text-slate-500">
                     {searchTerm
                       ? "No products found matching your search"
                       : "No products found"}
@@ -507,27 +505,28 @@ const ProductsPage = () => {
 
       {/* Create/Edit Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white p-8 border-4 border-black w-full max-w-2xl shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] my-8">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-black uppercase">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-0 backdrop-blur-sm sm:items-center sm:p-4">
+          <div className="flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl sm:rounded-2xl">
+            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+              <h3 className="text-lg font-bold text-slate-900">
                 {isEditMode ? "Edit Product" : "New Product"}
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-2 hover:bg-zinc-100 rounded transition-colors"
+                className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                aria-label="Close"
               >
-                <X size={24} />
+                <X size={22} />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4 overflow-y-auto px-6 py-5">
               {/* Images Section */}
               <div>
-                <label className="block text-xs font-black uppercase mb-2 text-zinc-700">
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-600">
                   Product Images (Max 5)
                 </label>
-                <div className="border-4 border-dashed border-black p-6 text-center rounded">
+                <div className="rounded-xl border-2 border-dashed border-slate-300 p-6 text-center">
                   <input
                     type="file"
                     multiple
@@ -539,35 +538,31 @@ const ProductsPage = () => {
                   />
                   <label
                     htmlFor="image-input"
-                    className="cursor-pointer flex flex-col items-center gap-2"
+                    className="flex cursor-pointer flex-col items-center gap-2"
                   >
-                    <Upload size={32} className="text-zinc-400" />
-                    <p className="font-black uppercase text-sm">
+                    <Upload size={28} className="text-slate-400" />
+                    <p className="text-sm font-semibold text-slate-600">
                       Click to upload or drag and drop
                     </p>
-                    <p className="text-xs text-zinc-500">
+                    <p className="text-xs text-slate-400">
                       {images.length + previewUrls.length}/5 images
                     </p>
                   </label>
                 </div>
 
-                {/* Image Previews */}
                 {previewUrls.length > 0 && (
-                  <div className="grid grid-cols-5 gap-2 mt-4">
+                  <div className="mt-4 grid grid-cols-5 gap-2">
                     {previewUrls.map((url, idx) => (
                       <div
                         key={idx}
-                        className="relative w-20 h-20 border-2 border-black"
+                        className="relative h-20 w-20 overflow-hidden rounded-lg border border-slate-200"
                       >
-                        <img
-                          src={url}
-                          alt="Preview"
-                          className="w-full h-full object-cover"
-                        />
+                        <img src={url} alt="Preview" className="h-full w-full object-cover" />
                         <button
                           type="button"
                           onClick={() => removeImage(idx)}
-                          className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 hover:bg-red-700"
+                          className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-white hover:bg-red-700"
+                          aria-label="Remove"
                         >
                           <X size={12} />
                         </button>
@@ -578,9 +573,9 @@ const ProductsPage = () => {
               </div>
 
               {/* Product Details Grid */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-xs font-black uppercase mb-2 text-zinc-700">
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-600">
                     Product Name
                   </label>
                   <input
@@ -589,14 +584,14 @@ const ProductsPage = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
                     }
-                    className="w-full border-4 border-black p-3 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border border-slate-300 bg-white p-3 text-sm font-medium outline-none transition focus:border-[#0856DF] focus:ring-2 focus:ring-[#0856DF]/15"
                     placeholder="Enter product name"
                     disabled={isSubmitting}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-black uppercase mb-2 text-zinc-700">
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-600">
                     Category
                   </label>
                   <select
@@ -604,7 +599,7 @@ const ProductsPage = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, category: e.target.value })
                     }
-                    className="w-full border-4 border-black p-3 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border border-slate-300 bg-white p-3 text-sm font-medium outline-none transition focus:border-[#0856DF] focus:ring-2 focus:ring-[#0856DF]/15"
                     disabled={isSubmitting}
                   >
                     <option value="">Select Category</option>
@@ -617,7 +612,7 @@ const ProductsPage = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-black uppercase mb-2 text-zinc-700">
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-600">
                     Price (Rs)
                   </label>
                   <input
@@ -626,14 +621,14 @@ const ProductsPage = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, price: e.target.value })
                     }
-                    className="w-full border-4 border-black p-3 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border border-slate-300 bg-white p-3 text-sm font-medium outline-none transition focus:border-[#0856DF] focus:ring-2 focus:ring-[#0856DF]/15"
                     placeholder="0"
                     disabled={isSubmitting}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-black uppercase mb-2 text-zinc-700">
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-600">
                     Stock
                   </label>
                   <input
@@ -642,13 +637,13 @@ const ProductsPage = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, stock: e.target.value })
                     }
-                    className="w-full border-4 border-black p-3 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border border-slate-300 bg-white p-3 text-sm font-medium outline-none transition focus:border-[#0856DF] focus:ring-2 focus:ring-[#0856DF]/15"
                     placeholder="0"
                     disabled={isSubmitting}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-black uppercase mb-2 text-zinc-700">
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-600">
                     Brand Name
                   </label>
                   <input
@@ -657,15 +652,15 @@ const ProductsPage = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, brand: e.target.value })
                     }
-                    className="w-full border-4 border-black p-3 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border border-slate-300 bg-white p-3 text-sm font-medium outline-none transition focus:border-[#0856DF] focus:ring-2 focus:ring-[#0856DF]/15"
                     placeholder="0"
                     disabled={isSubmitting}
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-black uppercase mb-2 text-zinc-700">
+              <div className="max-w-xl">
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-600">
                   Description
                 </label>
                 <textarea
@@ -673,8 +668,8 @@ const ProductsPage = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, description: e.target.value })
                   }
-                  className="w-full border-4 border-black p-3 font-bold resize-none"
-                  rows={3}
+                  className="w-full max-w-xl rounded-xl border border-slate-300 bg-white p-3 text-sm font-medium leading-relaxed outline-none transition focus:border-[#0856DF] focus:ring-2 focus:ring-[#0856DF]/15 resize-none"
+                  rows={4}
                 />
                 <div className="mt-2">
                   <AiGeneratorButton
@@ -688,19 +683,19 @@ const ProductsPage = () => {
               </div>
 
               {/* Optional Fields */}
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div>
-                  <label className="block text-xs font-black uppercase mb-2 text-zinc-700">
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-600">
                     Colors (comma-separated)
                   </label>
-                  <div className="flex flex-wrap gap-2 mb-2">
+                  <div className="mb-2 flex flex-wrap gap-2">
                     {suggestedColors.map((c) => (
                       <button
                         key={c}
                         type="button"
                         onClick={() => addSuggestedValue("colors", c)}
                         disabled={isSubmitting}
-                        className="text-xs px-3 py-1 rounded-full border-2 border-slate-300 hover:bg-slate-100"
+                        className="rounded-full border border-slate-300 px-3 py-1 text-xs transition hover:bg-slate-100"
                       >
                         {c}
                       </button>
@@ -712,24 +707,24 @@ const ProductsPage = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, colors: e.target.value })
                     }
-                    className="w-full border-4 border-black p-3 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border border-slate-300 bg-white p-3 text-sm font-medium outline-none transition focus:border-[#0856DF] focus:ring-2 focus:ring-[#0856DF]/15"
                     placeholder="Red, Blue, Green"
                     disabled={isSubmitting}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-black uppercase mb-2 text-zinc-700">
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-600">
                     Sizes (comma-separated)
                   </label>
-                  <div className="flex flex-wrap gap-2 mb-2">
+                  <div className="mb-2 flex flex-wrap gap-2">
                     {suggestedSizes.map((s) => (
                       <button
                         key={s}
                         type="button"
                         onClick={() => addSuggestedValue("sizes", s)}
                         disabled={isSubmitting}
-                        className="text-xs px-3 py-1 rounded-full border-2 border-slate-300 hover:bg-slate-100"
+                        className="rounded-full border border-slate-300 px-3 py-1 text-xs transition hover:bg-slate-100"
                       >
                         {s}
                       </button>
@@ -741,24 +736,24 @@ const ProductsPage = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, sizes: e.target.value })
                     }
-                    className="w-full border-4 border-black p-3 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border border-slate-300 bg-white p-3 text-sm font-medium outline-none transition focus:border-[#0856DF] focus:ring-2 focus:ring-[#0856DF]/15"
                     placeholder="S, M, L, XL"
                     disabled={isSubmitting}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-black uppercase mb-2 text-zinc-700">
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-600">
                     Tags (comma-separated)
                   </label>
-                  <div className="flex flex-wrap gap-2 mb-2">
+                  <div className="mb-2 flex flex-wrap gap-2">
                     {suggestedTags.map((t) => (
                       <button
                         key={t}
                         type="button"
                         onClick={() => addSuggestedValue("tags", t)}
                         disabled={isSubmitting}
-                        className="text-xs px-3 py-1 rounded-full border-2 border-slate-300 hover:bg-slate-100"
+                        className="rounded-full border border-slate-300 px-3 py-1 text-xs transition hover:bg-slate-100"
                       >
                         {t}
                       </button>
@@ -770,25 +765,25 @@ const ProductsPage = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, tags: e.target.value })
                     }
-                    className="w-full border-4 border-black p-3 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border border-slate-300 bg-white p-3 text-sm font-medium outline-none transition focus:border-[#0856DF] focus:ring-2 focus:ring-[#0856DF]/15"
                     placeholder="Trending, New, Sale"
                     disabled={isSubmitting}
                   />
                 </div>
               </div>
 
-              <div className="flex gap-3 pt-4">
+              <div className="flex gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="flex-1 border-4 border-black py-3 font-black uppercase hover:bg-zinc-100 transition-colors disabled:opacity-50"
+                  className="flex-1 rounded-xl border border-slate-300 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
                   disabled={isSubmitting}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 bg-black text-white py-3 font-black uppercase hover:bg-zinc-800 transition-colors disabled:opacity-50"
+                  className="flex-1 rounded-xl bg-[#0856DF] py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0645c8] disabled:opacity-50"
                   disabled={isSubmitting}
                 >
                   {isSubmitting
@@ -805,33 +800,29 @@ const ProductsPage = () => {
 
       {/* Delete Modal */}
       {deleteId && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white p-8 border-4 border-black w-full max-w-sm shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] text-center">
-            <div className="flex justify-center mb-4">
-              <AlertCircle size={48} className="text-red-600" />
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-0 backdrop-blur-sm sm:items-center sm:p-4">
+          <div className="w-full max-w-sm rounded-t-3xl bg-white p-6 text-center shadow-2xl sm:rounded-2xl">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-50">
+              <AlertCircle size={26} className="text-red-600" />
             </div>
-            <h3 className="text-2xl font-black uppercase mb-4">
-              Delete Product?
-            </h3>
-            <p className="text-zinc-600 font-bold mb-8">
+            <h3 className="mb-2 text-lg font-bold text-slate-900">Delete Product?</h3>
+            <p className="mb-6 text-sm font-medium text-slate-500">
               {products.find((p) => p._id === deleteId)?.name}
               <br />
-              <span className="text-xs text-zinc-500">
-                This action cannot be undone.
-              </span>
+              <span className="text-xs text-slate-400">This action cannot be undone.</span>
             </p>
-            <div className="flex gap-4">
+            <div className="flex gap-3">
               <button
                 onClick={() => setDeleteId(null)}
                 disabled={isSubmitting}
-                className="flex-1 border-4 border-black py-3 font-black uppercase hover:bg-zinc-100 transition-colors disabled:opacity-50"
+                className="flex-1 rounded-xl border border-slate-300 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDelete}
                 disabled={isSubmitting}
-                className="flex-1 bg-red-600 text-white py-3 font-black uppercase hover:bg-red-700 transition-colors disabled:opacity-50"
+                className="flex-1 rounded-xl bg-red-600 py-3 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-50"
               >
                 {isSubmitting ? "Deleting..." : "Delete"}
               </button>

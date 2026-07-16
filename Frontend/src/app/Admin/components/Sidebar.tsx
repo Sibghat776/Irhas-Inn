@@ -15,61 +15,22 @@ import {
   ShoppingCart,
   Tags,
   Users,
+  X,
 } from "lucide-react";
 
 const sidebarLinks = [
-  {
-    name: "Overview",
-    icon: LayoutDashboard,
-    color: "text-purple-500",
-    href: "/Admin/Overview",
-  },
-  {
-    name: "Products",
-    icon: PackageSearch,
-    color: "text-blue-500",
-    href: "/Admin/Products",
-  },
-  {
-    name: "Categories",
-    icon: Tags,
-    color: "text-pink-500",
-    href: "/Admin/Categories",
-  },
-  {
-    name: "Orders",
-    icon: ShoppingBag,
-    color: "text-orange-500",
-    href: "/Admin/Orders",
-  },
-  {
-    name: "Carts",
-    icon: ShoppingCart,
-    color: "text-yellow-500",
-    href: "/Admin/Carts",
-  },
-  { name: "Users", icon: Users, color: "text-green-500", href: "/Admin/Users" },
-  {
-    name: "Notifications",
-    icon: Bell,
-    color: "text-red-500",
-    href: "/Admin/Notifications",
-  },
-  {
-    name: "Analytics",
-    icon: BarChart3,
-    color: "text-cyan-500",
-    href: "/Admin/Analytics",
-  },
-  {
-    name: "Settings",
-    icon: Settings,
-    color: "text-indigo-500",
-    href: "/Admin/Settings",
-  },
+  { name: "Overview", icon: LayoutDashboard, href: "/Admin/Overview" },
+  { name: "Products", icon: PackageSearch, href: "/Admin/Products" },
+  { name: "Categories", icon: Tags, href: "/Admin/Categories" },
+  { name: "Orders", icon: ShoppingBag, href: "/Admin/Orders" },
+  { name: "Carts", icon: ShoppingCart, href: "/Admin/Carts" },
+  { name: "Users", icon: Users, href: "/Admin/Users" },
+  { name: "Notifications", icon: Bell, href: "/Admin/Notifications" },
+  { name: "Analytics", icon: BarChart3, href: "/Admin/Analytics" },
+  { name: "Settings", icon: Settings, href: "/Admin/Settings" },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ onNavigate }: { onNavigate?: () => void }) => {
   const pathname = usePathname();
   const [adminName, setAdminName] = useState("Super Admin");
   const [adminRole, setAdminRole] = useState("Admin");
@@ -81,13 +42,9 @@ const Sidebar = () => {
       if (storedUser) {
         try {
           const parsed = JSON.parse(storedUser);
-          if (parsed?.username) {
-            setAdminName(parsed.username);
-          }
+          if (parsed?.username) setAdminName(parsed.username);
           setAdminRole(parsed?.isAdmin ? "Super Admin" : "Admin");
-          if (parsed?.profilePic) {
-            setProfilePic(parsed.profilePic);
-          }
+          if (parsed?.profilePic) setProfilePic(parsed.profilePic);
         } catch {
           setAdminName("Admin");
           setAdminRole("Admin");
@@ -97,91 +54,80 @@ const Sidebar = () => {
   }, []);
 
   return (
-    <aside className="w-72 bg-black text-white flex flex-col h-screen fixed top-0 left-0 z-50">
-      <div className="h-24 flex items-center justify-between px-6 border-b-2 border-zinc-800">
-        <Link href="/" className="flex items-center gap-3">
-          <img
-            src={"/Logo.png"}
-            className="w-12 h-12 bg-white text-black font-black flex items-center justify-center border-2 border-zinc-600 uppercase"
-          />
-
+    <aside className="flex h-full w-72 flex-col border-r border-slate-200 bg-white">
+      <div className="flex h-16 items-center justify-between border-b border-slate-200 px-5">
+        <Link href="/" className="flex items-center gap-3" onClick={onNavigate}>
+          <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-[#0856DF]">
+            <img src={"/Logo.png"} alt="logo" className="h-full w-full object-contain" />
+          </div>
           <div>
-            <p className="text-xl font-black tracking-tight uppercase">
-              ZeeF Store
-            </p>
-            <p className="text-xs text-zinc-400 uppercase tracking-[0.2em]">
-              Store Home
+            <p className="text-sm font-bold leading-tight text-slate-900">ZeeF Store</p>
+            <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
+              Admin Panel
             </p>
           </div>
         </Link>
+        {onNavigate && (
+          <button
+            onClick={onNavigate}
+            className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 lg:hidden"
+            aria-label="Close menu"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        )}
       </div>
 
-      <nav className="flex-1 overflow-y-auto py-8 px-6 space-y-3">
-        <p className="text-xs font-black text-zinc-600 uppercase tracking-[0.2em] mb-6">
+      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+        <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
           Menu
         </p>
-
         {sidebarLinks.map((link) => {
           const Icon = link.icon;
           const isActive =
             pathname === link.href || pathname.startsWith(link.href + "/");
-
           return (
             <Link
               key={link.name}
               href={link.href}
-              className={`w-full flex items-center gap-4 px-4 py-3.5 transition-all duration-200 group border-2 ${isActive
-                ? "bg-white text-black border-white shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)]"
-                : "bg-black text-zinc-400 border-transparent hover:border-zinc-800 hover:bg-zinc-900"
-                }`}
+              onClick={onNavigate}
+              className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
+                isActive
+                  ? "bg-[#0856DF] text-white shadow-sm"
+                  : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+              }`}
             >
               <Icon
-                className={`w-5 h-5 ${link.color} transition-transform duration-300 ${isActive ? "scale-110" : "group-hover:scale-110"
-                  }`}
+                className={`h-5 w-5 transition-transform ${isActive ? "scale-110" : "group-hover:scale-110"}`}
               />
-              <span
-                className={`text-sm font-bold tracking-wide uppercase ${isActive ? "text-black" : "text-zinc-300"}`}
-              >
-                {link.name}
-              </span>
-              {isActive && (
-                <ChevronRight className="w-4 h-4 ml-auto text-black" />
-              )}
+              <span className="flex-1">{link.name}</span>
+              {isActive && <ChevronRight className="h-4 w-4" />}
             </Link>
           );
         })}
       </nav>
 
-      <div className="p-6 border-t-2 border-zinc-800">
+      <div className="border-t border-slate-200 p-4">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-white flex items-center justify-center text-black font-black text-lg border-2 border-zinc-600 rounded-full">
+          <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-[#0856DF]/10 text-sm font-bold text-[#0856DF]">
             {profilePic ? (
-              <img
-                src={profilePic}
-                className="w-full h-full object-cover rounded-full"
-                alt=""
-              />
+              <img src={profilePic} alt="" className="h-full w-full object-cover" />
             ) : (
               <span>{adminName.charAt(0).toUpperCase()}</span>
             )}
           </div>
-          <div className="text-left">
-            <p className="text-sm font-black text-white uppercase tracking-wider">
-              {adminName}
-            </p>
-            <p className="text-xs text-zinc-500 font-bold tracking-widest">
-              {adminRole}
-            </p>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold text-slate-900">{adminName}</p>
+            <p className="text-xs text-slate-400">{adminRole}</p>
           </div>
         </div>
-        <div className="mt-4 border-t border-zinc-800 pt-4">
-          <Link
-            href="/"
-            className="block uppercase text-xs font-black tracking-[0.2em] text-zinc-300 hover:text-white"
-          >
-            Back to Store
-          </Link>
-        </div>
+        <Link
+          href="/"
+          onClick={onNavigate}
+          className="mt-3 block rounded-lg px-3 py-2 text-center text-xs font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
+        >
+          ← Back to Store
+        </Link>
       </div>
     </aside>
   );

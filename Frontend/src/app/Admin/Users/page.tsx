@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { UserCheck, UserX, Mail, Phone, Trash2, Edit, X } from "lucide-react";
 import useFetch, { baseUrl, showToast } from "@/app/utils/commonFunctions";
 import axios from "axios";
-import { color } from "framer-motion";
 import { useDispatch } from "react-redux";
 import { logout } from "@/app/Redux/Features/authSlice";
 import type { AppDispatch } from "@/app/Redux/store";
@@ -158,27 +157,25 @@ const UsersPage = () => {
       .padStart(6, "0");
 
   return (
-    <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 max-w-6xl mx-auto">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-end mb-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-4xl font-black uppercase tracking-tight">
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
             Customer Base
           </h2>
-          <p className="text-zinc-500 font-bold text-sm mt-1">
-            Manage your platform users
-          </p>
+          <p className="mt-1 text-sm text-slate-500">Manage your platform users</p>
         </div>
-        <div className="bg-black text-white px-6 py-2 font-black text-sm uppercase tracking-widest">
+        <span className="inline-flex w-max items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600">
           Total: {data.length}
-        </div>
+        </span>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto border-2 border-black">
-        <table className="w-full text-left border-collapse">
+      <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <table className="w-full min-w-[680px] text-left">
           <thead>
-            <tr className="bg-zinc-100 border-b-4 border-black text-xs font-black uppercase tracking-widest">
+            <tr className="border-b border-slate-200 text-xs font-semibold uppercase tracking-wide text-slate-500">
               <th className="p-4">User</th>
               <th className="p-4">Email</th>
               <th className="p-4">Phone</th>
@@ -186,56 +183,60 @@ const UsersPage = () => {
               <th className="p-4 text-center">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y-2 divide-zinc-100">
+          <tbody className="divide-y divide-slate-100">
             {data.map((user) => (
-              <tr key={user._id} className="hover:bg-zinc-50 transition-colors">
-                <td className="p-4 flex items-center gap-3 font-bold uppercase">
-                  {user.profilePic ? (
-                    <img
-                      src={user.profilePic || "/default-avatar.png"}
-                      className="w-10 h-10 rounded-full border-2 border-black object-cover bg-zinc-200"
-                      alt="pfp"
-                    />
-                  ) : (
-                    <div
-                      style={{ backgroundColor: randomHex }}
-                      className={`flex items-center justify-center w-10 h-10 rounded-full p-3 text-white font-bold`}
-                    >
-                      {user.username.slice(0, 1).toUpperCase()}
-                    </div>
-                  )}
-                  {user.username}
+              <tr key={user._id} className="transition-colors hover:bg-slate-50">
+                <td className="p-4">
+                  <div className="flex items-center gap-3">
+                    {user.profilePic ? (
+                      <img
+                        src={user.profilePic || "/default-avatar.png"}
+                        className="h-10 w-10 rounded-full border border-slate-200 object-cover bg-slate-100"
+                        alt="pfp"
+                      />
+                    ) : (
+                      <div
+                        style={{ backgroundColor: randomHex }}
+                        className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-white"
+                      >
+                        {user.username.slice(0, 1).toUpperCase()}
+                      </div>
+                    )}
+                    <span className="font-semibold text-slate-900">{user.username}</span>
+                  </div>
                 </td>
-                <td className="p-4 text-sm font-medium text-zinc-600 lowercase">
-                  {user.email}
-                </td>
-                <td className="p-4 text-sm font-mono text-zinc-600">
+                <td className="p-4 text-sm text-slate-600">{user.email}</td>
+                <td className="p-4 text-sm font-mono text-slate-600">
                   {user.phoneNo}
                 </td>
                 <td className="p-4">
                   {user.isVerified ? (
-                    <span className="flex items-center gap-1 text-emerald-600 font-black text-[10px] uppercase border border-emerald-600 px-2 py-1 w-max rounded-full">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
                       <UserCheck size={12} /> Verified
                     </span>
                   ) : (
-                    <span className="flex items-center gap-1 text-zinc-400 font-black text-[10px] uppercase border border-zinc-400 px-2 py-1 w-max rounded-full">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-500">
                       <UserX size={12} /> Unverified
                     </span>
                   )}
                 </td>
-                <td className="p-4 flex justify-center gap-3">
-                  <button
-                    onClick={() => openEdit(user)}
-                    className="p-2 bg-zinc-100 hover:bg-blue-600 hover:text-white transition-all border-2 border-transparent hover:border-blue-700"
-                  >
-                    <Edit size={16} />
-                  </button>
-                  <button
-                    onClick={() => setDeleteId(user._id)}
-                    className="p-2 bg-zinc-100 hover:bg-red-600 hover:text-white transition-all border-2 border-transparent hover:border-red-700"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                <td className="p-4">
+                  <div className="flex justify-center gap-2">
+                    <button
+                      onClick={() => openEdit(user)}
+                      className="rounded-lg border border-blue-200 bg-blue-50 p-2 text-blue-600 transition hover:bg-blue-600 hover:text-white"
+                      aria-label="Edit"
+                    >
+                      <Edit size={16} />
+                    </button>
+                    <button
+                      onClick={() => setDeleteId(user._id)}
+                      className="rounded-lg border border-red-200 bg-red-50 p-2 text-red-600 transition hover:bg-red-600 hover:text-white"
+                      aria-label="Delete"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -245,22 +246,25 @@ const UsersPage = () => {
 
       {/* Delete Modal */}
       {deleteId && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white p-8 border-4 border-black w-full max-w-sm shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] text-center">
-            <h3 className="text-2xl font-black uppercase mb-4">Delete User?</h3>
-            <p className="text-zinc-600 font-bold mb-8">
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-0 backdrop-blur-sm sm:items-center sm:p-4">
+          <div className="w-full max-w-sm rounded-t-3xl bg-white p-6 text-center shadow-2xl sm:rounded-2xl">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-50">
+              <Trash2 size={24} className="text-red-600" />
+            </div>
+            <h3 className="mb-2 text-lg font-bold text-slate-900">Delete User?</h3>
+            <p className="mb-6 text-sm font-medium text-slate-500">
               This action cannot be undone.
             </p>
-            <div className="flex gap-4">
+            <div className="flex gap-3">
               <button
                 onClick={() => setDeleteId(null)}
-                className="flex-1 border-2 border-black py-3 font-black uppercase hover:bg-zinc-100 transition-colors"
+                className="flex-1 rounded-xl border border-slate-300 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDelete}
-                className="flex-1 bg-red-600 text-white py-3 font-black uppercase hover:bg-red-700 transition-colors"
+                className="flex-1 rounded-xl bg-red-600 py-3 text-sm font-semibold text-white transition hover:bg-red-700"
               >
                 Delete
               </button>
@@ -271,69 +275,76 @@ const UsersPage = () => {
 
       {/* Edit Modal */}
       {editingUser && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white p-8 border-4 border-black w-full max-w-md shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-black uppercase">Edit User</h3>
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-0 backdrop-blur-sm sm:items-center sm:p-4">
+          <div className="flex max-h-[92vh] w-full max-w-md flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl sm:rounded-2xl">
+            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+              <h3 className="text-lg font-bold text-slate-900">Edit User</h3>
               <button
                 onClick={() => setEditingUser(null)}
-                className="p-1 hover:bg-zinc-100 rounded transition-colors"
+                className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                aria-label="Close"
               >
-                <X size={24} />
+                <X size={22} />
               </button>
             </div>
 
-            <div className="mb-6 p-4 bg-zinc-50 border-2 border-black rounded">
-              <p className="text-xs font-black text-zinc-600 uppercase mb-2">
-                User ID:
-              </p>
-              <p className="font-mono text-sm text-zinc-700 break-all">
-                {editingUser._id}
-              </p>
-            </div>
+            <div className="space-y-4 overflow-y-auto px-6 py-5">
+              <div className="rounded-xl bg-slate-50 p-4">
+                <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  User ID
+                </p>
+                <p className="break-all font-mono text-sm text-slate-700">
+                  {editingUser._id}
+                </p>
+              </div>
 
-            <label className="block text-xs font-black uppercase mb-2 text-zinc-700">
-              Username
-            </label>
-            <input
-              className="w-full border-4 border-black p-3 font-bold mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={editFormData.username}
-              onChange={(e) =>
-                setEditFormData({ ...editFormData, username: e.target.value })
-              }
-              placeholder="Enter username"
-              disabled={isUpdating}
-            />
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-600">
+                  Username
+                </label>
+                <input
+                  className="w-full rounded-xl border border-slate-300 bg-white p-3 text-sm font-medium outline-none transition focus:border-[#0856DF] focus:ring-2 focus:ring-[#0856DF]/15"
+                  value={editFormData.username}
+                  onChange={(e) =>
+                    setEditFormData({ ...editFormData, username: e.target.value })
+                  }
+                  placeholder="Enter username"
+                  disabled={isUpdating}
+                />
+              </div>
 
-            <label className="block text-xs font-black uppercase mb-2 text-zinc-700">
-              Email
-            </label>
-            <input
-              className="w-full border-4 border-black p-3 font-bold mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={editFormData.email}
-              onChange={(e) =>
-                setEditFormData({ ...editFormData, email: e.target.value })
-              }
-              placeholder="Enter email"
-              type="email"
-              disabled={isUpdating}
-            />
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-600">
+                  Email
+                </label>
+                <input
+                  className="w-full rounded-xl border border-slate-300 bg-white p-3 text-sm font-medium outline-none transition focus:border-[#0856DF] focus:ring-2 focus:ring-[#0856DF]/15"
+                  value={editFormData.email}
+                  onChange={(e) =>
+                    setEditFormData({ ...editFormData, email: e.target.value })
+                  }
+                  placeholder="Enter email"
+                  type="email"
+                  disabled={isUpdating}
+                />
+              </div>
 
-            <div className="flex gap-3">
-              <button
-                onClick={() => setEditingUser(null)}
-                className="flex-1 border-4 border-black py-3 font-black uppercase hover:bg-zinc-100 transition-colors disabled:opacity-50"
-                disabled={isUpdating}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleUpdate}
-                disabled={isUpdating}
-                className="flex-1 bg-black text-white py-3 font-black uppercase hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isUpdating ? "Updating..." : "Update Account"}
-              </button>
+              <div className="flex gap-3 pt-2">
+                <button
+                  onClick={() => setEditingUser(null)}
+                  className="flex-1 rounded-xl border border-slate-300 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
+                  disabled={isUpdating}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleUpdate}
+                  disabled={isUpdating}
+                  className="flex-1 rounded-xl bg-[#0856DF] py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0645c8] disabled:opacity-50"
+                >
+                  {isUpdating ? "Updating..." : "Update Account"}
+                </button>
+              </div>
             </div>
           </div>
         </div>

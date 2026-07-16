@@ -1,10 +1,14 @@
 import { BarChart3 } from "lucide-react";
 
 const AnalyticsPage = () => (
-  <div className="h-96 border-4 border-black border-dashed flex flex-col items-center justify-center text-center p-10 bg-zinc-50">
-    <BarChart3 className="w-16 h-16 text-cyan-500 mb-4" />
-    <h2 className="text-3xl font-black uppercase">Analytics Module</h2>
-    <p className="font-bold text-zinc-500 uppercase tracking-widest mt-2">
+  <div className="flex h-96 flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white text-center shadow-sm">
+    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-50">
+      <BarChart3 className="h-8 w-8 text-cyan-500" />
+    </div>
+    <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+      Analytics Module
+    </h2>
+    <p className="mt-2 text-sm font-medium uppercase tracking-widest text-slate-400">
       Integration Pending
     </p>
   </div>
