@@ -26,6 +26,11 @@ export interface UseGeminiAIResult {
 // ✅ Google's currently supported active model
 const DEFAULT_MODEL = "gemini-2.5-flash";
 
+// Minimum acceptable word count before we retry / give up
+const MIN_WORDS = 60;
+// How many times to automatically retry if the AI returns a short response
+const MAX_RETRIES = 2;
+
 function buildPrompt(
   name: string,
   context: GeminiContext,
@@ -56,13 +61,13 @@ function buildPrompt(
     `- Use personality words people actually say out loud, like "obsessed", "game-changer", "honestly", "literally".`,
     `- Build urgency and desire in the closing lines (make the reader want to grab it NOW).`,
     `- Keep the language simple and easy English that anyone can read.`,
-    `- Formatting requirements:`,
+    `Formatting requirements:`,
     `- Use 3 to 5 professional, modern emojis placed strategically (not excessive, not zero).`,
-    `- Write 180 to 280 words — full and complete, never truncated.`,
+    `- Write 180 to 280 words — this is a STRICT MINIMUM, do not stop early.`,
     `- Use short, punchy paragraphs (2-3 lines each) separated by line breaks for readability.`,
     `- NO markdown formatting at all: no asterisks, no hashtags, no bullet symbols, no code blocks, no headings, no labels.`,
     `- Return ONLY the description text, nothing else. No intro, no "Here is your description".`,
-    `- Do not truncate. Make it complete and reach at least 280 words.`,
+    `- IMPORTANT: You must write the FULL description, at least 180 words. Do not cut it short under any circumstance.`,
   );
 
   return base.join("\n");
@@ -116,6 +121,31 @@ export function useGeminiAI(
     return clientRef.current;
   }, []);
 
+  const generateOnce = useCallback(
+    async (
+      client: GoogleGenerativeAI,
+      name: string,
+      extraContext?: string,
+    ): Promise<string> => {
+      const model = client.getGenerativeModel({
+        model: modelName || DEFAULT_MODEL,
+        generationConfig: {
+          temperature: temperature ?? 0.9,
+          maxOutputTokens: maxOutputTokens ?? 800,
+          topP: 0.95,
+          topK: 40,
+        },
+      });
+
+      const prompt = buildPrompt(name, context, extraContext);
+      const result = await model.generateContent(prompt);
+      const raw = result.response.text();
+
+      return cleanText(raw);
+    },
+    [context, modelName, temperature, maxOutputTokens],
+  );
+
   const generate = useCallback(
     async (name: string, extraContext?: string): Promise<string | null> => {
       if (!name || !name.trim()) {
@@ -132,47 +162,50 @@ export function useGeminiAI(
       setLoading(true);
       setError(null);
 
-      try {
-        // useGeminiAI hook ke andar:
-        const model = client.getGenerativeModel({
-          model: modelName || DEFAULT_MODEL,
-          generationConfig: {
-            temperature: temperature ?? 0.9,
-            maxOutputTokens: maxOutputTokens ?? 800,
-            topP: 0.95,
-            topK: 40,
-          },
-        });
+      let lastError: string | null = null;
 
-        const prompt = buildPrompt(name, context, extraContext);
-        const result = await model.generateContent(prompt);
-        const raw = result.response.text();
+      for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+        try {
+          const cleaned = await generateOnce(client, name, extraContext);
 
-        const cleaned = cleanText(raw);
+          if (!cleaned) {
+            lastError = "Received an empty response from Gemini";
+            continue; // try again
+          }
 
-        if (!cleaned) {
-          throw new Error("Received an empty response from Gemini");
-        }
+          const wordCount = countWords(cleaned);
 
-        if (countWords(cleaned) < 80) {
-          throw new Error(
-            "The generated description was too short. Please try generating again.",
+          if (wordCount < MIN_WORDS) {
+            lastError = `Generated description was too short (${wordCount} words). Retrying...`;
+            console.warn(
+              `[useGeminiAI] Attempt ${attempt}/${MAX_RETRIES} returned only ${wordCount} words, retrying...`,
+            );
+            continue; // try again
+          }
+
+          // Success
+          setLastResult(cleaned);
+          setLoading(false);
+          return cleaned;
+        } catch (err: any) {
+          console.error(
+            `[useGeminiAI] Attempt ${attempt}/${MAX_RETRIES} failed:`,
+            err,
           );
+          lastError = err?.message || "Failed to generate content with AI";
         }
-
-        setLastResult(cleaned);
-        return cleaned;
-      } catch (err: any) {
-        console.error("Gemini AI Error:", err); // ✅ Yeh line console mein actual masla dikhayegi
-        const message = err?.message || "Failed to generate content with AI";
-        setError(message);
-        showToast(message, "error");
-        return null;
-      } finally {
-        setLoading(false);
       }
+
+      // All retries exhausted
+      const finalMessage =
+        lastError ||
+        "Failed to generate a full description after multiple attempts. Please try again.";
+      setError(finalMessage);
+      showToast(finalMessage, "error");
+      setLoading(false);
+      return null;
     },
-    [context, getClient, modelName, temperature, maxOutputTokens],
+    [getClient, generateOnce],
   );
 
   const reset = useCallback(() => {
