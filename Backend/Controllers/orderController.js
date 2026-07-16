@@ -2,6 +2,7 @@ import { Order } from "../Models/Orders.js";
 import { Product } from "../Models/Product.js";
 import Users from "../Models/Users.js";
 import { Notification } from "../Models/Notification.js";
+import { sendPushToUser } from "./pushNotificationController.js";
 import { createError, createSuccess } from "../utils/commonFunctions.js";
 
 const populateOrder = (query) =>
@@ -95,6 +96,30 @@ export const createOrder = async (req, res, next) => {
     }
 
     console.log(`[Order Created]: ${order._id} for user ${req.user.id}`);
+
+    // In-app notification for the customer
+    try {
+      await Notification.create({
+        userId: req.user.id,
+        title: "Order Placed",
+        message: `Your order #${order._id.toString().slice(-8)} has been placed successfully. We'll notify you as it progresses.`,
+      });
+    } catch (notifErr) {
+      console.error(`[Notification Failed]: For user ${req.user.id} -`, notifErr.message);
+    }
+
+    // Web Push to the customer's subscribed devices
+    try {
+      const link = `/profile/orders/${order._id}`;
+      const result = await sendPushToUser(req.user.id, {
+        title: "Order Placed 🎉",
+        body: `Your order #${order._id.toString().slice(-8)} has been placed successfully.`,
+        link,
+      });
+      console.log(`[Push Sent]: For user ${req.user.id} - sent ${result.sent}, removed ${result.removed}`);
+    } catch (pushErr) {
+      console.error(`[Push Failed]: For user ${req.user.id} -`, pushErr.message);
+    }
 
     return res
       .status(201)
@@ -206,6 +231,15 @@ export const updateOrderStatus = async (req, res, next) => {
     });
 
     console.log(`[Notification Created]: For user ${order.user} - ${title}`);
+
+    // Also fire a Web Push notification to the user's subscribed devices
+    try {
+      const link = `/profile/orders/${order._id}`;
+      const result = await sendPushToUser(order.user, { title, body: message, link });
+      console.log(`[Push Sent]: For user ${order.user} - sent ${result.sent}, removed ${result.removed}`);
+    } catch (pushErr) {
+      console.error(`[Push Failed]: For user ${order.user} -`, pushErr.message);
+    }
 
     return res
       .status(200)

@@ -8,6 +8,7 @@ import twilio from "twilio";
 import dotenv from "dotenv";
 import { sendWhatsAppOTP } from "../utils/whatsapp.js";
 import { uploadToCloudinary } from "../utils/cloudinary.js";
+import { sendPushToAdmins } from "./pushNotificationController.js";
 dotenv.config();
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -562,6 +563,18 @@ export const contactUs = async (req, res, next) => {
       `Contact Form: Message from ${name}`,
       `Name: ${name}\nEmail: ${email}\nMessage:\n${message}`,
     );
+
+    // Web Push to admins' subscribed devices so they get a phone notification
+    try {
+      const result = await sendPushToAdmins({
+        title: "New Contact Message 📩",
+        body: `${name} (${email}): ${message.slice(0, 80)}${message.length > 80 ? "…" : ""}`,
+        link: "/Admin",
+      });
+      console.log(`[Push Sent to Admins]: sent ${result.sent}, removed ${result.removed}`);
+    } catch (pushErr) {
+      console.error("[Push Failed to Admins]:", pushErr.message);
+    }
 
     res.status(200).json(createSuccess(200, "Message sent successfully!"));
   } catch (error) {
