@@ -20,27 +20,73 @@ if (!PAGE_ACCESS_TOKEN || !PAGE_ID || !IG_BUSINESS_ID) {
  */
 export async function postToFacebook(product) {
   try {
-    const imageUrl = product.images?.[0]?.url; // use first image
-    const caption = `${product.name}\n\n${product.description}`;
-    const endpoint = `https://graph.facebook.com/v21.0/${PAGE_ID}/photos`;
-    const params = {
-      url: imageUrl,
-      caption,
+    const images = product.images?.map(img => img.url).filter(Boolean) || [];
+    const frontendUrl = process.env.FRONTEND_URL || 'https://zeeftrendystore.vercel.app';
+    const productLink = `${frontendUrl}/product/${product._id}`;
+
+    // Build structured caption
+    let caption = `${product.name}\n\n${product.description}`;
+
+    if (Array.isArray(product.colors) && product.colors.length) {
+      caption += `\n\nColor: ${product.colors.join(', ')}`;
+    }
+    if (Array.isArray(product.sizes) && product.sizes.length) {
+      caption += `\nSize: ${product.sizes.join(', ')}`;
+    }
+
+    caption += `\n\n👉 Order Now: ${productLink}`;
+
+    if (Array.isArray(product.tags) && product.tags.length) {
+      const hashtags = product.tags
+        .map(tag => `#${tag.toLowerCase().replace(/[^a-z0-9]/g, '')}`)
+        .join(' ');
+      caption += `\n\n${hashtags}`;
+    }
+
+    const uploadedMedia = [];
+
+    console.log('[SocialMedia] Uploading', images.length, 'images to Facebook (unpublished) for product', product._id);
+
+    for (let i = 0; i < images.length; i++) {
+      const imgUrl = images[i];
+      const endpoint = `https://graph.facebook.com/v21.0/${PAGE_ID}/photos`;
+      const params = {
+        url: imgUrl,
+        published: false,
+        access_token: PAGE_ACCESS_TOKEN,
+      };
+      console.log('[SocialMedia] Uploading image', i + 1, 'of', images.length, '-', imgUrl);
+      const resp = await axios.post(endpoint, null, { params });
+      console.log('[SocialMedia] Image', i + 1, 'upload response', resp.data);
+      if (resp.data.id) {
+        uploadedMedia.push({ media_fbid: resp.data.id });
+        console.log('[SocialMedia] Collected photo ID for image', i + 1, ':', resp.data.id);
+      } else {
+        console.warn('[SocialMedia] No photo ID returned for image', i + 1, '-', imgUrl);
+      }
+    }
+
+    if (uploadedMedia.length === 0) {
+      return { success: false, error: 'Facebook: No images were successfully uploaded' };
+    }
+
+    // Create a single feed post with all uploaded media (multi-photo/carousel post)
+    const feedEndpoint = `https://graph.facebook.com/v21.0/${PAGE_ID}/feed`;
+    const feedParams = {
+      message: caption,
+      attached_media: JSON.stringify(uploadedMedia),
       access_token: PAGE_ACCESS_TOKEN,
     };
-    console.log('[SocialMedia] Posting to Facebook for product', product._id);
-    console.log('[SocialMedia] Facebook request', { endpoint, params });
-    const response = await axios.post(endpoint, null, { params });
-    console.log('[SocialMedia] Facebook response', response.data);
-    const { id } = response.data; // Facebook post ID
+    console.log('[SocialMedia] Creating single feed post with', uploadedMedia.length, 'attached photos:', uploadedMedia);
+    const feedResp = await axios.post(feedEndpoint, null, { params: feedParams });
+    console.log('[SocialMedia] Feed post response', feedResp.data);
+    const { id } = feedResp.data; // Facebook post ID
     return { success: true, postId: id };
   } catch (err) {
     const msg = err.response?.data?.error?.message ?? err.message;
     return { success: false, error: `Facebook: ${msg}` };
   }
-}
-
-/**
+}/**
  * Publish a photo to Instagram Business via the Graph API.
  * Returns { success: boolean, postId?: string, error?: string }
  */

@@ -1,29 +1,9 @@
-Task: Fix the push notification subscription system in this project. Users are unable to subscribe to notifications — debug and fix the issue.
+There's another error in Backend/queues/socialPostQueue.js: "SyntaxError: The requested module 'bullmq' does not provide an export named 'QueueScheduler'". 
 
-Files involved:
-Backend:
-- Controllers/pushNotificationController.js
-- Models/PushSubscription.js
-- Routes/pushNotificationRoute.js
-- index.js
-- utils/commonFunctions.js
-- utils/webpush.js
+This means the installed version of bullmq no longer exports QueueScheduler (it was deprecated/removed in newer BullMQ versions since scheduling is now handled automatically by Queue/Worker).
 
-Frontend:
-- next.config.ts
-- public/push-handlers.js
-- public/webpush-config.json
-- src/app/Admin/Notifications/page.tsx
-- src/app/components/Sidebar.tsx
-- src/app/ClientLayout.tsx
-- src/app/Components/NotificationPrompt.tsx
-- src/app/layout.tsx
-- src/app/utils/notificationClient.ts
-- src/app/worker/index.js
-
-Requirements:
-1. Convert all Urdu text/comments in the code to English.
-2. Fix the subscription bug so users can successfully subscribe.
-3. Replace all error handling (currently using alert()) with toast notifications instead.
-4. Do NOT make any other changes to the project.
-5. Ask for my permission before making any changes — explain what you plan to do first, then wait for approval.
+Please:
+1. Remove the QueueScheduler import and its usage from socialPostQueue.js entirely.
+2. Confirm the Queue and Worker setup still handles retries correctly without it (attempts + backoff options on the Worker are sufficient).
+3. Check package.json for the installed bullmq version to confirm this is the correct fix for that version.
+4. Restart and confirm the server boots without errors.
