@@ -480,7 +480,7 @@ const Navbar: React.FC = () => {
               <div className="flex items-center justify-between pb-6 border-b border-gray-200">
                 <div className="flex items-center gap-3">
                   <img
-                    src="/logo.png"
+                    src="Logo.png"
                     alt="Logo"
                     className="h-9 w-9 rounded-full object-cover border border-gray-300"
                   />
