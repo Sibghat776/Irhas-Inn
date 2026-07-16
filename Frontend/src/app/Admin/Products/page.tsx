@@ -394,7 +394,15 @@ const ProductsPage = () => {
 
       {/* Table */}
       <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <table className="w-full min-w-[760px] text-left">
+        <table className="w-full table-fixed text-left">
+          <colgroup>
+            <col className="w-[40%]" />
+            <col className="w-[18%]" />
+            <col className="w-[10%]" />
+            <col className="w-[10%]" />
+            <col className="w-[10%]" />
+            <col className="w-[12%]" />
+          </colgroup>
           <thead>
             <tr className="border-b border-slate-200 text-xs font-semibold uppercase tracking-wide text-slate-500">
               <th className="p-4">Product Name</th>

@@ -324,9 +324,6 @@ const ProductDetailPage: React.FC = () => {
                     <p className="pb-2 text-xl font-medium text-slate-400 line-through">
                       Rs {Math.round(product.price * 1.4).toLocaleString()}
                     </p>
-                    <span className="mb-3 inline-block rounded-full bg-[#0856DF]/10 px-3 py-1 text-xs font-semibold text-[#0856DF]">
-                      Save 40%
-                    </span>
                   </div>
                 </div>
 
