@@ -33,3 +33,54 @@
 .animate-fadeInUp {
   animation: fadeInUp 1s ease-out forwards;
 }
+
+/* ============================================================
+   Order Report Printing — 3 reports per A4 page
+   The printable section (.print-reports) is hidden on screen
+   and only shown when printing. Each .order-report-block takes
+   exactly 1/3 of an A4 page height so the sheet can be cut.
+   ============================================================ */
+.print-reports {
+  display: none;
+}
+
+@media print {
+  /* Hide everything except the printable reports */
+  body * {
+    visibility: hidden;
+  }
+
+  .print-reports,
+  .print-reports * {
+    visibility: visible;
+  }
+
+  .print-reports {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  /* Each report occupies 1/3 of an A4 page (A4 height ≈ 297mm) */
+  .order-report-block {
+    height: 99mm;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8mm 10mm;
+    border-bottom: 1px dashed #cbd5e1;
+    overflow: hidden;
+    page-break-inside: avoid;
+  }
+
+  /* Force a page break after every 3rd block (i.e. after 1st & 2nd) */
+  .order-report-block:nth-child(3n + 1):not(:first-child),
+  .order-report-block:nth-child(3n + 2) {
+    page-break-after: always;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}

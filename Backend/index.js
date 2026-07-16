@@ -11,6 +11,7 @@ import { orderRoute } from "./Routes/orderRoute.js";
 import { cartRoute } from "./Routes/cartRoute.js";
 import { notificationRoute } from "./Routes/notificationRoute.js";
 import { pushNotificationRoute } from "./Routes/pushNotificationRoute.js";
+import { analyticsRoute } from "./Routes/analyticsRoute.js";
 import cookieParser from "cookie-parser";
 dotenv.config();
 
@@ -48,6 +49,7 @@ app.use("/api/v1/order", orderRoute);
 app.use("/api/v1/cart", cartRoute);
 app.use("/api/v1/notifications", notificationRoute);
 app.use("/api/v1/push", pushNotificationRoute);
+app.use("/api/v1/analytics", analyticsRoute);
 
 // Server Start and DB Connection (No if condition)
 (async () => {

@@ -1,9 +1,10 @@
 "use client";
 
 import { Fragment, useEffect, useState } from "react";
-import { Download, Eye, Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { Download, Eye, Trash2, ChevronDown, ChevronUp, Printer } from "lucide-react";
 import useFetch, { baseUrl, showToast } from "@/app/utils/commonFunctions";
 import axios from "axios";
+import QRCode from "qrcode";
 
 const paymentStatusOptions = [
   "pending",
@@ -21,6 +22,11 @@ const orderStatusOptions = [
   "Delivered",
   "Cancelled",
 ];
+
+// Lightweight inline SVG placeholder used when a product image is missing
+// (e.g., the referenced product was deleted after the order was placed).
+const PLACEHOLDER_IMG =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect width='80' height='80' fill='%23e2e8f0'/%3E%3Cpath d='M0 64 L28 36 L44 52 L60 32 L80 56' stroke='%2394a3b8' stroke-width='3' fill='none'/%3E%3Ccircle cx='26' cy='24' r='8' fill='%2394a3b8'/%3E%3C/svg%3E";
 
 const OrdersPage = () => {
   const {
@@ -40,6 +46,39 @@ const OrdersPage = () => {
   const [expandedOrderIds, setExpandedOrderIds] = useState<
     Record<string, boolean>
   >({});
+  const [printOrders, setPrintOrders] = useState<any[]>([]);
+  const [printQr, setPrintQr] = useState<Record<string, string>>({});
+  const [isGeneratingPrint, setIsGeneratingPrint] = useState(false);
+
+  const FRONTEND_URL =
+    process.env.NEXT_PUBLIC_FRONTEND_URL ||
+    process.env.NEXT_PUBLIC_API_URL?.replace("/api/v1", "") ||
+    "https://zeeftrendystore.vercel.app";
+
+  const generateQr = async (orderId: string) => {
+    const url = `${FRONTEND_URL}/track-order/${orderId}`;
+    try {
+      return await QRCode.toDataURL(url, { width: 160, margin: 1 });
+    } catch {
+      return "";
+    }
+  };
+
+  const buildPrintView = async (ordersToPrint: any[]) => {
+    setIsGeneratingPrint(true);
+    const qrMap: Record<string, string> = {};
+    for (const o of ordersToPrint) {
+      qrMap[o._id] = await generateQr(o._id);
+    }
+    setPrintOrders(ordersToPrint);
+    setPrintQr(qrMap);
+    setIsGeneratingPrint(false);
+    // Allow React to render the hidden print section before opening dialog
+    setTimeout(() => window.print(), 300);
+  };
+
+  const handlePrintOne = (order: any) => buildPrintView([order]);
+  const handlePrintAll = () => buildPrintView(orders);
 
   useEffect(() => {
     if (ordersRes?.data) {
@@ -177,6 +216,14 @@ const OrdersPage = () => {
         <button className="inline-flex items-center gap-2 self-start rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50">
           <Download className="h-4 w-4 text-orange-500" /> Export CSV
         </button>
+        <button
+          onClick={handlePrintAll}
+          disabled={isGeneratingPrint || orders.length === 0}
+          className="inline-flex items-center gap-2 self-start rounded-xl bg-[#0856DF] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0645c8] disabled:opacity-50"
+        >
+          <Printer className="h-4 w-4" />
+          {isGeneratingPrint ? "Preparing..." : "Print All"}
+        </button>
       </div>
 
       <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -284,31 +331,40 @@ const OrdersPage = () => {
                     <td className="p-4 text-slate-500">
                       {new Date(order.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="p-4">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          type="button"
-                          onClick={() => toggleOrderDetails(order._id)}
-                          className="rounded-lg border border-slate-200 p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
-                          title="Toggle order details"
-                        >
-                          {expandedOrderIds[order._id] ? (
-                            <ChevronUp className="h-5 w-5" />
-                          ) : (
-                            <ChevronDown className="h-5 w-5" />
-                          )}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(order._id)}
-                          disabled={isDeleting}
-                          className="rounded-lg border border-red-200 bg-red-50 p-2 text-red-600 transition hover:bg-red-600 hover:text-white disabled:opacity-50"
-                          aria-label="Delete"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
+                  <td className="p-4">
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        type="button"
+                        onClick={() => toggleOrderDetails(order._id)}
+                        className="rounded-lg border border-slate-200 p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
+                        title="Toggle order details"
+                      >
+                        {expandedOrderIds[order._id] ? (
+                          <ChevronUp className="h-5 w-5" />
+                        ) : (
+                          <ChevronDown className="h-5 w-5" />
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handlePrintOne(order)}
+                        disabled={isGeneratingPrint}
+                        className="rounded-lg border border-slate-200 p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 disabled:opacity-50"
+                        title="Print report"
+                      >
+                        <Printer className="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(order._id)}
+                        disabled={isDeleting}
+                        className="rounded-lg border border-red-200 bg-red-50 p-2 text-red-600 transition hover:bg-red-600 hover:text-white disabled:opacity-50"
+                        aria-label="Delete"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </td>
                   </tr>
                   {expandedOrderIds[order._id] ? (
                     <tr className="bg-slate-50/70">
@@ -323,7 +379,6 @@ const OrdersPage = () => {
                             </h3>
                             {order.orderItems?.map((item: any, idx: number) => {
                               const product = item.product || {};
-                              console.log("item:", item);
                               return (
                                 <div
                                   key={idx}
@@ -331,34 +386,40 @@ const OrdersPage = () => {
                                 >
                                   <img
                                     src={
-                                      product.images[0]?.url || item.images[0]
+                                      product?.images?.[0]?.url ||
+                                      item?.images?.[0] ||
+                                      PLACEHOLDER_IMG
                                     }
-                                    alt={product.name || "Product Image"}
+                                    alt={product?.name || "Product Image"}
                                     className="h-20 w-20 rounded-lg object-cover"
+                                    onError={(e) => {
+                                      (e.currentTarget as HTMLImageElement).src =
+                                        PLACEHOLDER_IMG;
+                                    }}
                                   />
                                   <div className="min-w-0">
                                     <p className="truncate font-semibold text-slate-900">
-                                      {product.name || item.name || "Product"}
+                                      {product?.name || item?.name || "Product"}
                                     </p>
                                     <p className="text-xs text-slate-500">
                                       ID:{" "}
-                                      {product._id?.toString().slice(-5) ||
-                                        item.product?._id?.toString().slice(-5) ||
+                                      {product?._id?.toString().slice(-5) ||
+                                        item?.product?._id?.toString().slice(-5) ||
                                         "N/A"}
                                     </p>
                                     <p className="text-xs text-slate-500">
                                       Category:{" "}
-                                      {typeof product.category === "string"
+                                      {typeof product?.category === "string"
                                         ? product.category
-                                        : product.category?.name || "Unknown"}
+                                        : product?.category?.name || "Unknown"}
                                     </p>
                                     <p className="text-xs text-slate-500">
                                       Quantity: {item.quantity}
                                     </p>
                                     <p className="text-xs text-slate-500">
                                       Rs{" "}
-                                      {product.price?.toLocaleString() ||
-                                        item.price?.toLocaleString() ||
+                                      {product?.price?.toLocaleString() ||
+                                        item?.price?.toLocaleString() ||
                                         "0"}
                                     </p>
                                   </div>
@@ -426,6 +487,237 @@ const OrdersPage = () => {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Hidden printable order reports (3 per A4 page) */}
+      <div className="print-reports">
+        {printOrders.map((order) => (
+          <div key={order._id} className="order-report-block">
+            {/* Header: logo + store name + receipt label + QR */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+                borderBottom: "2px solid #0f172a",
+                paddingBottom: "5px",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/Logo.png"
+                  alt="ZeeF Trendy Store"
+                  style={{ width: 30, height: 30, objectFit: "contain" }}
+                />
+                <div>
+                  <div
+                    style={{
+                      fontSize: "13px",
+                      fontWeight: 800,
+                      color: "#0f172a",
+                      lineHeight: 1.1,
+                    }}
+                  >
+                    ZeeF Trendy Store
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "8px",
+                      fontWeight: 600,
+                      letterSpacing: "1px",
+                      color: "#0856DF",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    Order Receipt
+                  </div>
+                </div>
+              </div>
+              {printQr[order._id] ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={printQr[order._id]}
+                  alt="Track order QR"
+                  style={{ width: 56, height: 56 }}
+                />
+              ) : null}
+            </div>
+
+            {/* Meta strip */}
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "2px 16px",
+                fontSize: "9px",
+                color: "#334155",
+                padding: "4px 0",
+                borderBottom: "1px solid #e2e8f0",
+              }}
+            >
+              <span>
+                <strong style={{ color: "#0f172a" }}>Order ID:</strong>{" "}
+                <span style={{ fontFamily: "monospace" }}>{order._id}</span>
+              </span>
+              {order.serialNumber ? (
+                <span>
+                  <strong style={{ color: "#0f172a" }}>Serial #:</strong>{" "}
+                  {order.serialNumber}
+                </span>
+              ) : null}
+              <span>
+                <strong style={{ color: "#0f172a" }}>Date:</strong>{" "}
+                {new Date(order.createdAt).toLocaleDateString()}
+              </span>
+              <span>
+                <strong style={{ color: "#0f172a" }}>Customer:</strong>{" "}
+                {order.user?.username || order.user?.email || "—"}
+              </span>
+            </div>
+
+            {/* Itemized table */}
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "collapse",
+                fontSize: "9px",
+                color: "#0f172a",
+                marginTop: "4px",
+              }}
+            >
+              <thead>
+                <tr style={{ borderBottom: "1px solid #cbd5e1" }}>
+                  <th
+                    style={{
+                      textAlign: "left",
+                      padding: "2px 4px",
+                      fontWeight: 700,
+                      color: "#475569",
+                    }}
+                  >
+                    Item
+                  </th>
+                  <th
+                    style={{
+                      textAlign: "right",
+                      padding: "2px 4px",
+                      fontWeight: 700,
+                      color: "#475569",
+                    }}
+                  >
+                    Qty
+                  </th>
+                  <th
+                    style={{
+                      textAlign: "right",
+                      padding: "2px 4px",
+                      fontWeight: 700,
+                      color: "#475569",
+                    }}
+                  >
+                    Price
+                  </th>
+                  <th
+                    style={{
+                      textAlign: "right",
+                      padding: "2px 4px",
+                      fontWeight: 700,
+                      color: "#475569",
+                    }}
+                  >
+                    Subtotal
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {(order.orderItems || []).map((item: any, idx: number) => {
+                  const unit = item.product?.price || item.price || 0;
+                  const qty = item.quantity || 1;
+                  return (
+                    <tr
+                      key={idx}
+                      style={{
+                        borderBottom: "1px solid #eef2f7",
+                        background: idx % 2 === 1 ? "#f8fafc" : "transparent",
+                      }}
+                    >
+                      <td
+                        style={{
+                          padding: "2px 4px",
+                          maxWidth: "90px",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        {item.product?.name || item.name || "Product"}
+                      </td>
+                      <td style={{ padding: "2px 4px", textAlign: "right" }}>
+                        {qty}
+                      </td>
+                      <td style={{ padding: "2px 4px", textAlign: "right" }}>
+                        Rs {unit.toLocaleString()}
+                      </td>
+                      <td style={{ padding: "2px 4px", textAlign: "right" }}>
+                        Rs {(unit * qty).toLocaleString()}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+
+            {/* Total row (light accent, print-safe) */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginTop: "4px",
+                padding: "4px 6px",
+                background: "#eef4ff",
+                border: "1px solid #c7dbff",
+                borderRadius: "3px",
+                fontSize: "11px",
+                fontWeight: 800,
+                color: "#0f172a",
+              }}
+            >
+              <span>TOTAL</span>
+              <span>Rs {order.totalPrice?.toLocaleString() || 0}</span>
+            </div>
+
+            {/* Footer: status + shipping + scan label */}
+            <div
+              style={{
+                fontSize: "8px",
+                color: "#475569",
+                marginTop: "4px",
+                borderTop: "1px dashed #cbd5e1",
+                paddingTop: "3px",
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span>
+                  Status: <strong>{order.status}</strong>
+                </span>
+                <span>
+                  Payment: <strong>{order.paymentStatus}</strong> (
+                  {order.paymentMethod})
+                </span>
+              </div>
+              <div style={{ marginTop: "2px" }}>
+                <strong>Ship to:</strong> {order.shippingAddress?.fullName},{" "}
+                {order.shippingAddress?.address}, {order.shippingAddress?.city},{" "}
+                {order.shippingAddress?.country} ({order.shippingAddress?.phoneNo})
+              </div>
+              <div style={{ marginTop: "2px", color: "#64748b" }}>
+                Scan QR to track your order: {FRONTEND_URL}/track-order/{order._id}
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

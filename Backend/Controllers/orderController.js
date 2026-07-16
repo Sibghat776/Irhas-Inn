@@ -177,6 +177,52 @@ export const getOrderById = async (req, res, next) => {
 };
 
 // ==========================================
+// PUBLIC ORDER TRACKING (no auth) - used by QR code on printed reports
+// ==========================================
+export const trackOrder = async (req, res, next) => {
+  try {
+    const order = await populateOrder(Order.findById(req.params.id));
+
+    if (!order) {
+      return next(createError(404, "Order not found"));
+    }
+
+    // Expose full details (per store policy) but always read-only.
+    const tracking = {
+      _id: order._id,
+      serialNumber: order.serialNumber,
+      status: order.status,
+      paymentMethod: order.paymentMethod,
+      paymentStatus: order.paymentStatus,
+      itemsPrice: order.itemsPrice,
+      shippingPrice: order.shippingPrice,
+      totalPrice: order.totalPrice,
+      createdAt: order.createdAt,
+      trackingHistory: order.trackingHistory,
+      shippingAddress: order.shippingAddress,
+      orderItems: (order.orderItems || []).map((item) => ({
+        quantity: item.quantity,
+        product: item.product
+          ? {
+              name: item.product.name,
+              price: item.product.price,
+              images: item.product.images,
+              slug: item.product.slug,
+            }
+          : null,
+      })),
+    };
+
+    return res
+      .status(200)
+      .json(createSuccess(200, "Order tracking fetched successfully", tracking));
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+// ==========================================
 // 4. GET ALL ORDERS (ADMIN)
 // ==========================================
 export const getAllOrders = async (req, res, next) => {
