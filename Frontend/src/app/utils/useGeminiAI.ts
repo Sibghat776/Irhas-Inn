@@ -131,10 +131,21 @@ export function useGeminiAI(
         model: modelName || DEFAULT_MODEL,
         generationConfig: {
           temperature: temperature ?? 0.9,
-          maxOutputTokens: maxOutputTokens ?? 800,
+          // Bumped up as a safety margin. Even with thinking disabled below,
+          // this gives headroom for the 180-280 word description.
+          maxOutputTokens: maxOutputTokens ?? 2048,
           topP: 0.95,
           topK: 40,
-        },
+          // 🔧 THE FIX: gemini-2.5-flash is a "thinking" model — by default it
+          // spends part of maxOutputTokens on internal reasoning before ever
+          // writing the actual answer. That's why finishReason was MAX_TOKENS
+          // with only ~31 candidate tokens (765 were eaten by thinking).
+          // Setting thinkingBudget to 0 disables thinking entirely, so the
+          // full token budget goes to the actual description text.
+          thinkingConfig: {
+            thinkingBudget: 0,
+          },
+        } as any,
       });
 
       const prompt = buildPrompt(name, context, extraContext);
