@@ -20,6 +20,11 @@ const productSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    addedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Users",
+      required: true,
+    },
     description: {
       type: String,
       required: [true, "Product description is required"],

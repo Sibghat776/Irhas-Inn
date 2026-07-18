@@ -15,6 +15,14 @@ import { analyticsRoute } from "./Routes/analyticsRoute.js";
 import cookieParser from "cookie-parser";
 dotenv.config();
 
+// Global safety net — prevents one broken feature (e.g. WhatsApp) from crashing the whole server
+process.on("unhandledRejection", (reason) => {
+  console.error("[CRITICAL] Unhandled Promise Rejection:", reason);
+});
+process.on("uncaughtException", (err) => {
+  console.error("[CRITICAL] Uncaught Exception:", err.message, err.stack);
+});
+
 const app = express();
 
 // Middlewares

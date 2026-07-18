@@ -7,7 +7,6 @@ import {
   BarChart3,
   Bell,
   ChevronRight,
-  Home,
   LayoutDashboard,
   PackageSearch,
   Settings,
@@ -18,7 +17,7 @@ import {
   X,
 } from "lucide-react";
 
-const sidebarLinks = [
+const superAdminLinks = [
   { name: "Overview", icon: LayoutDashboard, href: "/Admin/Overview" },
   { name: "Products", icon: PackageSearch, href: "/Admin/Products" },
   { name: "Categories", icon: Tags, href: "/Admin/Categories" },
@@ -30,10 +29,17 @@ const sidebarLinks = [
   { name: "Settings", icon: Settings, href: "/Admin/Settings" },
 ];
 
+const resellerLinks = [
+  { name: "Overview", icon: LayoutDashboard, href: "/Admin/Overview" },
+  { name: "Products", icon: PackageSearch, href: "/Admin/Products" },
+  { name: "Orders", icon: ShoppingBag, href: "/Admin/Orders" },
+  { name: "Analytics", icon: BarChart3, href: "/Admin/Analytics" },
+];
+
 const Sidebar = ({ onNavigate }: { onNavigate?: () => void }) => {
   const pathname = usePathname();
-  const [adminName, setAdminName] = useState("Super Admin");
-  const [adminRole, setAdminRole] = useState("Admin");
+  const [adminName, setAdminName] = useState("Admin");
+  const [adminRole, setAdminRole] = useState<string>("admin");
   const [profilePic, setProfilePic] = useState<string | null>(null);
 
   useEffect(() => {
@@ -43,15 +49,18 @@ const Sidebar = ({ onNavigate }: { onNavigate?: () => void }) => {
         try {
           const parsed = JSON.parse(storedUser);
           if (parsed?.username) setAdminName(parsed.username);
-          setAdminRole(parsed?.isAdmin ? "Super Admin" : "Admin");
+          setAdminRole(parsed?.role ?? (parsed?.isAdmin ? "superadmin" : "user"));
           if (parsed?.profilePic) setProfilePic(parsed.profilePic);
         } catch {
           setAdminName("Admin");
-          setAdminRole("Admin");
+          setAdminRole("admin");
         }
       }
     }
   }, []);
+
+  const sidebarLinks = adminRole === "superadmin" ? superAdminLinks : resellerLinks;
+  const roleLabel = adminRole === "superadmin" ? "Super Admin" : "Reseller Admin";
 
   return (
     <aside className="flex h-full w-72 flex-col border-r border-slate-200 bg-white">
@@ -118,7 +127,7 @@ const Sidebar = ({ onNavigate }: { onNavigate?: () => void }) => {
           </div>
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold text-slate-900">{adminName}</p>
-            <p className="text-xs text-slate-400">{adminRole}</p>
+            <p className="text-xs text-slate-400">{roleLabel}</p>
           </div>
         </div>
         <Link

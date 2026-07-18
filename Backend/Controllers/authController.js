@@ -14,8 +14,20 @@ dotenv.config();
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const adminEmails = process.env.ADMIN_EMAILS
-  ? process.env.ADMIN_EMAILS.split(",")
+  ? process.env.ADMIN_EMAILS.split(",").map((e) => e.trim().toLowerCase())
   : [];
+const superAdminEmail = (process.env.SUPER_ADMIN_EMAIL || "").trim().toLowerCase();
+// Both superadmin and reseller admins get isAdmin=true for backward compat
+const isAdminEmail = (email) => {
+  const e = (email || "").trim().toLowerCase();
+  return e === superAdminEmail || adminEmails.includes(e);
+};
+const getRoleFromEmail = (email) => {
+  const e = (email || "").trim().toLowerCase();
+  if (e === superAdminEmail) return "superadmin";
+  if (adminEmails.includes(e)) return "admin";
+  return "user";
+};
 
 // Reusable OTP email body builder — keeps the nice formatting in one place
 // Plain text version (fallback for email clients that don't render HTML)
@@ -156,7 +168,7 @@ export const register = async (req, res, next) => {
       password: hash,
       otp,
       otpExpires: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes expiry
-      isAdmin: adminEmails.includes(email),
+      isAdmin: isAdminEmail(email),
     });
     await newUser.save();
 
@@ -236,13 +248,14 @@ export const verifyOtp = async (req, res, next) => {
     user.isVerified = true;
     user.otp = null;
     user.otpExpires = null;
-    user.isAdmin = adminEmails.includes(user.email);
+    user.isAdmin = isAdminEmail(user.email);
     await user.save();
 
     const token = jwt.sign(
       {
         id: user._id,
         isAdmin: user.isAdmin,
+        role: getRoleFromEmail(user.email),
       },
       process.env.JWT,
       {
@@ -251,6 +264,7 @@ export const verifyOtp = async (req, res, next) => {
     );
 
     const { password, ...userDetails } = user._doc;
+    const responseUser = { ...userDetails, role: getRoleFromEmail(user.email) };
     return res
       .cookie("access_token", token, {
         httpOnly: true,
@@ -260,7 +274,7 @@ export const verifyOtp = async (req, res, next) => {
         maxAge: 3 * 24 * 60 * 60 * 1000,
       })
       .status(200)
-      .json(createSuccess(200, "Account Verified Successfully!", userDetails));
+      .json(createSuccess(200, "Account Verified Successfully!", responseUser));
   } catch (error) {
     next(error);
   }
@@ -376,11 +390,12 @@ export const login = async (req, res, next) => {
     const { password: _, otp, otpExpires, ...userDetails } = user._doc;
 
     const token = jwt.sign(
-      { id: user._id, isAdmin: user.isAdmin },
+      { id: user._id, isAdmin: user.isAdmin, role: getRoleFromEmail(user.email) },
       process.env.JWT,
       { expiresIn: "3d" },
     );
 
+    const loginResponseUser = { ...userDetails, role: getRoleFromEmail(user.email) };
     res
       .cookie("access_token", token, {
         httpOnly: true,
@@ -390,7 +405,7 @@ export const login = async (req, res, next) => {
         maxAge: 3 * 24 * 60 * 60 * 1000,
       })
       .status(200)
-      .json(createSuccess(200, "User Logged In Successfully", userDetails));
+      .json(createSuccess(200, "User Logged In Successfully", loginResponseUser));
   } catch (error) {
     next(error);
   }
@@ -419,7 +434,7 @@ export const googleAuth = async (req, res, next) => {
     let user = await Users.findOne({ email });
 
     // .env se emails fetch karein
-    const shouldBeAdmin = adminEmails.includes(email);
+    const shouldBeAdmin = isAdminEmail(email);
 
     // If user does not exist (New Sign up)
     if (!user) {
@@ -445,6 +460,7 @@ export const googleAuth = async (req, res, next) => {
       {
         id: user._id,
         isAdmin: user.isAdmin,
+        role: getRoleFromEmail(user.email),
       },
       process.env.JWT,
       {
@@ -453,6 +469,7 @@ export const googleAuth = async (req, res, next) => {
     );
 
     const { password, otp, otpExpires, ...userDetails } = user._doc;
+    const googleResponseUser = { ...userDetails, role: getRoleFromEmail(user.email) };
 
     res
       .cookie("access_token", token, {
@@ -463,7 +480,7 @@ export const googleAuth = async (req, res, next) => {
         maxAge: 3 * 24 * 60 * 60 * 1000,
       })
       .status(200)
-      .json(createSuccess(200, "Google Login Successful!", userDetails));
+      .json(createSuccess(200, "Google Login Successful!", googleResponseUser));
   } catch (error) {
     next(error);
   }

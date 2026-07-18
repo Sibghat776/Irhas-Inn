@@ -4,6 +4,7 @@ import {
   deleteProduct,
   getProductById,
   getProducts,
+  getAdminProducts,
   rateProduct,
   updateProduct,
 } from "../Controllers/productController.js";
@@ -21,6 +22,7 @@ productRouter.post(
 );
 productRouter.get("/getProduct/:id", getProductById);
 productRouter.get("/getAllProducts", getProducts);
+productRouter.get("/getAdminProducts", verifyToken, verifyAdmin, getAdminProducts);
 productRouter.put("/updateProduct/:id", verifyToken, verifyAdmin, updateProduct);
 productRouter.delete("/deleteProduct/:id", verifyToken, verifyAdmin, deleteProduct);
 productRouter.put("/productRatings/:id", verifyUser, rateProduct);

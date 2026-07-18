@@ -6,13 +6,25 @@ import { createError, createSuccess } from "../utils/commonFunctions.js";
 // GET /api/v1/analytics/summary  (admin only)
 // Aggregates revenue, order counts, status breakdown,
 // top-selling products, and daily revenue (last 30 days).
+// Scoped to reseller's own products if role === "admin".
 // ==========================================
 export const getAnalyticsSummary = async (req, res, next) => {
   try {
+    const isReseller = req.user.role === "admin";
+
+    // For reseller: get their product IDs first
+    let resellerProductIds = [];
+    let orderMatchStage = {};
+    if (isReseller) {
+      resellerProductIds = await Product.find({ addedBy: req.user.id }).distinct("_id");
+      orderMatchStage = { "orderItems.product": { $in: resellerProductIds } };
+    }
+
     const [ordersAgg, statusAgg, topProductsAgg, totalProducts, totalUsers] =
       await Promise.all([
         // Revenue + order counts
         Order.aggregate([
+          ...(isReseller ? [{ $match: orderMatchStage }] : []),
           {
             $group: {
               _id: null,
@@ -32,12 +44,15 @@ export const getAnalyticsSummary = async (req, res, next) => {
         ]),
         // Orders grouped by status
         Order.aggregate([
+          ...(isReseller ? [{ $match: orderMatchStage }] : []),
           { $group: { _id: "$status", count: { $sum: 1 } } },
           { $sort: { count: -1 } },
         ]),
         // Top-selling products (by quantity sold)
         Order.aggregate([
+          ...(isReseller ? [{ $match: orderMatchStage }] : []),
           { $unwind: "$orderItems" },
+          ...(isReseller ? [{ $match: { "orderItems.product": { $in: resellerProductIds } } }] : []),
           {
             $group: {
               _id: "$orderItems.product",
@@ -73,9 +88,12 @@ export const getAnalyticsSummary = async (req, res, next) => {
             },
           },
         ]),
-        Product.countDocuments(),
-        // total users handled by a lightweight count on Orders' distinct users
-        Order.distinct("user"),
+        isReseller
+          ? Product.countDocuments({ addedBy: req.user.id })
+          : Product.countDocuments(),
+        isReseller
+          ? Order.find(orderMatchStage).distinct("user")
+          : Order.distinct("user"),
       ]);
 
     const totals = ordersAgg[0] || {
@@ -95,6 +113,7 @@ export const getAnalyticsSummary = async (req, res, next) => {
     const revenueOverTime = await Order.aggregate([
       {
         $match: {
+          ...(isReseller ? orderMatchStage : {}),
           createdAt: { $gte: thirtyDaysAgo },
           status: { $ne: "Cancelled" },
         },

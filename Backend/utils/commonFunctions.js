@@ -19,6 +19,19 @@ export const createSuccess = (status, message, data = {}) => {
   successObj.data = data;
   return successObj;
 };
+// ==================== ROLE RESOLVER ====================
+export const resolveRole = (email) => {
+  const superAdminEmail = (process.env.SUPER_ADMIN_EMAIL || "").trim().toLowerCase();
+  const adminEmails = (process.env.ADMIN_EMAILS || "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+  const normalizedEmail = (email || "").trim().toLowerCase();
+  if (normalizedEmail === superAdminEmail) return "superadmin";
+  if (adminEmails.includes(normalizedEmail)) return "admin";
+  return "user";
+};
+
 export const verifyToken = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
@@ -32,10 +45,21 @@ export const verifyToken = (req, res, next) => {
 
     if (!token) return next(createError(401, "You are not authenticated!"));
 
-    jwt.verify(token, process.env.JWT, (err, user) => {
+    jwt.verify(token, process.env.JWT, async (err, user) => {
       if (err) return next(createError(403, "Token is not valid!"));
-
       req.user = user;
+      try {
+        const Users = (await import("../Models/Users.js")).default;
+        const dbUser = await Users.findById(user.id).select("email").lean();
+        if (dbUser) {
+          req.user.email = dbUser.email;
+          req.user.role = resolveRole(dbUser.email);
+        } else {
+          req.user.role = "user";
+        }
+      } catch {
+        req.user.role = "user";
+      }
       next();
     });
   } catch (error) {
@@ -46,7 +70,7 @@ export const verifyToken = (req, res, next) => {
 export const verifyUser = (req, res, next) => {
   verifyToken(req, res, (err) => {
     if (err) return next(err);
-    if (req.user.id === req.params.id || req.user.isAdmin) {
+    if (req.user.id === req.params.id || req.user.isAdmin || req.user.role === "superadmin" || req.user.role === "admin") {
       next();
     } else {
       next(createError(401, "You are not authorized"));
@@ -57,10 +81,32 @@ export const verifyUser = (req, res, next) => {
 export const verifyAdmin = (req, res, next) => {
   verifyToken(req, res, (err) => {
     if (err) return next(err);
-    if (req.user.isAdmin) {
+    if (req.user.role === "superadmin" || req.user.role === "admin" || req.user.isAdmin) {
       next();
     } else {
       next(createError(401, "You are not authorized"));
+    }
+  });
+};
+
+export const requireSuperAdmin = (req, res, next) => {
+  verifyToken(req, res, (err) => {
+    if (err) return next(err);
+    if (req.user.role === "superadmin") {
+      next();
+    } else {
+      next(createError(403, "Super admin access required"));
+    }
+  });
+};
+
+export const requireAdminOrAbove = (req, res, next) => {
+  verifyToken(req, res, (err) => {
+    if (err) return next(err);
+    if (req.user.role === "superadmin" || req.user.role === "admin") {
+      next();
+    } else {
+      next(createError(403, "Admin access required"));
     }
   });
 };

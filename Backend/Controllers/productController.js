@@ -104,7 +104,6 @@ export const addProduct = async (req, res, next) => {
     const slug = await generateSlug(name);
 
     // Create product
-    console.log(req.user)
     const product = await Product.create({
       name: name.trim(),
       slug,
@@ -118,6 +117,7 @@ export const addProduct = async (req, res, next) => {
       tags: parseArray(tags),
       images: uploadedImages,
       user: req.user.id,
+      addedBy: req.user.id,
     });
 
     // Add product to category
@@ -241,6 +241,42 @@ export const getProducts = async (req, res, next) => {
           totalPages: Math.ceil(totalProducts / limitNum),
           hasNextPage: pageNum < Math.ceil(totalProducts / limitNum),
           hasPrevPage: pageNum > 1,
+        },
+      }),
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ==================== 2b. GET ALL PRODUCTS (ADMIN-FACING, ROLE-SCOPED) ====================
+
+export const getAdminProducts = async (req, res, next) => {
+  try {
+    const filter = {};
+
+    // Reseller admins only see their own products
+    if (req.user.role === "admin") {
+      filter.addedBy = req.user.id;
+    }
+    // superadmin sees all (no filter)
+
+    const products = await Product.find(filter)
+      .populate("category", "name slug")
+      .populate("user", "username email")
+      .populate("addedBy", "username email")
+      .sort({ createdAt: -1 })
+      .select("-__v");
+
+    res.status(200).json(
+      createSuccess(200, "Admin products fetched successfully", {
+        products,
+        pagination: {
+          totalProducts: products.length,
+          currentPage: 1,
+          totalPages: 1,
+          hasNextPage: false,
+          hasPrevPage: false,
         },
       }),
     );
@@ -464,6 +500,11 @@ export const updateProduct = async (req, res, next) => {
       return next(createError(404, "Product not found"));
     }
 
+    // Ownership check for reseller admins
+    if (req.user.role === "admin" && product.addedBy?.toString() !== req.user.id?.toString()) {
+      return next(createError(403, "You can only edit your own products"));
+    }
+
     // Update basic fields
     if (name?.trim()) {
       product.name = name.trim();
@@ -541,6 +582,11 @@ export const deleteProduct = async (req, res, next) => {
     const product = await Product.findById(productId);
     if (!product) {
       return next(createError(404, "Product not found"));
+    }
+
+    // Ownership check for reseller admins
+    if (req.user.role === "admin" && product.addedBy?.toString() !== req.user.id?.toString()) {
+      return next(createError(403, "You can only delete your own products"));
     }
 
     // Delete images from Cloudinary

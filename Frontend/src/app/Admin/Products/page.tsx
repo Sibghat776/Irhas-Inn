@@ -30,6 +30,7 @@ interface Product {
   averageRating?: number;
   tags?: string[];
   isActive?: boolean;
+  addedBy?: string | { _id: string };
 }
 
 interface Category {
@@ -40,7 +41,7 @@ interface Category {
 
 const ProductsPage = () => {
   const { data: productsRes, loading: productsLoading } = useFetch<any>(
-    `${baseUrl}product/getAllProducts`,
+    `${baseUrl}product/getAdminProducts`,
   );
   const { data: categoriesRes } = useFetch<any>(
     `${baseUrl}category/getAllCategories`,
@@ -54,6 +55,21 @@ const ProductsPage = () => {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string>("superadmin");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = window.localStorage.getItem("user");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          setCurrentUserId(parsed?._id ?? null);
+          setUserRole(parsed?.role ?? (parsed?.isAdmin ? "superadmin" : "user"));
+        } catch {}
+      }
+    }
+  }, []);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -478,20 +494,24 @@ const ProductsPage = () => {
                   </td>
                   <td className="p-4">
                     <div className="flex justify-center gap-2">
-                      <button
-                        onClick={() => handleEditProduct(product)}
-                        className="rounded-lg border border-blue-200 bg-blue-50 p-2 text-blue-600 transition hover:bg-blue-600 hover:text-white"
-                        aria-label="Edit"
-                      >
-                        <Edit size={16} />
-                      </button>
-                      <button
-                        onClick={() => setDeleteId(product._id)}
-                        className="rounded-lg border border-red-200 bg-red-50 p-2 text-red-600 transition hover:bg-red-600 hover:text-white"
-                        aria-label="Delete"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                      {(userRole === "superadmin" || (() => { const id = typeof product.addedBy === "string" ? product.addedBy : (product.addedBy as any)?._id; return id === currentUserId; })()) && (
+                        <>
+                          <button
+                            onClick={() => handleEditProduct(product)}
+                            className="rounded-lg border border-blue-200 bg-blue-50 p-2 text-blue-600 transition hover:bg-blue-600 hover:text-white"
+                            aria-label="Edit"
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button
+                            onClick={() => setDeleteId(product._id)}
+                            className="rounded-lg border border-red-200 bg-red-50 p-2 text-red-600 transition hover:bg-red-600 hover:text-white"
+                            aria-label="Delete"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>

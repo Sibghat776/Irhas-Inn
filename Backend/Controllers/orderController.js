@@ -229,7 +229,16 @@ export const getAllOrders = async (req, res, next) => {
   try {
     await assignMissingSerialNumbers();
 
-    const orders = await populateOrder(Order.find({}).sort({ createdAt: -1 }));
+    let orders;
+    if (req.user.role === "admin") {
+      // Reseller: only orders containing at least one of their products
+      const resellerProductIds = await Product.find({ addedBy: req.user.id }).distinct("_id");
+      orders = await populateOrder(
+        Order.find({ "orderItems.product": { $in: resellerProductIds } }).sort({ createdAt: -1 })
+      );
+    } else {
+      orders = await populateOrder(Order.find({}).sort({ createdAt: -1 }));
+    }
 
     return res
       .status(200)
@@ -261,6 +270,17 @@ export const updateOrderStatus = async (req, res, next) => {
     const order = await Order.findById(orderId);
     if (!order) {
       return next(createError(404, "Order not found"));
+    }
+
+    // Ownership check for reseller admins
+    if (req.user.role === "admin") {
+      const resellerProductIds = await Product.find({ addedBy: req.user.id }).distinct("_id");
+      const hasOwnership = order.orderItems.some((item) =>
+        resellerProductIds.some((pid) => pid.toString() === item.product?.toString())
+      );
+      if (!hasOwnership) {
+        return next(createError(403, "You can only update orders containing your products"));
+      }
     }
 
     order.status = status;

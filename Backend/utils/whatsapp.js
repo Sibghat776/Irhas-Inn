@@ -134,8 +134,10 @@ let sock = null;
 const AUTH_FOLDER = join(tmpdir(), "baileys_auth_zeef");
 const MONGO_COLLECTION = "baileys_sessions";
 // Ensure the auth folder exists so Baileys can read/write creds without ENOENT errors
-if (!existsSync(AUTH_FOLDER)) {
-  mkdirSync(AUTH_FOLDER, { recursive: true });
+try {
+  if (!existsSync(AUTH_FOLDER)) mkdirSync(AUTH_FOLDER, { recursive: true });
+} catch (err) {
+  console.warn("[WhatsApp] Could not create auth folder:", err.message);
 }
 
 
@@ -151,7 +153,11 @@ async function clearAuthBackup() {
     console.error("Failed to delete stale WhatsApp auth backup from MongoDB:", err.message);
   }
   if (existsSync(AUTH_FOLDER)) {
-    rmSync(AUTH_FOLDER, { recursive: true, force: true });
+    try {
+      rmSync(AUTH_FOLDER, { recursive: true, force: true, maxRetries: 3, retryDelay: 200 });
+    } catch (err) {
+      console.warn("[WhatsApp] Could not fully clear auth folder (file lock?), continuing anyway:", err.message);
+    }
   }
 }
 

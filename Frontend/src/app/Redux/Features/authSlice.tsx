@@ -7,6 +7,7 @@ interface AuthState {
   email: string | null;
   phoneNo: string | number | null;
   isAdmin: boolean;
+  role: "superadmin" | "admin" | "user";
   isVerified: boolean;
   loading: boolean;
   error: string | null;
@@ -30,6 +31,7 @@ const initialState: AuthState = storedUser
       email: storedUser.email ?? null,
       phoneNo: storedUser.phoneNo ?? null,
       isAdmin: storedUser.isAdmin ?? false,
+      role: storedUser.role ?? "user",
       isVerified: storedUser.isVerified ?? false,
       loading: false,
       error: null,
@@ -41,6 +43,7 @@ const initialState: AuthState = storedUser
       email: null,
       phoneNo: null,
       isAdmin: false,
+      role: "user",
       isVerified: false,
       loading: false,
       error: null,
@@ -64,6 +67,7 @@ const authSlice = createSlice({
         phoneNo: string;
         isVerified: boolean;
         isAdmin: boolean;
+        role?: "superadmin" | "admin" | "user";
       }>,
     ) => {
       const user = action.payload;
@@ -79,6 +83,7 @@ const authSlice = createSlice({
       state.phoneNo = user.phoneNo;
       state.isVerified = user.isVerified;
       state.isAdmin = user.isAdmin;
+      state.role = user.role ?? "user";
 
       state.loading = false;
       state.error = null;
@@ -100,6 +105,8 @@ const authSlice = createSlice({
       state.email = null;
       state.phoneNo = null;
       state.isVerified = false;
+      state.isAdmin = false;
+      state.role = "user";
       state.loading = false;
       state.error = null;
     },
