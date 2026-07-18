@@ -51,7 +51,9 @@ const UsersPage = () => {
         try {
           const parsed = JSON.parse(stored);
           setCurrentUserId(parsed._id ?? null);
-          setCurrentUserRole(parsed.role ?? "user");
+          const resolvedRole = parsed.role ?? (parsed.isAdmin ? "superadmin" : "user");
+          setCurrentUserRole(resolvedRole);
+          if (process.env.NODE_ENV !== "production") console.log("[UsersPage] role:", resolvedRole);
         } catch {}
       }
     }

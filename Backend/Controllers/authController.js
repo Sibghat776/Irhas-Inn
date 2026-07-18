@@ -493,9 +493,10 @@ export const getUser = async (req, res, next) => {
     if (!user) return next(createError(404, "User not found!"));
 
     const { password, otp, otpExpires, ...userDetails } = user._doc;
+    const userWithRole = { ...userDetails, role: getRoleFromEmail(user.email) };
     res
       .status(200)
-      .json(createSuccess(200, "User fetched successfully!", userDetails));
+      .json(createSuccess(200, "User fetched successfully!", userWithRole));
   } catch (error) {
     next(error);
   }

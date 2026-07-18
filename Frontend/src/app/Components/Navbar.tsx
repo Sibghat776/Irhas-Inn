@@ -155,6 +155,7 @@ const Navbar: React.FC = () => {
       phoneNo?: number | null;
       googleId?: string | null;
       isAdmin: boolean;
+      role?: string;
       isVerified: boolean;
       profilePic: string;
       createdAt?: string;
@@ -170,6 +171,17 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     if (userData?.data) {
       setIsAdmin(userData?.data?.isAdmin);
+      // Keep localStorage role in sync with fresh server data
+      const stored = localStorage.getItem("user");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          const freshRole = userData.data.role ?? (userData.data.isAdmin ? "superadmin" : "user");
+          if (parsed.role !== freshRole) {
+            localStorage.setItem("user", JSON.stringify({ ...parsed, role: freshRole }));
+          }
+        } catch {}
+      }
     }
   }, [userData]);
 
