@@ -7,6 +7,8 @@ import { sendToSubscription } from "../utils/webpush.js";
 // 1. SUBSCRIBE - subscription save karna
 // ==========================================
 export const subscribeUser = async (req, res, next) => {
+  console.log("BACKEND PUBLIC :", process.env.VAPID_PUBLIC_KEY);
+  console.log("BACKEND PRIVATE:", process.env.VAPID_PRIVATE_KEY);
   try {
     const { endpoint, keys } = req.body;
 

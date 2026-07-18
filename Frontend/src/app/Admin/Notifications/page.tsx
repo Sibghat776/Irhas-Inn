@@ -15,6 +15,8 @@ export default function AdminNotificationPage() {
     const [result, setResult] = useState<any>(null);
 
     const handleSend = async () => {
+        console.log("FRONTEND PUBLIC:",
+            process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY)
         if (!title || !body) return showToast("Please enter title and message", "error");
 
         setLoading(true);
