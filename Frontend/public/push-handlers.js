@@ -1,7 +1,10 @@
 // Web Push Notification handlers for ZeeF Trendy Store
 // Yeh file sw.js ke saath importScripts ke zariye load hoti hai
-
+console.log("Push handler loaded");
 self.addEventListener("push", (event) => {
+  console.log("PUSH RECEIVED");
+
+  console.log(event);
   if (!event.data) return;
 
   let data;

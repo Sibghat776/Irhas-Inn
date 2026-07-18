@@ -1,3 +1,5 @@
 q.zip 
 q/ 
 node_modules/ 
+.vercel
+.env*
