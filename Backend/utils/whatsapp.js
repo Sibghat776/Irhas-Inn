@@ -130,19 +130,42 @@ import pino from "pino";
 
 let isClientReady = false;
 let sock = null;
+let isConnecting = false; // singleton guard
+
+// Reconnect state
+let retryCount = 0;
+let conflictCount = 0;
+let conflictWindowStart = 0;
+let stableTimer = null;
 
 const AUTH_FOLDER = join(tmpdir(), "baileys_auth_zeef");
 const MONGO_COLLECTION = "baileys_sessions";
-// Ensure the auth folder exists so Baileys can read/write creds without ENOENT errors
+
 try {
   if (!existsSync(AUTH_FOLDER)) mkdirSync(AUTH_FOLDER, { recursive: true });
 } catch (err) {
   console.warn("[WhatsApp] Could not create auth folder:", err.message);
 }
 
+// Human-readable disconnect reasons
+const DISCONNECT_REASONS = {
+  401: "Logged Out",
+  408: "Connection Timeout",
+  411: "Multi-Device Mismatch",
+  428: "Connection Closed",
+  440: "Stream Conflict (another session active for this account)",
+  500: "Internal Server Error",
+};
+
+function getBackoffDelay(retry) {
+  if (retry <= 1) return 5000;
+  if (retry === 2) return 15000;
+  if (retry === 3) return 30000;
+  return 60000;
+}
 
 // ==========================================
-// 💾 RESTORE AUTH FROM MONGO
+// 💾 CLEAR AUTH BACKUP
 // ==========================================
 async function clearAuthBackup() {
   try {
@@ -166,9 +189,7 @@ async function restoreFromMongo() {
     const collection = mongoose.connection.db.collection(MONGO_COLLECTION);
     const doc = await collection.findOne({ _id: "auth_backup" });
     if (!doc || !doc.files) return;
-
     if (!existsSync(AUTH_FOLDER)) mkdirSync(AUTH_FOLDER, { recursive: true });
-
     for (const [name, data] of Object.entries(doc.files)) {
       try {
         writeFileSync(join(AUTH_FOLDER, name), Buffer.from(data, "base64"));
@@ -208,25 +229,41 @@ async function backupToMongo() {
 // 🚀 INITIALIZE WHATSAPP CLIENT (Baileys)
 // ==========================================
 export const initWhatsAppClient = async () => {
+  // Singleton guard — never create two sockets at once
+  if (isConnecting) {
+    console.log("[WhatsApp] Connection already in progress, skipping duplicate init.");
+    return;
+  }
+
   if (mongoose.connection.readyState !== 1) {
     console.log("Waiting for MongoDB connection to initialize WhatsApp...");
     setTimeout(initWhatsAppClient, 2000);
     return;
   }
 
+  isConnecting = true;
+
+  // Close existing socket cleanly before creating a new one
+  if (sock) {
+    try { sock.end(undefined); } catch (_) {}
+    sock = null;
+  }
+
   try {
-    // Restore session from MongoDB first
+    // Restore session from MongoDB ONCE per init attempt
     await restoreFromMongo();
 
     let state, saveCreds;
     try {
       ({ state, saveCreds } = await useMultiFileAuthState(AUTH_FOLDER));
     } catch (authErr) {
-      console.warn('WhatsApp auth state init failed, skipping WhatsApp client:', authErr.message);
-      return; // skip further initialization
+      console.warn("[WhatsApp] Auth state init failed, skipping:", authErr.message);
+      isConnecting = false;
+      return;
     }
+
     const { version, isLatest } = await fetchLatestBaileysVersion();
-    console.log(`Using Baileys v${version}, isLatest: ${isLatest}`);
+    console.log(`[WhatsApp] Using Baileys v${version}, isLatest: ${isLatest}`);
 
     sock = makeWASocket({
       version,
@@ -238,6 +275,8 @@ export const initWhatsAppClient = async () => {
       logger: pino({ level: "silent" }),
     });
 
+    isConnecting = false; // socket created, no longer "connecting"
+
     sock.ev.on("creds.update", async () => {
       await saveCreds();
       await backupToMongo();
@@ -248,48 +287,87 @@ export const initWhatsAppClient = async () => {
         isClientReady = false;
         console.log("⚠️ QR RECEIVED — Scan with WhatsApp");
         qrcode.generate(qr, { small: true });
-        console.log(
-          `Manual Scan: https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qr)}`,
-        );
+        console.log(`Manual Scan: https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qr)}`);
+      }
+
+      if (connection === "open") {
+        isClientReady = true;
+        retryCount = 0;
+        conflictCount = 0;
+        console.log("🚀 WhatsApp Client is fully ready!");
+        await backupToMongo();
+
+        // Reset retry counter after 60s of stable connection
+        if (stableTimer) clearTimeout(stableTimer);
+        stableTimer = setTimeout(() => { retryCount = 0; conflictCount = 0; }, 60000);
       }
 
       if (connection === "close") {
+        isClientReady = false;
+        if (stableTimer) { clearTimeout(stableTimer); stableTimer = null; }
+
         const reason =
           lastDisconnect?.error?.output?.statusCode ||
           lastDisconnect?.error?.output?.payload?.statusCode ||
           lastDisconnect?.reason ||
           lastDisconnect?.error?.message;
-        const shouldReconnect = reason !== DisconnectReason.loggedOut;
-        console.log(
-          `❌ Disconnected. Reason: ${reason}. Reconnect: ${shouldReconnect}`,
-        );
-        isClientReady = false;
+
+        const reasonLabel = DISCONNECT_REASONS[reason] || `Unknown (${reason})`;
+        retryCount++;
+        const delay = getBackoffDelay(retryCount);
+
+        console.log(`❌ [WhatsApp] Disconnected. Reason: ${reason} — ${reasonLabel}`);
+        console.log(`   Retry #${retryCount}, next attempt in ${delay / 1000}s`);
 
         if (reason === 440) {
-          console.log("Bad session — clearing stale session, need fresh QR");
-          await clearAuthBackup();
-          setTimeout(() => initWhatsAppClient(), 3000);
-        } else if (shouldReconnect) {
-          setTimeout(() => initWhatsAppClient(), 5000);
-        } else {
-          console.log("Logged out — clearing session from MongoDB");
-          await clearAuthBackup();
-        }
-      }
+          // Track conflict frequency
+          const now = Date.now();
+          if (now - conflictWindowStart > 120000) {
+            // Reset window if last conflict was >2 min ago
+            conflictCount = 1;
+            conflictWindowStart = now;
+          } else {
+            conflictCount++;
+          }
 
-      if (connection === "open") {
-        isClientReady = true;
-        console.log("🚀 WhatsApp Client is fully ready!");
-        await backupToMongo();
+          if (conflictCount >= 3) {
+            console.log(`[WhatsApp] ${conflictCount} conflicts in 2 min — clearing stale session, need fresh QR`);
+            conflictCount = 0;
+            await clearAuthBackup();
+          } else {
+            console.log(`[WhatsApp] Conflict #${conflictCount}/3 — waiting ${delay / 1000}s before retry (no session clear yet)`);
+          }
+          setTimeout(initWhatsAppClient, delay);
+        } else if (reason === DisconnectReason.loggedOut) {
+          console.log("[WhatsApp] Logged out — clearing session from MongoDB");
+          await clearAuthBackup();
+          // Don't auto-reconnect on logout — needs manual QR scan
+        } else {
+          setTimeout(initWhatsAppClient, delay);
+        }
       }
     });
 
     sock.ev.on("messages.upsert", () => {});
   } catch (err) {
-    console.error("❌ WhatsApp Init Error:", err.message);
-    setTimeout(() => initWhatsAppClient(), 10000);
+    isConnecting = false;
+    console.error("❌ [WhatsApp] Init Error:", err.message);
+    const delay = getBackoffDelay(++retryCount);
+    console.log(`   Retry #${retryCount} in ${delay / 1000}s`);
+    setTimeout(initWhatsAppClient, delay);
   }
 };
+
+// Clean shutdown — release socket so no zombie connection causes 440 on next start
+const shutdown = () => {
+  if (sock) {
+    try { sock.end(undefined); } catch (_) {}
+    sock = null;
+  }
+  process.exit(0);
+};
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
 
 // ==========================================
 // 📩 SEND OTP FUNCTION
@@ -315,7 +393,6 @@ export const sendWhatsAppOTP = async (phoneNo, otp) => {
 
     const messageText = `Dear Valued Customer,\n\nWelcome to ZF Store! 🛍️\n\nYour OTP Code: *${otp}*\n\nValid for 10 minutes.`;
     await sock.sendMessage(chatId, { text: messageText });
-
     console.log(`OTP sent successfully to ${number}`);
     return true;
   } catch (error) {
