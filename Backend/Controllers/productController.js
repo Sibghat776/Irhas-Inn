@@ -1,4 +1,5 @@
 import { Product } from "../Models/Product.js";
+import Users from "../Models/Users.js"; // ensures Mongoose registers the User schema for populate()
 import { Category } from "../Models/Category.js";
 import { createError, createSuccess } from "../utils/commonFunctions.js";
 import { queueSocialPost } from "./socialPostController.js";

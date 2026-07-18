@@ -251,21 +251,21 @@ const ProductsPage = () => {
       if (formData.tags.trim()) {
         submitData.append(
           "tags",
-          JSON.stringify(formData.tags.split(",").map((t) => t.trim())),
+          formData.tags.split(",").map((t) => t.trim()).filter(Boolean).join(","),
         );
       }
 
       if (formData.colors.trim()) {
         submitData.append(
           "colors",
-          JSON.stringify(formData.colors.split(",").map((c) => c.trim())),
+          formData.colors.split(",").map((c) => c.trim()).filter(Boolean).join(","),
         );
       }
 
       if (formData.sizes.trim()) {
         submitData.append(
           "sizes",
-          JSON.stringify(formData.sizes.split(",").map((s) => s.trim())),
+          formData.sizes.split(",").map((s) => s.trim()).filter(Boolean).join(","),
         );
       }
 

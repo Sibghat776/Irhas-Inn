@@ -22,7 +22,7 @@ const productSchema = new mongoose.Schema(
     },
     addedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Users",
+      ref: "User",
       required: true,
     },
     description: {
