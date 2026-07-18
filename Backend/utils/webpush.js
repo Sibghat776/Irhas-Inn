@@ -18,6 +18,8 @@ export const sendToSubscription = async (subscription, payload) => {
 
   try {
     return await webpush.sendNotification(pushSubscription, JSON.stringify(payload));
+    console.log(process.env.VAPID_PUBLIC_KEY);
+    console.log(process.env.VAPID_PRIVATE_KEY);
   } catch (err) {
     console.error("❌ webpush.sendNotification failed for endpoint:", subscription.endpoint);
     console.error("   statusCode:", err?.statusCode);

@@ -40,7 +40,8 @@ app.use(
 );
 
 app.use(helmet());
-
+console.log("BACKEND PUBLIC :", process.env.VAPID_PUBLIC_KEY);
+console.log("BACKEND PRIVATE:", process.env.VAPID_PRIVATE_KEY);
 // Routes
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/product", productRouter);

@@ -6,6 +6,7 @@ import ClientLayout from "./ClientLayout";
 import GoogleProvider from "./GoogleProvider";
 import NotificationPrompt from "./Components/NotificationPrompt";
 import RouteProgressBar from "./Components/RouteProgressBar";
+import { configDotenv } from "dotenv";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,9 +17,10 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-
+configDotenv()
 const siteUrl = "https://zeeftrendystore.vercel.app";
-
+console.log("FRONTEND PUBLIC:",
+  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY)
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {

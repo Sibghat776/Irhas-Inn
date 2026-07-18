@@ -1,30 +1,47 @@
 // Web Push Notification handlers for ZeeF Trendy Store
 // Yeh file sw.js ke saath importScripts ke zariye load hoti hai
 console.log("Push handler loaded");
+
+// self.addEventListener("push", (event) => {
+//   console.log("PUSH RECEIVED");
+
+//   console.log(event);
+//   if (!event.data) return;
+
+//   let data;
+//   try {
+//     data = event.data.json();
+//   } catch {
+//     data = { title: "ZeeF Trendy Store", body: event.data.text(), link: "/" };
+//   }
+
+//   const options = {
+//     body: data.body || "",
+//     icon: "/Logo.png",
+//     badge: "/Logo.png",
+//     data: { link: data.link || "/" },
+//     vibrate: [200, 100, 200],
+//   };
+
+//   event.waitUntil(
+//     self.registration.showNotification(data.title || "ZeeF Trendy Store", options)
+//   );
+// });
+
 self.addEventListener("push", (event) => {
-  console.log("PUSH RECEIVED");
 
-  console.log(event);
-  if (!event.data) return;
+    console.log("========== PUSH RECEIVED ==========");
 
-  let data;
-  try {
-    data = event.data.json();
-  } catch {
-    data = { title: "ZeeF Trendy Store", body: event.data.text(), link: "/" };
-  }
+    console.log(event);
 
-  const options = {
-    body: data.body || "",
-    icon: "/Logo.png",
-    badge: "/Logo.png",
-    data: { link: data.link || "/" },
-    vibrate: [200, 100, 200],
-  };
+    console.log(event.data);
 
-  event.waitUntil(
-    self.registration.showNotification(data.title || "ZeeF Trendy Store", options)
-  );
+    if(event.data){
+
+        console.log(event.data.text());
+
+    }
+
 });
 
 self.addEventListener("notificationclick", (event) => {
