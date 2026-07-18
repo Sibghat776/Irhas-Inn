@@ -10,8 +10,6 @@ const withPWA = withPWAInit({
     cleanupOutdatedCaches: true,
   },
   customWorkerSrc: "worker",
-  customWorkerDest: "public",
-  customWorkerPrefix: "push",
 });
 
 const nextConfig: NextConfig = {
