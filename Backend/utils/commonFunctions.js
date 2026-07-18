@@ -20,16 +20,10 @@ export const createSuccess = (status, message, data = {}) => {
   return successObj;
 };
 // ==================== ROLE RESOLVER ====================
-export const resolveRole = (email) => {
+export const resolveRole = (email, dbRole) => {
   const superAdminEmail = (process.env.SUPER_ADMIN_EMAIL || "").trim().toLowerCase();
-  const adminEmails = (process.env.ADMIN_EMAILS || "")
-    .split(",")
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
-  const normalizedEmail = (email || "").trim().toLowerCase();
-  if (normalizedEmail === superAdminEmail) return "superadmin";
-  if (adminEmails.includes(normalizedEmail)) return "admin";
-  return "user";
+  if ((email || "").trim().toLowerCase() === superAdminEmail) return "superadmin";
+  return dbRole || "user";
 };
 
 export const verifyToken = (req, res, next) => {
@@ -50,10 +44,10 @@ export const verifyToken = (req, res, next) => {
       req.user = user;
       try {
         const Users = (await import("../Models/Users.js")).default;
-        const dbUser = await Users.findById(user.id).select("email").lean();
+        const dbUser = await Users.findById(user.id).select("email role").lean();
         if (dbUser) {
           req.user.email = dbUser.email;
-          req.user.role = resolveRole(dbUser.email);
+          req.user.role = resolveRole(dbUser.email, dbUser.role);
         } else {
           req.user.role = "user";
         }

@@ -12,6 +12,8 @@ import { cartRoute } from "./Routes/cartRoute.js";
 import { notificationRoute } from "./Routes/notificationRoute.js";
 import { pushNotificationRoute } from "./Routes/pushNotificationRoute.js";
 import { analyticsRoute } from "./Routes/analyticsRoute.js";
+import { migrateRoles } from "./scripts/migrateRoles.js";
+import { adminRoute } from "./Routes/adminRoute.js";
 import cookieParser from "cookie-parser";
 dotenv.config();
 
@@ -57,11 +59,13 @@ app.use("/api/v1/cart", cartRoute);
 app.use("/api/v1/notifications", notificationRoute);
 app.use("/api/v1/push", pushNotificationRoute);
 app.use("/api/v1/analytics", analyticsRoute);
+app.use("/api/v1/admin", adminRoute);
 
 // Server Start and DB Connection (No if condition)
 (async () => {
   try {
     await connectDB();
+    await migrateRoles();
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
