@@ -103,6 +103,7 @@ export const createOrder = async (req, res, next) => {
         userId: req.user.id,
         title: "Order Placed",
         message: `Your order #${order._id.toString().slice(-8)} has been placed successfully. We'll notify you as it progresses.`,
+        orderId: order._id,
       });
     } catch (notifErr) {
       console.error(`[Notification Failed]: For user ${req.user.id} -`, notifErr.message);

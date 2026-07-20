@@ -1,5 +1,5 @@
 import Users from "../Models/Users.js";
-import { createError, createSuccess } from "../utils/commonFunctions.js";
+import { createError, createSuccess, resolveRole } from "../utils/commonFunctions.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { generateOTP, sendEmail } from "../utils/sendEmail.js"; // OTP generator + centralized email sender
@@ -255,7 +255,7 @@ export const verifyOtp = async (req, res, next) => {
       {
         id: user._id,
         isAdmin: user.isAdmin,
-        role: getRoleFromEmail(user.email),
+        role: resolveRole(user.email, user.role),
       },
       process.env.JWT,
       {
@@ -264,7 +264,7 @@ export const verifyOtp = async (req, res, next) => {
     );
 
     const { password, ...userDetails } = user._doc;
-    const responseUser = { ...userDetails, role: getRoleFromEmail(user.email) };
+    const responseUser = { ...userDetails, role: resolveRole(user.email, user.role) };
     return res
       .cookie("access_token", token, {
         httpOnly: true,
@@ -390,12 +390,12 @@ export const login = async (req, res, next) => {
     const { password: _, otp, otpExpires, ...userDetails } = user._doc;
 
     const token = jwt.sign(
-      { id: user._id, isAdmin: user.isAdmin, role: getRoleFromEmail(user.email) },
+      { id: user._id, isAdmin: user.isAdmin, role: resolveRole(user.email, user.role) },
       process.env.JWT,
       { expiresIn: "3d" },
     );
 
-    const loginResponseUser = { ...userDetails, role: getRoleFromEmail(user.email) };
+    const loginResponseUser = { ...userDetails, role: resolveRole(user.email, user.role) };
     res
       .cookie("access_token", token, {
         httpOnly: true,
@@ -460,7 +460,7 @@ export const googleAuth = async (req, res, next) => {
       {
         id: user._id,
         isAdmin: user.isAdmin,
-        role: getRoleFromEmail(user.email),
+        role: resolveRole(user.email, user.role),
       },
       process.env.JWT,
       {
@@ -469,7 +469,7 @@ export const googleAuth = async (req, res, next) => {
     );
 
     const { password, otp, otpExpires, ...userDetails } = user._doc;
-    const googleResponseUser = { ...userDetails, role: getRoleFromEmail(user.email) };
+    const googleResponseUser = { ...userDetails, role: resolveRole(user.email, user.role) };
 
     res
       .cookie("access_token", token, {
@@ -493,7 +493,7 @@ export const getUser = async (req, res, next) => {
     if (!user) return next(createError(404, "User not found!"));
 
     const { password, otp, otpExpires, ...userDetails } = user._doc;
-    const userWithRole = { ...userDetails, role: getRoleFromEmail(user.email) };
+    const userWithRole = { ...userDetails, role: resolveRole(user.email, user.role) };
     res
       .status(200)
       .json(createSuccess(200, "User fetched successfully!", userWithRole));

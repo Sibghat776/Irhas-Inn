@@ -54,9 +54,11 @@ const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [role, setRole] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
+  const [ready, setReady] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const isAdmin = role === "admin" || role === "superadmin";
   const [cartCount, setCartCount] = useState(0);
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
@@ -74,6 +76,24 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedUser = window.localStorage.getItem("user");
+      if (storedUser) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          const userRole = parsedUser?.role ?? (parsedUser?.isAdmin ? "superadmin" : "user");
+          setRole(userRole);
+        } catch {
+          setRole("user");
+        }
+      } else {
+        setRole("user");
+      }
+      setReady(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -170,7 +190,7 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     if (userData?.data) {
-      setIsAdmin(userData?.data?.isAdmin);
+      setRole(userData.data.role ?? (userData.data.isAdmin ? "superadmin" : "user"));
       // Keep localStorage role in sync with fresh server data
       const stored = localStorage.getItem("user");
       if (stored) {

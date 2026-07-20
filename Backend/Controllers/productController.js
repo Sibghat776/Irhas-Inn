@@ -9,6 +9,29 @@ import {
 } from "../utils/cloudinary.js";
 import slugify from "slugify";
 
+// ====================================================
+// Feature 2: Default tags for every product
+// ====================================================
+
+const DEFAULT_TAGS = ["karachi", "pakistan", "onlineshopping", "viral", "zeeftrendystore"];
+
+/**
+ * Merge default tags into provided tags array.
+ * Performs case‑insensitive deduplication while preserving original order.
+ */
+function mergeDefaultTags(tagsArray) {
+  if (!Array.isArray(tagsArray)) tagsArray = [];
+  // Create a map for case‑insensitive lookup
+  const seen = new Set(tagsArray.map(t => t.toLowerCase()));
+  // Add any missing default tags
+  DEFAULT_TAGS.forEach(tag => {
+    if (!seen.has(tag.toLowerCase())) {
+      tagsArray.push(tag);
+      seen.add(tag.toLowerCase());
+    }
+  });
+  return tagsArray;
+}
 // ==================== UTILITY FUNCTIONS ====================
 
 const parseArray = (value) => {
@@ -115,7 +138,7 @@ export const addProduct = async (req, res, next) => {
       stock: Number(stock) || 0,
       colors: parseArray(colors),
       sizes: parseArray(sizes),
-      tags: parseArray(tags),
+      tags: mergeDefaultTags(parseArray(tags)),
       images: uploadedImages,
       user: req.user.id,
       addedBy: req.user.id,
@@ -521,7 +544,7 @@ export const updateProduct = async (req, res, next) => {
     // Update arrays
     if (colors) product.colors = parseArray(colors);
     if (sizes) product.sizes = parseArray(sizes);
-    if (tags) product.tags = parseArray(tags);
+    if (tags) product.tags = mergeDefaultTags(parseArray(tags));
 
     // Handle category change
     if (category && category !== product.category.toString()) {
