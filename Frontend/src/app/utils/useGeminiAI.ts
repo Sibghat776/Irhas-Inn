@@ -27,7 +27,8 @@ export interface UseGeminiAIResult {
 const DEFAULT_MODEL = "gemini-2.5-flash";
 
 // Minimum acceptable word count before we retry / give up
-const MIN_WORDS = 60;
+// (Lowered from 60 → 40 since the new bullet-point format is intentionally short)
+const MIN_WORDS = 40;
 // How many times to automatically retry if the AI returns a short response
 const MAX_RETRIES = 2;
 
@@ -45,7 +46,7 @@ function buildPrompt(
 
   const base = [
     `You are a fun, relatable e-commerce copywriter for an online store called "ZeeF Trendy Store".`,
-    `Write a HUMANIZED, conversational, viral-style description for the following ${subject} — like a real person hyping it up to a friend, NOT a corporate robot.`,
+    `Write a SHORT, SCANNABLE, BULLET-POINT style description for the following ${subject} — like a real person hyping it up to a friend, NOT a corporate robot.`,
     `${subject === "product" ? "Product" : subject === "category" ? "Category" : "Item"} Name: "${name}".`,
   ];
 
@@ -57,17 +58,16 @@ function buildPrompt(
 
   base.push(
     `Tone & style requirements:`,
-    `- Write like a human, not a robot. Conversational, casual, and binge-worthy.`,
-    `- Use personality words people actually say out loud, like "obsessed", "game-changer", "honestly", "literally".`,
-    `- Build urgency and desire in the closing lines (make the reader want to grab it NOW).`,
+    `- Write like a human, not a robot. Conversational, casual, relatable.`,
     `- Keep the language simple and easy English that anyone can read.`,
-    `Formatting requirements:`,
-    `- Use 3 to 5 professional, modern emojis placed strategically (not excessive, not zero).`,
-    `- Write 180 to 280 words — this is a STRICT MINIMUM, do not stop early.`,
-    `- Use short, punchy paragraphs (2-3 lines each) separated by line breaks for readability.`,
-    `- NO markdown formatting at all: no asterisks, no hashtags, no bullet symbols, no code blocks, no headings, no labels.`,
-    `- Return ONLY the description text, nothing else. No intro, no "Here is your description".`,
-    `- IMPORTANT: You must write the FULL description, at least 180 words. Do not cut it short under any circumstance.`,
+    `Formatting requirements (STRICT):`,
+    `- Line 1: ONE short, punchy hook line introducing the ${subject} (can include 1 emoji).`,
+    `- Then 4 to 6 short bullet points, each on its own line, each starting with a relevant emoji (e.g. ✅ 🔥 💯 ⭐ 👌 🎯) instead of a dash or asterisk.`,
+    `- Each bullet must be SHORT — under 12 words — and specific to THIS ${subject} (no generic filler like "high quality material").`,
+    `- Last line: ONE short closing line (under 15 words) that creates urgency/desire to buy now.`,
+    `- Total length: 60 to 100 words. Do not write long paragraphs.`,
+    `- NO markdown formatting at all: no asterisks, no hashtags, no dash bullets, no code blocks, no headings, no labels.`,
+    `- Return ONLY the description text (hook line + emoji bullets + closing line), nothing else. No intro, no "Here is your description".`,
   );
 
   return base.join("\n");
@@ -131,17 +131,17 @@ export function useGeminiAI(
         model: modelName || DEFAULT_MODEL,
         generationConfig: {
           temperature: temperature ?? 0.9,
-          // Bumped up as a safety margin. Even with thinking disabled below,
-          // this gives headroom for the 180-280 word description.
-          maxOutputTokens: maxOutputTokens ?? 2048,
+          // Lowered from 2048 → 600 since we only need a short bullet-point
+          // description now, not a 180-280 word paragraph. Still generous
+          // headroom above the ~60-100 word target.
+          maxOutputTokens: maxOutputTokens ?? 600,
           topP: 0.95,
           topK: 40,
-          // 🔧 THE FIX: gemini-2.5-flash is a "thinking" model — by default it
-          // spends part of maxOutputTokens on internal reasoning before ever
-          // writing the actual answer. That's why finishReason was MAX_TOKENS
-          // with only ~31 candidate tokens (765 were eaten by thinking).
-          // Setting thinkingBudget to 0 disables thinking entirely, so the
-          // full token budget goes to the actual description text.
+          // 🔧 KEEP THIS FIX: gemini-2.5-flash is a "thinking" model — by
+          // default it spends part of maxOutputTokens on internal reasoning
+          // before ever writing the actual answer, which previously caused
+          // finishReason: MAX_TOKENS with almost no real output. Disabling
+          // thinking ensures the full token budget goes to the actual text.
           thinkingConfig: {
             thinkingBudget: 0,
           },

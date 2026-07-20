@@ -215,40 +215,41 @@ const ProductDetailPage: React.FC = () => {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-400 via-white to-gray-100 text-[#041241]">
-      <div className="max-w-7xl mx-auto px-6 py-20">
+    <main className="min-h-screen bg-gradient-to-b from-gray-400 pt-12 via-white to-gray-100 text-[#041241]">
+      <div className="mx-auto max-w-7xl px-3 py-8 sm:px-6 sm:py-20">
         <button
           type="button"
           onClick={() => router.back()}
-          className="mb-8 inline-flex items-center gap-2 rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-[#041241] shadow-sm transition hover:bg-[#0856DF] hover:text-white"
+          className="mb-4 inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-[#041241] shadow-sm transition hover:bg-[#0856DF] hover:text-white sm:mb-8 sm:gap-2 sm:rounded-2xl sm:px-4 sm:py-3 sm:text-sm"
         >
-          <ArrowLeft size={16} /> Back to Products
+          <ArrowLeft size={14} className="sm:hidden" />
+          <ArrowLeft size={16} className="hidden sm:block" />
+          Back to Products
         </button>
 
         {loading ? (
-          <div className="rounded-[32px] border border-slate-200 bg-white p-12 shadow-lg">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm shadow-lg sm:rounded-[32px] sm:p-12 sm:text-base">
             Loading product details...
           </div>
         ) : error || !product ? (
-          <div className="rounded-[32px] border border-red-200 bg-red-50 p-12 text-red-700 shadow-lg">
+          <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-sm text-red-700 shadow-lg sm:rounded-[32px] sm:p-12 sm:text-base">
             Unable to fetch product. Please login and try again.
           </div>
         ) : (
           <>
-            <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
-              <div className="space-y-6 rounded-[32px] bg-white p-6 shadow-[0_20px_70px_rgba(6,18,75,0.08)]">
-                <div className="relative overflow-hidden rounded-[32px] bg-slate-100 shadow-inner">
-                  <div className="relative h-[460px] overflow-hidden">
+            <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr] lg:gap-10">
+              <div className="space-y-4 rounded-2xl bg-white p-3 shadow-[0_10px_40px_rgba(6,18,75,0.06)] sm:space-y-6 sm:rounded-[32px] sm:p-6 sm:shadow-[0_20px_70px_rgba(6,18,75,0.08)]">
+                <div className="relative overflow-hidden rounded-xl bg-slate-100 shadow-inner sm:rounded-[32px]">
+                  <div className="relative h-64 overflow-hidden sm:h-96 md:h-[460px]">
                     {imageList.map((image, imgIndex) => (
                       <img
                         key={`${image.url}-${imgIndex}`}
                         src={image.url}
                         alt={`${product.name} ${imgIndex + 1}`}
-                        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ease-out ${
-                          imgIndex === currentImageIndex
+                        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ease-out ${imgIndex === currentImageIndex
                             ? "opacity-100"
                             : "opacity-0"
-                        }`}
+                          }`}
                       />
                     ))}
                   </div>
@@ -256,93 +257,97 @@ const ProductDetailPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={prevImage}
-                    className="absolute left-4 top-1/2 inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/90 text-[#041241] shadow-lg transition hover:bg-white"
+                    className="absolute left-2 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/90 text-[#041241] shadow-lg transition hover:bg-white sm:left-4 sm:h-12 sm:w-12"
                   >
-                    <ArrowLeft size={20} />
+                    <ArrowLeft size={16} className="sm:hidden" />
+                    <ArrowLeft size={20} className="hidden sm:block" />
                   </button>
                   <button
                     type="button"
                     onClick={nextImage}
-                    className="absolute right-4 top-1/2 inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/90 text-[#041241] shadow-lg transition hover:bg-white"
+                    className="absolute right-2 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/90 text-[#041241] shadow-lg transition hover:bg-white sm:right-4 sm:h-12 sm:w-12"
                   >
-                    <ArrowRight size={20} />
+                    <ArrowRight size={16} className="sm:hidden" />
+                    <ArrowRight size={20} className="hidden sm:block" />
                   </button>
 
-                  <div className="absolute inset-x-0 bottom-4 flex justify-center gap-2">
+                  <div className="absolute inset-x-0 bottom-2 flex justify-center gap-1.5 sm:bottom-4 sm:gap-2">
                     {imageList.map((_, dotIndex) => (
                       <span
                         key={dotIndex}
-                        className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${
-                          dotIndex === currentImageIndex
+                        className={`h-1.5 w-1.5 rounded-full transition-all duration-300 sm:h-2.5 sm:w-2.5 ${dotIndex === currentImageIndex
                             ? "bg-white"
                             : "bg-white/50"
-                        }`}
+                          }`}
                       />
                     ))}
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <span className="rounded-full bg-[#0856DF] px-3 py-1 text-xs font-black uppercase tracking-[0.3em] text-white">
+                <div className="space-y-2.5 sm:space-y-4">
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-3">
+                    <span className="rounded-full bg-[#0856DF] px-2.5 py-0.5 text-[9px] font-black uppercase tracking-[0.2em] text-white sm:px-3 sm:py-1 sm:text-xs sm:tracking-[0.3em]">
                       {product.category?.name ?? "General"}
                     </span>
-                    <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-600">
-                      <Tag size={14} /> {product.brand ?? "ZeeF"}
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs text-slate-600 sm:gap-2 sm:px-3 sm:py-1 sm:text-sm">
+                      <Tag size={12} className="sm:hidden" />
+                      <Tag size={14} className="hidden sm:block" />
+                      {product.brand ?? "ZeeF"}
                     </span>
-                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-600">
-                      <Truck size={13} /> Free Shipping
+                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-600 sm:px-2 sm:text-xs">
+                      <Truck size={11} className="sm:hidden" />
+                      <Truck size={13} className="hidden sm:block" />
+                      Free Shipping
                     </span>
                   </div>
-                  <h1 className="text-4xl font-black tracking-tight text-[#041241]">
+                  <h1 className="text-xl font-black tracking-tight text-[#041241] sm:text-3xl md:text-4xl">
                     {product.name}
                   </h1>
-                  <div className="flex flex-wrap items-center gap-4 text-slate-500">
-                    <span className="inline-flex items-center gap-2 text-sm">
-                      <Star size={16} className="text-amber-500" />
+                  <div className="flex flex-wrap items-center gap-2.5 text-slate-500 sm:gap-4">
+                    <span className="inline-flex items-center gap-1.5 text-xs sm:gap-2 sm:text-sm">
+                      <Star size={14} className="text-amber-500 sm:h-4 sm:w-4" />
                       {product.averageRating?.toFixed(1) ?? "0.0"} Rating
                     </span>
-                    <span className="text-sm">{reviews.length} review(s)</span>
-                    <span className="text-sm">{product.sold ?? 0} sold</span>
-                    <span className="text-sm">{product.stock ?? 0} in stock</span>
+                    <span className="text-xs sm:text-sm">{reviews.length} review(s)</span>
+                    <span className="text-xs sm:text-sm">{product.sold ?? 0} sold</span>
+                    <span className="text-xs sm:text-sm">{product.stock ?? 0} in stock</span>
                   </div>
-                  <p className="max-w-2xl whitespace-pre-wrap break-words text-base leading-8 text-slate-600">
+                  <p className="max-w-2xl whitespace-pre-wrap break-words text-sm leading-6 text-slate-600 sm:text-base sm:leading-8">
                     {product.description}
                   </p>
                 </div>
               </div>
 
-              <div className="space-y-6 rounded-[32px] border border-slate-200 bg-white p-6 shadow-[0_20px_70px_rgba(6,18,75,0.08)]">
-                <div className="space-y-2">
-                  <p className="text-sm uppercase tracking-[0.3em] text-slate-400">
+              <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-3 shadow-[0_10px_40px_rgba(6,18,75,0.06)] sm:space-y-6 sm:rounded-[32px] sm:p-6 sm:shadow-[0_20px_70px_rgba(6,18,75,0.08)]">
+                <div className="space-y-1 sm:space-y-2">
+                  <p className="text-xs uppercase tracking-[0.2em] text-slate-400 sm:text-sm sm:tracking-[0.3em]">
                     Price
                   </p>
-                  <div className="flex items-end gap-3">
-                    <p className="text-5xl font-black text-[#041241]">
+                  <div className="flex items-end gap-2 sm:gap-3">
+                    <p className="text-3xl font-black text-[#041241] sm:text-5xl">
                       Rs {product.price.toLocaleString()}
                     </p>
-                    <p className="pb-2 text-xl font-medium text-slate-400 line-through">
+                    <p className="pb-1 text-sm font-medium text-slate-400 line-through sm:pb-2 sm:text-xl">
                       Rs {Math.round(product.price * 1.4).toLocaleString()}
                     </p>
                   </div>
                 </div>
 
                 {availableColors.length > 0 || availableSizes.length > 0 ? (
-                  <div className="space-y-5 rounded-3xl bg-[#F7F7FA] p-5 text-sm text-slate-600">
+                  <div className="space-y-4 rounded-2xl bg-[#F7F7FA] p-3.5 text-xs text-slate-600 sm:space-y-5 sm:rounded-3xl sm:p-5 sm:text-sm">
                     {availableColors.length > 0 && (
                       <div>
-                        <p className="mb-3 text-sm font-semibold text-slate-800">Choose a Color</p>
-                        <div className="flex flex-wrap gap-2">
+                        <p className="mb-2 text-xs font-semibold text-slate-800 sm:mb-3 sm:text-sm">Choose a Color</p>
+                        <div className="flex flex-wrap gap-1.5 sm:gap-2">
                           {availableColors.map((color) => (
                             <button
                               key={color}
                               type="button"
                               onClick={() => setSelectedColor(color)}
-                              className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
-                                selectedColor === color
+                              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition sm:px-4 sm:py-2 sm:text-sm ${selectedColor === color
                                   ? "border-black bg-black text-white"
                                   : "border-slate-300 bg-white text-slate-700 hover:bg-slate-100"
-                              }`}
+                                }`}
                             >
                               {color}
                             </button>
@@ -353,18 +358,17 @@ const ProductDetailPage: React.FC = () => {
 
                     {availableSizes.length > 0 && (
                       <div>
-                        <p className="mb-3 text-sm font-semibold text-slate-800">Choose a Size</p>
-                        <div className="flex flex-wrap gap-2">
+                        <p className="mb-2 text-xs font-semibold text-slate-800 sm:mb-3 sm:text-sm">Choose a Size</p>
+                        <div className="flex flex-wrap gap-1.5 sm:gap-2">
                           {availableSizes.map((size) => (
                             <button
                               key={size}
                               type="button"
                               onClick={() => setSelectedSize(size)}
-                              className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
-                                selectedSize === size
+                              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition sm:px-4 sm:py-2 sm:text-sm ${selectedSize === size
                                   ? "border-black bg-black text-white"
                                   : "border-slate-300 bg-white text-slate-700 hover:bg-slate-100"
-                              }`}
+                                }`}
                             >
                               {size}
                             </button>
@@ -374,7 +378,7 @@ const ProductDetailPage: React.FC = () => {
                     )}
 
                     {selectedColor || selectedSize ? (
-                      <div className="rounded-3xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
+                      <div className="rounded-2xl border border-slate-200 bg-white p-3 text-xs text-slate-700 sm:rounded-3xl sm:p-4 sm:text-sm">
                         <span className="font-semibold">Selected:</span> {[
                           selectedColor && `Color: ${selectedColor}`,
                           selectedSize && `Size: ${selectedSize}`,
@@ -385,18 +389,20 @@ const ProductDetailPage: React.FC = () => {
                     ) : null}
                   </div>
                 ) : (
-                  <div className="rounded-3xl bg-[#F7F7FA] p-5 text-sm text-slate-600">
+                  <div className="rounded-2xl bg-[#F7F7FA] p-3.5 text-xs text-slate-600 sm:rounded-3xl sm:p-5 sm:text-sm">
                     Premium quality product, ready to ship with fast delivery.
                   </div>
                 )}
 
-                <div className="grid gap-4">
+                <div className="grid gap-2.5 sm:gap-4">
                   <button
                     type="button"
                     onClick={handleAddToCart}
-                    className="inline-flex min-h-[56px] items-center justify-center gap-3 rounded-3xl bg-[#0856DF] px-5 text-base font-semibold text-white transition hover:bg-[#0645c8]"
+                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-2xl bg-[#0856DF] px-4 text-sm font-semibold text-white transition hover:bg-[#0645c8] sm:min-h-[56px] sm:gap-3 sm:rounded-3xl sm:px-5 sm:text-base"
                   >
-                    <ShoppingCart size={20} /> Add to Cart
+                    <ShoppingCart size={16} className="sm:hidden" />
+                    <ShoppingCart size={20} className="hidden sm:block" />
+                    Add to Cart
                   </button>
                   <button
                     type="button"
@@ -404,38 +410,38 @@ const ProductDetailPage: React.FC = () => {
                       handleAddToCart();
                       router.push("/checkout");
                     }}
-                    className="inline-flex min-h-[56px] items-center justify-center gap-3 rounded-3xl border border-slate-300 bg-white px-5 text-base font-semibold text-[#041241] transition hover:bg-[#f3f8ff]"
+                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-2xl border border-slate-300 bg-white px-4 text-sm font-semibold text-[#041241] transition hover:bg-[#f3f8ff] sm:min-h-[56px] sm:gap-3 sm:rounded-3xl sm:px-5 sm:text-base"
                   >
                     Buy Now
                   </button>
                 </div>
 
-                <div className="rounded-3xl bg-[#F7F7FA] p-5 text-sm text-slate-600">
+                <div className="rounded-2xl bg-[#F7F7FA] p-3.5 text-xs text-slate-600 sm:rounded-3xl sm:p-5 sm:text-sm">
                   <p className="font-semibold text-slate-900">Product Details</p>
-                  <p className="mt-2 whitespace-pre-wrap break-words">{product.description}</p>
+                  <p className="mt-1.5 whitespace-pre-wrap break-words sm:mt-2">{product.description}</p>
                 </div>
               </div>
             </div>
 
             {/* Reviews Section */}
-            <div className="mt-12 rounded-[32px] border border-slate-200 bg-white p-8 shadow-[0_20px_70px_rgba(6,18,75,0.08)]">
-              <div className="flex items-center gap-3 mb-8">
-                <MessageSquare size={24} className="text-[#0856DF]" />
-                <h2 className="text-2xl font-black text-[#041241]">
-                  Reviews & Ratings
+            <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_10px_40px_rgba(6,18,75,0.06)] sm:mt-12 sm:rounded-[32px] sm:p-8 sm:shadow-[0_20px_70px_rgba(6,18,75,0.08)]">
+              <div className="mb-5 flex items-center gap-2 sm:mb-8 sm:gap-3">
+                <MessageSquare size={18} className="text-[#0856DF] sm:h-6 sm:w-6" />
+                <h2 className="text-lg font-black text-[#041241] sm:text-2xl">
+                  Reviews &amp; Ratings
                 </h2>
-                <span className="ml-auto text-sm text-slate-500">
+                <span className="ml-auto text-xs text-slate-500 sm:text-sm">
                   {reviews.length} review(s)
                 </span>
               </div>
 
               {/* Rating Form */}
               {auth.username ? (
-                <div className="mb-10 rounded-3xl border border-slate-200 bg-[#F7F7FA] p-6">
-                  <p className="text-sm font-bold text-slate-800 mb-3">
+                <div className="mb-6 rounded-2xl border border-slate-200 bg-[#F7F7FA] p-4 sm:mb-10 sm:rounded-3xl sm:p-6">
+                  <p className="mb-2.5 text-xs font-bold text-slate-800 sm:mb-3 sm:text-sm">
                     Write a Review
                   </p>
-                  <div className="flex gap-1 mb-3">
+                  <div className="mb-2.5 flex gap-1 sm:mb-3">
                     {[1, 2, 3, 4, 5].map((s) => (
                       <button
                         key={s}
@@ -445,17 +451,16 @@ const ProductDetailPage: React.FC = () => {
                         onMouseLeave={() => setHover(0)}
                       >
                         <Star
-                          size={28}
-                          className={`transition-colors ${
-                            s <= (hover || star)
+                          size={22}
+                          className={`transition-colors sm:h-7 sm:w-7 ${s <= (hover || star)
                               ? "fill-amber-400 text-amber-400"
                               : "text-gray-300"
-                          }`}
+                            }`}
                         />
                       </button>
                     ))}
                     {star > 0 && (
-                      <span className="ml-2 text-sm text-slate-500 self-center">
+                      <span className="ml-2 self-center text-xs text-slate-500 sm:text-sm">
                         {star} star{star > 1 ? "s" : ""}
                       </span>
                     )}
@@ -465,29 +470,29 @@ const ProductDetailPage: React.FC = () => {
                     onChange={(e) => setComment(e.target.value)}
                     placeholder="Write your review (optional)"
                     rows={3}
-                    className="w-full text-sm border border-slate-200 rounded-xl px-4 py-3 resize-none focus:outline-none focus:border-[#0856DF] mb-3 bg-white"
+                    className="mb-2.5 w-full resize-none rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs focus:border-[#0856DF] focus:outline-none sm:mb-3 sm:px-4 sm:py-3 sm:text-sm"
                   />
                   {submitted ? (
-                    <div className="text-sm text-green-600 font-semibold flex items-center gap-1">
-                      <CheckCircle size={16} /> Thank you! Your review has been submitted.
+                    <div className="flex items-center gap-1 text-xs font-semibold text-green-600 sm:text-sm">
+                      <CheckCircle size={14} className="sm:h-4 sm:w-4" /> Thank you! Your review has been submitted.
                     </div>
                   ) : (
                     <button
                       onClick={handleSubmitRating}
                       disabled={submitting || star === 0}
-                      className="px-6 py-2.5 bg-[#0856DF] text-white text-sm font-semibold rounded-xl hover:bg-[#0645c8] disabled:opacity-50 disabled:cursor-not-allowed transition"
+                      className="rounded-xl bg-[#0856DF] px-5 py-2 text-xs font-semibold text-white transition hover:bg-[#0645c8] disabled:cursor-not-allowed disabled:opacity-50 sm:px-6 sm:py-2.5 sm:text-sm"
                     >
                       {submitting ? "Submitting..." : "Submit Review"}
                     </button>
                   )}
                 </div>
               ) : (
-                <div className="mb-10 rounded-3xl border border-dashed border-slate-300 bg-[#F7F7FA] p-6 text-center">
-                  <p className="text-sm text-slate-500">
+                <div className="mb-6 rounded-2xl border border-dashed border-slate-300 bg-[#F7F7FA] p-4 text-center sm:mb-10 sm:rounded-3xl sm:p-6">
+                  <p className="text-xs text-slate-500 sm:text-sm">
                     Please{" "}
                     <button
                       onClick={() => router.push("/")}
-                      className="text-[#0856DF] font-semibold hover:underline"
+                      className="font-semibold text-[#0856DF] hover:underline"
                     >
                       login
                     </button>{" "}
@@ -498,40 +503,39 @@ const ProductDetailPage: React.FC = () => {
 
               {/* Reviews List */}
               {reviews.length > 0 ? (
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {[...reviews].reverse().map((review, idx) => (
                     <div
                       key={idx}
-                      className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm"
+                      className="rounded-xl border border-slate-100 bg-white p-3.5 shadow-sm sm:rounded-2xl sm:p-5"
                     >
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="w-9 h-9 rounded-full bg-[#0856DF] flex items-center justify-center text-white text-sm font-bold">
+                      <div className="mb-1.5 flex items-center gap-2.5 sm:mb-2 sm:gap-3">
+                        <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#0856DF] text-xs font-bold text-white sm:h-9 sm:w-9 sm:text-sm">
                           {review.user?.username?.charAt(0).toUpperCase() || "U"}
                         </div>
-                        <div>
-                          <p className="text-sm font-bold text-slate-900 capitalize">
+                        <div className="min-w-0">
+                          <p className="truncate text-xs font-bold capitalize text-slate-900 sm:text-sm">
                             {review.user?.username || "User"}
                           </p>
-                          <p className="text-xs text-slate-400">
+                          <p className="text-[10px] text-slate-400 sm:text-xs">
                             {new Date(review.reviewDate).toLocaleDateString()}
                           </p>
                         </div>
-                        <div className="ml-auto flex gap-0.5">
+                        <div className="ml-auto flex flex-shrink-0 gap-0.5">
                           {[1, 2, 3, 4, 5].map((s) => (
                             <Star
                               key={s}
-                              size={14}
-                              className={
-                                s <= review.star
+                              size={12}
+                              className={`sm:h-3.5 sm:w-3.5 ${s <= review.star
                                   ? "fill-amber-400 text-amber-400"
                                   : "text-gray-200"
-                              }
+                                }`}
                             />
                           ))}
                         </div>
                       </div>
                       {review.comment && (
-                        <p className="text-sm text-slate-600 mt-2 leading-relaxed">
+                        <p className="mt-1.5 text-xs leading-relaxed text-slate-600 sm:mt-2 sm:text-sm">
                           {review.comment}
                         </p>
                       )}
@@ -539,9 +543,9 @@ const ProductDetailPage: React.FC = () => {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-10">
-                  <Star size={40} className="mx-auto text-slate-200 mb-3" />
-                  <p className="text-sm text-slate-500">
+                <div className="py-8 text-center sm:py-10">
+                  <Star size={32} className="mx-auto mb-2.5 text-slate-200 sm:h-10 sm:w-10 sm:mb-3" />
+                  <p className="text-xs text-slate-500 sm:text-sm">
                     No reviews yet. Be the first to review this product!
                   </p>
                 </div>

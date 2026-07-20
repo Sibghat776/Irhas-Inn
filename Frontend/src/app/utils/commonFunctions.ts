@@ -113,3 +113,48 @@ export default useFetch;
 
 export const baseUrl =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1/";
+
+// Build a wa.me share URL (no phone number => opens the contact picker so the
+// admin/reseller can choose any contact or group to send the product to).
+export const buildWhatsAppShareUrl = (product: {
+  _id: string;
+  name?: string;
+  description?: string;
+  price?: number | string;
+  brand?: string;
+  colors?: string[];
+  sizes?: string[];
+}): string => {
+  const frontendUrl =
+    process.env.NEXT_PUBLIC_FRONTEND_URL ||
+    process.env.NEXT_PUBLIC_API_URL?.replace("/api/v1", "") ||
+    "https://zeeftrendystore.vercel.app";
+
+  const productLink = `${frontendUrl}/product/${product._id}`;
+
+  const name = product.name || "Product";
+  const description = (product.description || "").trim();
+  const excerpt =
+    description.length > 150
+      ? `${description.slice(0, 150).trimEnd()}...`
+      : description;
+
+  const price =
+    typeof product.price === "number"
+      ? product.price.toLocaleString()
+      : product.price || "0";
+
+  const lines: string[] = [];
+  lines.push(`*${name}*`);
+  if (excerpt) lines.push("", excerpt);
+  lines.push("", `💰 Price: Rs ${price}`);
+  if (product.brand) lines.push(`🏷️ Brand: ${product.brand}`);
+  if (product.colors && product.colors.length > 0)
+    lines.push(`🎨 Colors: ${product.colors.join(", ")}`);
+  if (product.sizes && product.sizes.length > 0)
+    lines.push(`📏 Sizes: ${product.sizes.join(", ")}`);
+  lines.push("", `👉 Check it out and order now: ${productLink}`);
+
+  const message = lines.join("\n");
+  return `https://wa.me/?text=${encodeURIComponent(message)}`;
+};

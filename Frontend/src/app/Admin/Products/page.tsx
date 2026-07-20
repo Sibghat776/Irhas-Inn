@@ -9,9 +9,10 @@ import {
   AlertCircle,
   DockIcon,
   Search,
+  MessageCircle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import useFetch, { baseUrl, showToast } from "@/app/utils/commonFunctions";
+import useFetch, { baseUrl, showToast, buildWhatsAppShareUrl } from "@/app/utils/commonFunctions";
 import axios from "axios";
 import AiGeneratorButton from "../components/AiGeneratorButton";
 
@@ -527,6 +528,15 @@ const ProductsPage = () => {
                             aria-label="Delete"
                           >
                             <Trash2 size={16} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => window.open(buildWhatsAppShareUrl(product), "_blank")}
+                            className="rounded-lg border border-emerald-200 bg-emerald-50 p-2 text-emerald-600 transition hover:bg-emerald-600 hover:text-white"
+                            aria-label="Share on WhatsApp"
+                            title="Share on WhatsApp"
+                          >
+                            <MessageCircle size={16} />
                           </button>
                         </>
                       )}
