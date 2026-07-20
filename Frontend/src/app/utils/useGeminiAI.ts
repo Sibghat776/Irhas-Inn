@@ -24,7 +24,7 @@ export interface UseGeminiAIResult {
 }
 
 // ✅ Google's currently supported active model
-const DEFAULT_MODEL = "gemini-2.5-flash";
+const DEFAULT_MODEL = "gemini-2.5-flash-lite";
 
 // Minimum acceptable word count before we retry / give up
 // (Lowered from 60 → 40 since the new bullet-point format is intentionally short)
@@ -93,6 +93,31 @@ function cleanText(raw: string): string {
 function countWords(text: string): number {
   const matches = text.trim().match(/\S+/g);
   return matches ? matches.length : 0;
+}
+
+// Detects a 429 / quota-exceeded error so we can show a clear message and
+// avoid wasting remaining quota by auto-retrying.
+function isQuotaExceededError(err: any): boolean {
+  if (!err) return false;
+  const status = err?.status ?? err?.response?.status;
+  if (status === 429) return true;
+  const text = [
+    err?.message,
+    err?.response?.statusText,
+    err?.body,
+    err?.error?.message,
+    err?.error?.status,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+  return (
+    /429/.test(text) ||
+    /quota/i.test(text) ||
+    /rate.?limit/i.test(text) ||
+    /resource.?exhausted/i.test(text) ||
+    /exceeded/i.test(text)
+  );
 }
 
 export function useGeminiAI(
@@ -203,6 +228,18 @@ export function useGeminiAI(
             `[useGeminiAI] Attempt ${attempt}/${MAX_RETRIES} failed:`,
             err,
           );
+
+          // 429 / quota-exceeded: show a clear message and STOP retrying so
+          // we don't burn the remaining daily quota on repeat failures.
+          if (isQuotaExceededError(err)) {
+            const quotaMessage =
+              "Daily AI limit reached, try again later or write manually";
+            setError(quotaMessage);
+            showToast(quotaMessage, "error");
+            setLoading(false);
+            return null;
+          }
+
           lastError = err?.message || "Failed to generate content with AI";
         }
       }
