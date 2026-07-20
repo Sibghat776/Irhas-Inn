@@ -1,11 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Providers from "./Redux/Providers/provider";
+import AIProductChat from "./Components/AIProductChat";
+
 import ClientLayout from "./ClientLayout";
 import GoogleProvider from "./GoogleProvider";
 import NotificationPrompt from "./Components/NotificationPrompt";
 import RouteProgressBar from "./Components/RouteProgressBar";
+import Providers from "./Redux/Providers/provider";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -153,6 +155,7 @@ export default function RootLayout({
             <ClientLayout>{children}</ClientLayout>
             <NotificationPrompt />
             <RouteProgressBar />
+            <AIProductChat />
           </GoogleProvider>
         </Providers>
       </body>

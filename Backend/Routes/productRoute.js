@@ -1,13 +1,6 @@
 import express from "express";
-import {
-  addProduct,
-  deleteProduct,
-  getProductById,
-  getProducts,
-  getAdminProducts,
-  rateProduct,
-  updateProduct,
-} from "../Controllers/productController.js";
+import { addProduct, deleteProduct, getProductById, getProducts, getAdminProducts, rateProduct, updateProduct, searchProducts } from "../Controllers/productController.js";
+import { searchProductsAI } from "../Controllers/aiSearchController.js";
 import { verifyAdmin, verifyToken, verifyUser } from "../utils/commonFunctions.js";
 import { upload } from "../utils/cloudinary.js";
 
@@ -32,3 +25,6 @@ productRouter.put(
 );
 productRouter.delete("/deleteProduct/:id", verifyToken, verifyAdmin, deleteProduct);
 productRouter.put("/productRatings/:id", verifyUser, rateProduct);
+
+// ==================== AI SEARCH ENDPOINT ====================
+productRouter.post("/ai/search-products", searchProductsAI);
