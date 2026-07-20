@@ -10,7 +10,7 @@ const populateOrder = (query) =>
     .populate("user", "username email phoneNo profilePic")
     .populate({
       path: "orderItems.product",
-      select: "name slug price images stock description category",
+      select: "name slug price images stock description category brand",
       populate: {
         path: "category",
         select: "name",
@@ -120,6 +120,71 @@ export const createOrder = async (req, res, next) => {
       console.log(`[Push Sent]: For user ${req.user.id} - sent ${result.sent}, removed ${result.removed}`);
     } catch (pushErr) {
       console.error(`[Push Failed]: For user ${req.user.id} -`, pushErr.message);
+    }
+
+    // ==========================================
+    // [Reseller Notification] Notify each reseller whose product(s) were ordered.
+    // Non-blocking: any failure here must NEVER break order creation.
+    // ==========================================
+    try {
+      console.log(`[Reseller Notification] Checking resellers for order ${order._id}`);
+
+      // Map each reseller to the list of their ordered product names in THIS order.
+      const resellerItems = new Map(); // resellerId -> string[] of product names
+
+      for (const item of orderItems) {
+        const product = await Product.findById(item.product).select("name addedBy").lean();
+        if (!product) {
+          console.log(`[Reseller Notification] Product ${item.product} not found, skipping`);
+          continue;
+        }
+        const addedBy = product.addedBy ? product.addedBy.toString() : null;
+        if (!addedBy) {
+          // null/undefined addedBy => superadmin product, skip
+          console.log(`[Reseller Notification] Product "${product.name}" has no reseller (addedBy), skipping`);
+          continue;
+        }
+        if (!resellerItems.has(addedBy)) resellerItems.set(addedBy, []);
+        for (let i = 0; i < (item.quantity || 1); i++) {
+          resellerItems.get(addedBy).push(product.name);
+        }
+      }
+
+      console.log(`[Reseller Notification] Unique resellers to notify: ${resellerItems.size}`);
+
+      for (const [resellerId, productNames] of resellerItems.entries()) {
+        const uniqueNames = [...new Set(productNames)];
+        const itemCount = productNames.length;
+        const noun = itemCount === 1 ? "item" : "items";
+        const title = "New Order Received! 🛒";
+        const body = `New order! ${itemCount} ${noun} from your store were just ordered${
+          uniqueNames.length <= 3 ? `: ${uniqueNames.join(", ")}` : `.`
+        }`;
+        const link = `/Admin/Orders`;
+
+        try {
+          await Notification.create({
+            userId: resellerId,
+            title,
+            message: body,
+            orderId: order._id,
+          });
+          console.log(`[Reseller Notification] In-app Notification created for reseller ${resellerId}`);
+
+          const pushResult = await sendPushToUser(resellerId, { title, body, link });
+          console.log(
+            `[Reseller Notification] Web push sent for reseller ${resellerId} - sent ${pushResult.sent}, removed ${pushResult.removed}`
+          );
+        } catch (resellerErr) {
+          console.error(
+            `[Reseller Notification] Failed for reseller ${resellerId} -`,
+            resellerErr.message
+          );
+        }
+      }
+      console.log(`[Reseller Notification] Done for order ${order._id}`);
+    } catch (resellerBlockErr) {
+      console.error(`[Reseller Notification] Block-level error (non-fatal) -`, resellerBlockErr.message);
     }
 
     return res

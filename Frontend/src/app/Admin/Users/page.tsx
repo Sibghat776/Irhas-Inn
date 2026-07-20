@@ -40,6 +40,11 @@ const UsersPage = () => {
 
   const [editFormData, setEditFormData] = useState({ username: "", email: "" });
 
+  const [roleFilter, setRoleFilter] = useState<"all" | "user" | "admin" | "superadmin">("all");
+  const visibleUsers = roleFilter === "all"
+    ? data
+    : data.filter((u) => (u.role ?? "user") === roleFilter);
+
   useEffect(() => {
     if (res?.data) setData(res.data);
   }, [res]);
@@ -156,6 +161,16 @@ const UsersPage = () => {
         <span className="inline-flex w-max items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600">
           Total: {data.length}
         </span>
+        <select
+          value={roleFilter}
+          onChange={(e) => setRoleFilter(e.target.value as typeof roleFilter)}
+          className="rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-semibold text-slate-700 outline-none transition focus:border-[#0856DF] focus:ring-2 focus:ring-[#0856DF]/15"
+        >
+          <option value="all">All</option>
+          <option value="user">User</option>
+          <option value="admin">Reseller Admin</option>
+          <option value="superadmin">Super Admin</option>
+        </select>
       </div>
 
       <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -171,7 +186,7 @@ const UsersPage = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {data.map((user) => {
+            {visibleUsers.map((user) => {
               const isOwnRow = user._id === currentUserId;
               const isLoading = roleChangingId === user._id;
               return (

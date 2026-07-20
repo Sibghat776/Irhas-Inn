@@ -50,6 +50,12 @@ const OrdersPage = () => {
   const [printQr, setPrintQr] = useState<Record<string, string>>({});
   const [isGeneratingPrint, setIsGeneratingPrint] = useState(false);
 
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const visibleOrders =
+    statusFilter === "all"
+      ? orders
+      : orders.filter((o: any) => (o.status || "Pending") === statusFilter);
+
   const FRONTEND_URL =
     process.env.NEXT_PUBLIC_FRONTEND_URL ||
     process.env.NEXT_PUBLIC_API_URL?.replace("/api/v1", "") ||
@@ -224,6 +230,19 @@ const OrdersPage = () => {
           <Printer className="h-4 w-4" />
           {isGeneratingPrint ? "Preparing..." : "Print All"}
         </button>
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="self-start rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-semibold text-slate-700 outline-none transition focus:border-[#0856DF] focus:ring-2 focus:ring-[#0856DF]/15"
+        >
+          <option value="all">All</option>
+          <option value="Pending">Pending</option>
+          <option value="Processing">Processing</option>
+          <option value="Shipped">Shipped</option>
+          <option value="Out for Delivery">Out for Delivery</option>
+          <option value="Delivered">Delivered</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
       </div>
 
       <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -248,7 +267,7 @@ const OrdersPage = () => {
                 </td>
               </tr>
             ) : orders.length > 0 ? (
-              orders.map((order) => (
+              visibleOrders.map((order) => (
                 <Fragment key={order._id}>
                   <tr className="border-b border-slate-100 transition-colors hover:bg-slate-50">
                     <td className="p-4 font-mono font-semibold text-orange-500">
@@ -412,6 +431,9 @@ const OrdersPage = () => {
                                       {typeof product?.category === "string"
                                         ? product.category
                                         : product?.category?.name || "Unknown"}
+                                    </p>
+                                    <p className="text-xs text-slate-500">
+                                      Brand: {product?.brand || "Unknown"}
                                     </p>
                                     <p className="text-xs text-slate-500">
                                       Quantity: {item.quantity}

@@ -55,6 +55,7 @@ const ProductsPage = () => {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string>("superadmin");
 
@@ -366,9 +367,12 @@ const ProductsPage = () => {
 
   // ✅ FIX: Check if products is array before using filter
   const filteredProducts = Array.isArray(products)
-    ? products.filter((prod) =>
-        prod.name.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
+    ? products.filter((prod) => {
+        const matchesSearch = prod.name.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory =
+          categoryFilter === "all" || prod.category === categoryFilter;
+        return matchesSearch && matchesCategory;
+      })
     : [];
 
   return (
@@ -396,16 +400,30 @@ const ProductsPage = () => {
         </div>
       </div>
 
-      {/* Search Bar */}
-      <div className="relative">
-        <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-        <input
-          type="text"
-          placeholder="Search products..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full rounded-xl border border-slate-300 bg-white py-2.5 pl-10 pr-4 text-sm font-medium text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-[#0856DF] focus:ring-2 focus:ring-[#0856DF]/15"
-        />
+      {/* Search Bar + Category Filter */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="relative flex-1">
+          <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full rounded-xl border border-slate-300 bg-white py-2.5 pl-10 pr-4 text-sm font-medium text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-[#0856DF] focus:ring-2 focus:ring-[#0856DF]/15"
+          />
+        </div>
+        <select
+          value={categoryFilter}
+          onChange={(e) => setCategoryFilter(e.target.value)}
+          className="rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-semibold text-slate-700 outline-none transition focus:border-[#0856DF] focus:ring-2 focus:ring-[#0856DF]/15 sm:w-56"
+        >
+          <option value="all">All Categories</option>
+          {categories.map((cat) => (
+            <option key={cat._id} value={cat._id}>
+              {cat.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* Table */}

@@ -23,6 +23,12 @@ productRouter.post(
 productRouter.get("/getProduct/:id", getProductById);
 productRouter.get("/getAllProducts", getProducts);
 productRouter.get("/getAdminProducts", verifyToken, verifyAdmin, getAdminProducts);
-productRouter.put("/updateProduct/:id", verifyToken, verifyAdmin, updateProduct);
+productRouter.put(
+  "/updateProduct/:id",
+  verifyToken,
+  verifyAdmin,
+  upload.array("images", 5),
+  updateProduct,
+);
 productRouter.delete("/deleteProduct/:id", verifyToken, verifyAdmin, deleteProduct);
 productRouter.put("/productRatings/:id", verifyUser, rateProduct);
