@@ -75,7 +75,7 @@ const Carousel = () => {
   const total = String(slides.length).padStart(2, "0");
 
   return (
-    <section className="relative h-[calc(100vh-72px)] min-h-[580px] w-full overflow-hidden bg-black">
+    <section className="relative h-screen min-h-[640px] w-full overflow-hidden bg-black">
 
       {/* =====================================================
           IMAGES — fade + subtle scale
