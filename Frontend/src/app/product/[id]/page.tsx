@@ -247,8 +247,8 @@ const ProductDetailPage: React.FC = () => {
                         src={image.url}
                         alt={`${product.name} ${imgIndex + 1}`}
                         className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ease-out ${imgIndex === currentImageIndex
-                            ? "opacity-100"
-                            : "opacity-0"
+                          ? "opacity-100"
+                          : "opacity-0"
                           }`}
                       />
                     ))}
@@ -276,8 +276,8 @@ const ProductDetailPage: React.FC = () => {
                       <span
                         key={dotIndex}
                         className={`h-1.5 w-1.5 rounded-full transition-all duration-300 sm:h-2.5 sm:w-2.5 ${dotIndex === currentImageIndex
-                            ? "bg-white"
-                            : "bg-white/50"
+                          ? "bg-white"
+                          : "bg-white/50"
                           }`}
                       />
                     ))}
@@ -339,19 +339,22 @@ const ProductDetailPage: React.FC = () => {
                       <div>
                         <p className="mb-2 text-xs font-semibold text-slate-800 sm:mb-3 sm:text-sm">Choose a Color</p>
                         <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                          {availableColors.map((color) => (
-                            <button
-                              key={color}
-                              type="button"
-                              onClick={() => setSelectedColor(color)}
-                              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition sm:px-4 sm:py-2 sm:text-sm ${selectedColor === color
-                                  ? "border-black bg-black text-white"
-                                  : "border-slate-300 bg-white text-slate-700 hover:bg-slate-100"
-                                }`}
-                            >
-                              {color}
-                            </button>
-                          ))}
+                          {availableColors.map((color) => {
+                            const clean = String(color).replace(/[\[\]"']/g, "").trim();
+                            return (
+                              <button
+                                key={color}
+                                type="button"
+                                onClick={() => setSelectedColor(clean)}
+                                className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition sm:px-4 sm:py-2 sm:text-sm ${selectedColor === clean
+                                    ? "border-black bg-black text-white"
+                                    : "border-slate-300 bg-white text-slate-700 hover:bg-slate-100"
+                                  }`}
+                              >
+                                {clean}
+                              </button>
+                            );
+                          })}
                         </div>
                       </div>
                     )}
@@ -360,20 +363,23 @@ const ProductDetailPage: React.FC = () => {
                       <div>
                         <p className="mb-2 text-xs font-semibold text-slate-800 sm:mb-3 sm:text-sm">Choose a Size</p>
                         <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                          {availableSizes.map((size) => (
-                            <button
-                              key={size}
-                              type="button"
-                              onClick={() => setSelectedSize(size)}
-                              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition sm:px-4 sm:py-2 sm:text-sm ${selectedSize === size
-                                  ? "border-black bg-black text-white"
-                                  : "border-slate-300 bg-white text-slate-700 hover:bg-slate-100"
-                                }`}
-                            >
-                              {size}
-                            </button>
-                          ))}
-                        </div>
+                          {availableSizes.map((size) => {
+                            const clean = String(size).replace(/[\[\]"']/g, "").trim();
+                            return (
+                              <button
+                                key={size}
+                                type="button"
+                                onClick={() => setSelectedSize(clean)}
+                                className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition sm:px-4 sm:py-2 sm:text-sm ${selectedSize === clean
+                                    ? "border-black bg-black text-white"
+                                    : "border-slate-300 bg-white text-slate-700 hover:bg-slate-100"
+                                  }`}
+                              >
+                                {clean}
+                              </button>
+                            );
+                          })}
+                        </div>  
                       </div>
                     )}
 
@@ -453,8 +459,8 @@ const ProductDetailPage: React.FC = () => {
                         <Star
                           size={22}
                           className={`transition-colors sm:h-7 sm:w-7 ${s <= (hover || star)
-                              ? "fill-amber-400 text-amber-400"
-                              : "text-gray-300"
+                            ? "fill-amber-400 text-amber-400"
+                            : "text-gray-300"
                             }`}
                         />
                       </button>
@@ -527,8 +533,8 @@ const ProductDetailPage: React.FC = () => {
                               key={s}
                               size={12}
                               className={`sm:h-3.5 sm:w-3.5 ${s <= review.star
-                                  ? "fill-amber-400 text-amber-400"
-                                  : "text-gray-200"
+                                ? "fill-amber-400 text-amber-400"
+                                : "text-gray-200"
                                 }`}
                             />
                           ))}
