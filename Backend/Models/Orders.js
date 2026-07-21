@@ -24,6 +24,16 @@ const orderSchema = new mongoose.Schema(
           required: true,
           min: 1,
         },
+        selectedColor: {
+          type: String,
+          trim: true,
+          default: "",
+        },
+        selectedSize: {
+          type: String,
+          trim: true,
+          default: "",
+        },
       },
     ],
     shippingAddress: {

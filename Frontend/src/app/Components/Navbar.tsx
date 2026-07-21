@@ -216,9 +216,11 @@ const Navbar: React.FC = () => {
 
   const navbarClasses = clsx(
     "fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out py-3",
-    isScrolled
-      ? "bg-white shadow-md border-b border-gray-200 text-[#041241]"
-      : "bg-transparent text-white",
+    !isHomePage
+      ? "bg-[#222831] shadow-md border-b border-white/10 text-white"
+      : isScrolled
+        ? "bg-white shadow-md border-b border-[#EEEEEE] text-[#222831]"
+        : "bg-transparent text-white",
   );
 
   const handleLogout = async () => {
@@ -325,7 +327,7 @@ const Navbar: React.FC = () => {
           <span
             className={clsx(
               "font-bold text-lg",
-              isScrolled ? "text-black" : "text-white",
+              !isHomePage ? "text-white" : isScrolled ? "text-[#222831]" : "text-white",
             )}
           >
             ZeeF Trendy Store
@@ -338,14 +340,16 @@ const Navbar: React.FC = () => {
               href={item.href}
               className={clsx(
                 "relative text-sm font-semibold transition-colors duration-300 pb-1 border-b-2 border-transparent",
-                isScrolled || !isHomePage
-                  ? "text-gray-700 hover:text-[#0856DF] hover:border-[#0856DF]"
-                  : "text-white/90 hover:text-white hover:border-white",
+                !isHomePage
+                  ? "text-[#EEEEEE] hover:text-white hover:border-[#00ADB5]"
+                  : isScrolled
+                    ? "text-[#222831] hover:text-[#00ADB5] hover:border-[#00ADB5]"
+                    : "text-white/90 hover:text-white hover:border-white",
               )}
             >
               {item.name}
               {item.name === "Cart" && cartCount > 0 && (
-                <span className="absolute -top-2 -right-3 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold px-1">
+                <span className="absolute -top-2 -right-3 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-[#222831] text-white text-[10px] font-bold px-1">
                   {cartCount}
                 </span>
               )}
@@ -357,8 +361,8 @@ const Navbar: React.FC = () => {
               onClick={handleInstallClick}
               className={clsx(
                 "px-4 py-2 rounded-lg font-semibold transition-all duration-300",
-                isScrolled
-                  ? "bg-[#0856DF] text-white hover:bg-[#064ec4]"
+                isScrolled || !isHomePage
+                  ? "bg-[#00ADB5] text-white hover:bg-[#00ADB5]"
                   : "bg-white/10 border border-white/30 text-white hover:bg-white/20",
               )}
             >
@@ -373,9 +377,11 @@ const Navbar: React.FC = () => {
                   onClick={handleUserMenuToggle}
                   className={clsx(
                     "flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-300",
-                    isScrolled
-                      ? "bg-gray-50 border-gray-300 text-[#041241] hover:bg-gray-100"
-                      : "bg-white/10 border-white/30 text-white hover:bg-white/20",
+                    !isHomePage
+                      ? "bg-white/5 border-white/15 text-[#EEEEEE] hover:bg-white/10 hover:text-white"
+                      : isScrolled
+                        ? "bg-[#FFFFFF] border-[#EEEEEE] text-[#222831] hover:bg-[#EEEEEE]"
+                        : "bg-white/10 border-white/30 text-white hover:bg-white/20",
                   )}
                 >
                   {profilePic ? (
@@ -385,7 +391,7 @@ const Navbar: React.FC = () => {
                       alt="profile"
                     />
                   ) : (
-                    <div className="w-7 h-7 rounded-full bg-[#0856DF] flex items-center justify-center text-white text-xs font-bold">
+                    <div className="w-7 h-7 rounded-full bg-[#00ADB5] flex items-center justify-center text-white text-xs font-bold">
                       {username?.charAt(0).toUpperCase()}
                     </div>
                   )}
@@ -395,7 +401,7 @@ const Navbar: React.FC = () => {
                   <div className="relative">
                     <Bell size={14} />
                     {unreadCount > 0 && (
-                      <span className="absolute -top-1.5 -right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" />
+                      <span className="absolute -top-1.5 -right-1.5 w-2.5 h-2.5 bg-[#222831] rounded-full border-2 border-white" />
                     )}
                   </div>
                   {userMenuOpen ? (
@@ -406,40 +412,40 @@ const Navbar: React.FC = () => {
                 </button>
 
                 {userMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-200 text-[#041241] z-50 overflow-hidden">
-                    <div className="flex flex-col border-b border-gray-100 py-1">
+                  <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-white/10 bg-[#222831] text-[#EEEEEE] shadow-xl z-50">
+                    <div className="flex flex-col border-b border-white/10 py-1">
                       <Link
                         href="/profile"
                         onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg hover:bg-red-50 text-red-600 hover:text-red-700 transition-colors whitespace-nowrap"
+                        className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg text-[#EEEEEE] transition-colors hover:bg-white/10 hover:text-white whitespace-nowrap"
                       >
                         <User size={16} /> Profile
                       </Link>
                       <Link
                         href="/profile/orders"
                         onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg  hover:bg-yellow-50 text-yellow-600 hover:text-yellow-600  transition-colors whitespace-nowrap"
+                        className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg text-[#EEEEEE] transition-colors hover:bg-white/10 hover:text-[#00ADB5] whitespace-nowrap"
                       >
                         <Package size={16} /> Orders
                       </Link>
                       <Link
                         href="/profile/notifications"
                         onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg hover:bg-blue-50 text-[#0856DF] hover:text-[#0856DF] transition-colors whitespace-nowrap relative"
+                        className="relative flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg text-[#EEEEEE] transition-colors hover:bg-white/10 hover:text-[#00ADB5] whitespace-nowrap"
                       >
                         <Bell size={16} /> Notifications
                         {unreadCount > 0 && (
-                          <span className="ml-0.5 w-2 h-2 bg-red-500 rounded-full" />
+                          <span className="ml-0.5 h-2 w-2 rounded-full bg-[#00ADB5]" />
                         )}
                       </Link>
                       <Link
                         href="/cart"
                         onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg hover:bg-blue-50 text-green-500 hover:text-green-600 transition-colors whitespace-nowrap"
+                        className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg text-[#00ADB5] transition-colors hover:bg-white/10 hover:text-[#00ADB5] whitespace-nowrap"
                       >
                         <ShoppingCart size={16} /> Cart
                         {cartCount > 0 && (
-                          <span className="ml-auto min-w-[20px] h-5 flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold px-1">
+                          <span className="ml-auto min-w-[20px] h-5 flex items-center justify-center rounded-full bg-[#00ADB5] text-white text-[10px] font-bold px-1">
                             {cartCount}
                           </span>
                         )}
@@ -447,7 +453,7 @@ const Navbar: React.FC = () => {
                       {isAdmin && (
                         <button
                           onClick={handleAdminPage}
-                          className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg hover:bg-amber-50 text-amber-600 transition-colors whitespace-nowrap"
+                          className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg text-[#EEEEEE] transition-colors hover:bg-white/10 hover:text-white whitespace-nowrap"
                         >
                           <LayoutDashboard size={16} /> Admin
                         </button>
@@ -456,7 +462,7 @@ const Navbar: React.FC = () => {
                     <div className="py-1">
                       <button
                         onClick={handleLogout}
-                        className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg hover:bg-red-50 text-red-600 transition-colors whitespace-nowrap w-full"
+                        className="flex w-full items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg text-[#EEEEEE] transition-colors hover:bg-white/10 hover:text-white whitespace-nowrap"
                       >
                         <LogOut size={16} /> Logout
                       </button>
@@ -469,13 +475,13 @@ const Navbar: React.FC = () => {
             <div className="flex items-center gap-3">
               <button
                 onClick={() => dispatch(openLogin())}
-                className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold text-white bg-[#0856DF] hover:bg-[#064ec4] active:scale-95 transition-all duration-300"
+                className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold text-white bg-[#00ADB5] hover:bg-[#00ADB5] active:scale-95 transition-all duration-300"
               >
                 <LogIn size={16} /> Login
               </button>
               <button
                 onClick={() => dispatch(openSignup())}
-                className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold text-white bg-[#E63E5C] hover:bg-[#d63450] active:scale-95 transition-all duration-300"
+                className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold text-white bg-[#00ADB5] hover:bg-[#222831] active:scale-95 transition-all duration-300"
               >
                 <UserPlus size={16} /> Sign Up
               </button>
@@ -487,12 +493,14 @@ const Navbar: React.FC = () => {
         <div className="md:hidden flex items-center">
           <button
             onClick={() => setMenuOpen(true)}
-            className={clsx(
-              "p-2 rounded-lg transition-all duration-300",
-              isScrolled
-                ? "bg-gray-100 text-[#041241] hover:bg-gray-200"
-                : "bg-white/10 text-white hover:bg-white/20 border border-white/20",
-            )}
+              className={clsx(
+                "p-2 rounded-lg transition-all duration-300",
+                !isHomePage
+                  ? "bg-white/5 text-[#EEEEEE] hover:bg-white/10 hover:text-white border border-white/15"
+                  : isScrolled
+                    ? "bg-[#FFFFFF] text-[#222831] hover:bg-[#EEEEEE]"
+                    : "bg-white/10 text-white hover:bg-white/20 border border-white/20",
+              )}
             aria-label="Open Navigation Menu"
           >
             <Menu size={24} />
@@ -502,27 +510,27 @@ const Navbar: React.FC = () => {
 
       {/* Mobile Drawer */}
       {menuOpen && (
-        <div className="md:hidden fixed inset-0 z-[100] bg-black/30 transition-opacity duration-300 flex justify-end">
+        <div className="md:hidden fixed inset-0 z-[100] bg-[#222831]/30 transition-opacity duration-300 flex justify-end">
           <div
             className="absolute inset-0 -z-10 cursor-pointer"
             onClick={() => setMenuOpen(false)}
           ></div>
-          <div className="w-full max-w-xs bg-white h-full shadow-lg flex flex-col justify-between p-6 rounded-l-2xl border-l border-gray-200">
+          <div className="w-full max-w-xs bg-white h-full shadow-lg flex flex-col justify-between p-6 rounded-l-2xl border-l border-[#EEEEEE]">
             <div>
-              <div className="flex items-center justify-between pb-6 border-b border-gray-200">
+              <div className="flex items-center justify-between pb-6 border-b border-[#EEEEEE]">
                 <div className="flex items-center gap-3">
                   <img
                     src="Logo.png"
                     alt="Logo"
-                    className="h-9 w-9 rounded-full object-cover border border-gray-300"
+                    className="h-9 w-9 rounded-full object-cover border border-[#EEEEEE]"
                   />
-                  <span className="font-bold text-lg text-black">
+                  <span className="font-bold text-lg text-[#222831]">
                     ZeeF Trendy Store
                   </span>
                 </div>
                 <button
                   onClick={() => setMenuOpen(false)}
-                  className="p-2 rounded-lg bg-gray-100 text-gray-600 hover:text-red-600 hover:bg-red-50 transition-all duration-300"
+                  className="p-2 rounded-lg bg-[#FFFFFF] text-[#222831] hover:text-[#222831] hover:bg-[#EEEEEE] transition-all duration-300"
                   aria-label="Close Navigation Menu"
                 >
                   <X size={20} />
@@ -535,7 +543,7 @@ const Navbar: React.FC = () => {
                     key={i}
                     href={item.href}
                     onClick={() => setMenuOpen(false)}
-                    className="flex items-center py-3 px-4 rounded-lg text-sm font-semibold text-gray-700 hover:text-[#0856DF] hover:bg-blue-50 transition-all duration-300"
+                    className="flex items-center py-3 px-4 rounded-lg text-sm font-semibold text-[#222831] hover:text-[#00ADB5] hover:bg-[#FFFFFF] transition-all duration-300"
                   >
                     {item.name}
                   </Link>
@@ -544,10 +552,10 @@ const Navbar: React.FC = () => {
             </div>
 
             {/* Mobile Auth */}
-            <div className="mt-auto pt-6 border-t border-gray-200 space-y-4">
+            <div className="mt-auto pt-6 border-t border-[#EEEEEE] space-y-4">
               {isMounted && isVerified ? (
                 <div className="space-y-4">
-                  <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg">
+                  <div className="flex items-center gap-3 px-4 py-3 bg-[#FFFFFF] border border-[#EEEEEE] rounded-lg">
                     {profilePic ? (
                       <img
                         src={profilePic || "/defaultAvatar.png"}
@@ -555,15 +563,15 @@ const Navbar: React.FC = () => {
                         alt="profile"
                       />
                     ) : (
-                      <div className="w-10 h-10 rounded-full bg-[#0856DF] flex items-center justify-center text-white font-bold text-sm">
+                      <div className="w-10 h-10 rounded-full bg-[#00ADB5] flex items-center justify-center text-white font-bold text-sm">
                         {username?.charAt(0).toUpperCase()}
                       </div>
                     )}
                     <div>
-                      <p className="text-sm font-bold text-[#041241] capitalize">
+                      <p className="text-sm font-bold text-[#222831] capitalize">
                         {username}
                       </p>
-                      <p className="text-xs text-[#0856DF] font-semibold">
+                      <p className="text-xs text-[#00ADB5] font-semibold">
                         Verified
                       </p>
                     </div>
@@ -574,35 +582,35 @@ const Navbar: React.FC = () => {
                     <Link
                       href="/profile"
                       onClick={() => setMenuOpen(false)}
-                      className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm font-semibold text-gray-700 hover:text-[#0856DF] hover:bg-blue-50 transition-colors"
+                      className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm font-semibold text-[#222831] hover:text-[#00ADB5] hover:bg-[#FFFFFF] transition-colors"
                     >
                       <User size={16} /> Profile
                     </Link>
                     <Link
                       href="/profile/orders"
                       onClick={() => setMenuOpen(false)}
-                      className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm font-semibold text-gray-700 hover:text-[#0856DF] hover:bg-blue-50 transition-colors"
+                      className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm font-semibold text-[#222831] hover:text-[#00ADB5] hover:bg-[#FFFFFF] transition-colors"
                     >
                       <Package size={16} /> Orders
                     </Link>
                     <Link
                       href="/profile/notifications"
                       onClick={() => setMenuOpen(false)}
-                      className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm font-semibold text-gray-700 hover:text-[#0856DF] hover:bg-blue-50 transition-colors"
+                      className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm font-semibold text-[#222831] hover:text-[#00ADB5] hover:bg-[#FFFFFF] transition-colors"
                     >
                       <Bell size={16} /> Notifications
                       {unreadCount > 0 && (
-                        <span className="ml-auto w-2 h-2 bg-red-500 rounded-full" />
+                          <span className="ml-auto w-2 h-2 bg-[#222831] rounded-full" />
                       )}
                     </Link>
                     <Link
                       href="/cart"
                       onClick={() => setMenuOpen(false)}
-                      className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm font-semibold text-gray-700 hover:text-[#0856DF] hover:bg-blue-50 transition-colors"
+                      className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm font-semibold text-[#222831] hover:text-[#00ADB5] hover:bg-[#FFFFFF] transition-colors"
                     >
                       <ShoppingCart size={16} /> Cart
                       {cartCount > 0 && (
-                        <span className="ml-auto min-w-[20px] h-5 flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold px-1">
+                          <span className="ml-auto min-w-[20px] h-5 flex items-center justify-center rounded-full bg-[#222831] text-white text-[10px] font-bold px-1">
                           {cartCount}
                         </span>
                       )}
@@ -613,7 +621,7 @@ const Navbar: React.FC = () => {
                   {deferredPrompt && !isAppInstalled && (
                     <button
                       onClick={handleInstallClick}
-                      className="w-full py-2.5 px-4 rounded-lg text-center text-sm font-semibold bg-[#0856DF] text-white hover:bg-[#064ec4] transition-colors"
+                      className="w-full py-2.5 px-4 rounded-lg text-center text-sm font-semibold bg-[#00ADB5] text-white hover:bg-[#00ADB5] transition-colors"
                     >
                       Download App
                     </button>
@@ -624,21 +632,21 @@ const Navbar: React.FC = () => {
                         setMenuOpen(false);
                         window.location.href = "/editProfile";
                       }}
-                      className="py-2.5 px-3 rounded-lg text-center text-xs font-semibold bg-blue-50 text-[#0856DF] hover:bg-blue-100 transition-colors"
+                        className="py-2.5 px-3 rounded-lg text-center text-xs font-semibold bg-[#FFFFFF] text-[#222831] hover:bg-[#EEEEEE] transition-colors"
                     >
                       Edit Profile
                     </button>
                     {isAdmin ? (
                       <button
                         onClick={handleMobileAdminPage}
-                        className="py-2.5 px-3 rounded-lg text-center text-xs font-semibold bg-amber-50 text-amber-600 hover:bg-amber-100 transition-colors"
+                        className="py-2.5 px-3 rounded-lg text-center text-xs font-semibold bg-[#EEEEEE] text-[#222831] hover:bg-[#00ADB5] transition-colors"
                       >
                         Admin Panel
                       </button>
                     ) : (
                       <button
                         onClick={handleLogout}
-                        className="py-2.5 px-3 rounded-lg text-center text-xs font-semibold bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
+                        className="py-2.5 px-3 rounded-lg text-center text-xs font-semibold bg-[#FFFFFF] text-[#222831] hover:bg-[#EEEEEE] transition-colors"
                       >
                         Logout
                       </button>
@@ -647,7 +655,7 @@ const Navbar: React.FC = () => {
                   {isAdmin && (
                     <button
                       onClick={handleLogout}
-                      className="w-full py-2.5 px-4 rounded-lg text-center text-xs font-semibold bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
+                      className="w-full py-2.5 px-4 rounded-lg text-center text-xs font-semibold bg-[#FFFFFF] text-[#222831] hover:bg-[#EEEEEE] transition-colors"
                     >
                       Logout
                     </button>
@@ -660,7 +668,7 @@ const Navbar: React.FC = () => {
                       setMenuOpen(false);
                       dispatch(openLogin());
                     }}
-                    className="w-full py-2.5 rounded-lg text-center text-sm font-semibold bg-[#0856DF] text-white hover:bg-[#064ec4] transition-colors flex justify-center items-center gap-2"
+                    className="w-full py-2.5 rounded-lg text-center text-sm font-semibold bg-[#00ADB5] text-white hover:bg-[#00ADB5] transition-colors flex justify-center items-center gap-2"
                   >
                     <LogIn size={16} /> Login
                   </button>
@@ -669,7 +677,7 @@ const Navbar: React.FC = () => {
                       setMenuOpen(false);
                       dispatch(openSignup());
                     }}
-                    className="w-full py-2.5 rounded-lg text-center text-sm font-semibold bg-white border-2 border-gray-300 text-[#041241] hover:bg-gray-50 transition-colors flex justify-center items-center gap-2"
+                    className="w-full py-2.5 rounded-lg text-center text-sm font-semibold bg-white border-2 border-[#EEEEEE] text-[#222831] hover:bg-[#FFFFFF] transition-colors flex justify-center items-center gap-2"
                   >
                     <UserPlus size={16} /> Sign Up
                   </button>

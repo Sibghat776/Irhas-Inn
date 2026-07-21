@@ -170,14 +170,14 @@ const otpContent = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FFFFFF] via-white to-[#EEEEEE] p-4 relative overflow-hidden">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         className="w-full max-w-md backdrop-blur-2xl bg-white/10 border border-white/10 rounded-3xl p-8 shadow-2xl"
       >
         <div className="flex justify-center mb-3">
-          <ShieldCheck size={50} className="text-purple-300" />
+          <ShieldCheck size={50} className="text-[#222831]" />
         </div>
 
         <h1 className="text-center text-3xl font-bold text-white">
@@ -203,7 +203,7 @@ const otpContent = () => {
                 maxLength={1}
                 onChange={(e) => handleChange(e.target.value, i)}
                 onKeyDown={(e) => handleKeyDown(e, i)}
-                className="w-14 h-16 text-center text-xl font-bold text-white bg-white/10 border border-white/20 rounded-2xl focus:ring-4 focus:ring-purple-500/30 outline-none transition"
+                className="w-14 h-16 text-center text-xl font-bold text-white bg-white/10 border border-white/20 rounded-2xl focus:ring-4 focus:ring-[#00ADB5] outline-none transition"
               />
             ))}
           </div>
@@ -211,7 +211,7 @@ const otpContent = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 rounded-2xl font-bold text-white bg-gradient-to-r from-purple-500 to-blue-500 hover:scale-[1.02] transition-all shadow-lg"
+            className="w-full py-3 rounded-2xl font-bold text-white bg-gradient-to-r from-[#00ADB5] to-[#00ADB5] hover:scale-[1.02] transition-all shadow-lg"
           >
             {isLoading ? "Verifying..." : "Verify OTP"}
           </button>
@@ -227,7 +227,7 @@ const otpContent = () => {
             <button
               onClick={handleResendOtp}
               disabled={isResending}
-              className="text-purple-300 font-semibold"
+              className="text-[#222831] font-semibold"
             >
               {isResending ? "Sending..." : "Resend OTP"}
             </button>
@@ -236,12 +236,12 @@ const otpContent = () => {
 
         {/* ERROR */}
         {error && (
-          <p className="mt-4 text-red-300 text-center text-sm">{error}</p>
+          <p className="mt-4 text-[#222831] text-center text-sm">{error}</p>
         )}
 
         {/* SUCCESS */}
         {success && (
-          <p className="mt-4 text-green-300 text-center text-sm">{success}</p>
+          <p className="mt-4 text-[#222831] text-center text-sm">{success}</p>
         )}
       </motion.div>
     </div>

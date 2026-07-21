@@ -18,16 +18,16 @@ const TikTokIcon = () => (
 
 const Footer: React.FC = () => {
     return (
-        <footer className="relative bg-[#041241] text-white overflow-hidden">
+        <footer className="relative bg-[#222831] text-white overflow-hidden">
             {/* Animated gradient mesh background */}
             <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-[#0856DF]/8 rounded-full blur-[120px] animate-pulse"></div>
-                <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] bg-[#EDAE17]/6 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: "2s" }}></div>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#061F95]/5 rounded-full blur-[150px]"></div>
+                <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-[#00ADB5]/8 rounded-full blur-[120px] animate-pulse"></div>
+                <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] bg-[#EEEEEE]/6 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: "2s" }}></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#00ADB5]/5 rounded-full blur-[150px]"></div>
             </div>
 
             {/* Top accent line */}
-            <div className="relative h-[2px] bg-gradient-to-r from-transparent via-[#0856DF] to-transparent"></div>
+            <div className="relative h-[2px] bg-gradient-to-r from-transparent via-[#00ADB5] to-transparent"></div>
 
             <div className="relative px-6 md:px-20 pt-16 pb-6">
                 <div className="max-w-screen-xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 z-10">
@@ -40,13 +40,13 @@ const Footer: React.FC = () => {
                                     alt="ZeeF Trendy Store"
                                     className="w-[110px] h-auto group-hover:scale-105 transition-transform duration-300"
                                 />
-                                <div className="absolute -inset-2 bg-[#0856DF]/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                <div className="absolute -inset-2 bg-[#00ADB5]/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                             </div>
                         </Link>
-                        <p className="text-sm leading-relaxed text-gray-400">
+                        <p className="text-sm leading-relaxed text-[#EEEEEE]">
                             Your one-stop solution for{" "}
-                            <span className="text-[#0856DF] font-semibold">quality clothes</span>,{" "}
-                            <span className="text-[#EDAE17] font-semibold">accessories</span>, and
+                            <span className="text-[#00ADB5] font-semibold">quality clothes</span>,{" "}
+                            <span className="text-[#EEEEEE] font-semibold">accessories</span>, and
                             more — delivered with{" "}
                             <span className="text-white font-semibold">speed</span> and care
                             across Pakistan.
@@ -56,25 +56,25 @@ const Footer: React.FC = () => {
                             <Link
                                 href="https://facebook.com/zeeftrendystore"
                                 target="_blank"
-                                className="group relative w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-all duration-300 overflow-hidden"
+                                className="group relative w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[#EEEEEE] hover:text-white transition-all duration-300 overflow-hidden"
                                 aria-label="Facebook"
                             >
-                                <div className="absolute inset-0 bg-[#0856DF] translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                                <div className="absolute inset-0 bg-[#1877F2] translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                                 <Facebook size={16} className="relative z-10" />
                             </Link>
                             <Link
                                 href="https://instagram.com/zeeftrendystore"
                                 target="_blank"
-                                className="group relative w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-all duration-300 overflow-hidden"
+                                className="group relative w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[#EEEEEE] hover:text-white transition-all duration-300 overflow-hidden"
                                 aria-label="Instagram"
                             >
-                                <div className="absolute inset-0 bg-gradient-to-br from-[#E63E5C] to-[#EDAE17] translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                                <div className="absolute inset-0 bg-[#E4405F] translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                                 <Instagram size={16} className="relative z-10" />
                             </Link>
                             <Link
                                 href="https://wa.me/923343688913"
                                 target="_blank"
-                                className="group relative w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-all duration-300 overflow-hidden"
+                                className="group relative w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[#EEEEEE] hover:text-white transition-all duration-300 overflow-hidden"
                                 aria-label="WhatsApp"
                             >
                                 <div className="absolute inset-0 bg-[#25D366] translate-y-full text-white group-hover:translate-y-0 transition-transform duration-300"></div>
@@ -83,10 +83,10 @@ const Footer: React.FC = () => {
                             <Link
                                 href="https://tiktok.com/@zeeftrendystore"
                                 target="_blank"
-                                className="group relative w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-all duration-300 overflow-hidden"
+                                className="group relative w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[#EEEEEE] hover:text-white transition-all duration-300 overflow-hidden"
                                 aria-label="TikTok"
                             >
-                                <div className="absolute inset-0 bg-[#010101] translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                                <div className="absolute inset-0 bg-black translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                                 <TikTokIcon />
                             </Link>
                         </div>
@@ -96,7 +96,7 @@ const Footer: React.FC = () => {
                     <div>
                         <h3 className="text-sm font-bold mb-6 text-white uppercase tracking-[0.2em] relative inline-block">
                             Quick Links
-                            <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-[#EDAE17] to-transparent"></span>
+                            <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-[#EEEEEE] to-transparent"></span>
                         </h3>
                         <ul className="space-y-3 text-sm mt-2">
                             {[
@@ -108,9 +108,9 @@ const Footer: React.FC = () => {
                                 <li key={i}>
                                     <Link
                                         href={item.href}
-                                        className="text-gray-400 hover:text-white inline-flex items-center gap-2 group transition-all duration-300"
+                                        className="text-[#EEEEEE] hover:text-[#00ADB5] inline-flex items-center gap-2 group transition-all duration-300"
                                     >
-                                        <span className="w-0 group-hover:w-4 h-[1px] bg-[#EDAE17] transition-all duration-300"></span>
+                                        <span className="w-0 group-hover:w-4 h-[1px] bg-[#EEEEEE] transition-all duration-300"></span>
                                         <span className="group-hover:translate-x-1 transition-transform duration-300">{item.name}</span>
                                     </Link>
                                 </li>
@@ -122,31 +122,31 @@ const Footer: React.FC = () => {
                     <div>
                         <h3 className="text-sm font-bold mb-6 text-white uppercase tracking-[0.2em] relative inline-block">
                             Contact
-                            <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-[#0856DF] to-transparent"></span>
+                            <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-[#00ADB5] to-transparent"></span>
                         </h3>
                         <div className="space-y-4 text-sm mt-2">
                             <a
                                 href="mailto:ullahsibghat786@gmail.com"
-                                className="flex items-start gap-3 text-gray-400 hover:text-white transition-all duration-300 group"
+                                className="flex items-start gap-3 text-[#EEEEEE] hover:text-[#00ADB5] transition-all duration-300 group"
                             >
-                                <span className="w-8 h-8 rounded-lg bg-[#0856DF]/10 flex items-center justify-center shrink-0 group-hover:bg-[#0856DF]/20 transition-colors">
-                                    <Mail size={14} className="text-[#0856DF]" />
+                                <span className="w-8 h-8 rounded-lg bg-[#00ADB5]/10 flex items-center justify-center shrink-0 group-hover:bg-[#222831]/20 transition-colors">
+                                    <Mail size={14} className="text-[#00ADB5]" />
                                 </span>
                                 <span className="mt-1 leading-relaxed">ullahsibghat786@gmail.com</span>
                             </a>
                             <a
                                 href="https://wa.me/923343688913"
                                 target="_blank"
-                                className="flex items-start gap-3 text-gray-400 hover:text-white transition-all duration-300 group"
+                                className="flex items-start gap-3 text-[#EEEEEE] hover:text-[#00ADB5] transition-all duration-300 group"
                             >
-                                <span className="w-8 h-8 rounded-lg bg-[#25D366]/10 flex items-center justify-center shrink-0 group-hover:bg-[#25D366]/20 transition-colors">
+                                <span className="w-8 h-8 rounded-lg bg-[#00ADB5]/10 flex items-center justify-center shrink-0 group-hover:bg-[#00ADB5]/20 transition-colors">
                                     <WhatsAppIcon />
                                 </span>
                                 <span className="mt-1 leading-relaxed">+92 334 3688913</span>
                             </a>
-                            <div className="flex items-start gap-3 text-gray-400">
-                                <span className="w-8 h-8 rounded-lg bg-[#E63E5C]/10 flex items-center justify-center shrink-0">
-                                    <MapPin size={14} className="text-[#E63E5C]" />
+                            <div className="flex items-start gap-3 text-[#EEEEEE]">
+                                <span className="w-8 h-8 rounded-lg bg-[#EEEEEE]/10 flex items-center justify-center shrink-0">
+                                    <MapPin size={14} className="text-[#EEEEEE]" />
                                 </span>
                                 <span className="mt-1 leading-relaxed">Karachi, Pakistan</span>
                             </div>
@@ -157,18 +157,18 @@ const Footer: React.FC = () => {
                     <div>
                         <h3 className="text-sm font-bold mb-6 text-white uppercase tracking-[0.2em] relative inline-block">
                             Stay Updated
-                            <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-[#0856DF] to-transparent"></span>
+                            <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-[#00ADB5] to-transparent"></span>
                         </h3>
-                        <p className="text-sm text-gray-400 mb-5 leading-relaxed mt-2">
+                        <p className="text-sm text-[#EEEEEE] mb-5 leading-relaxed mt-2">
                             Subscribe for exclusive deals, new arrivals, and trending styles.
                         </p>
                         <div className="flex flex-col gap-3">
                             <input
                                 type="email"
                                 placeholder="Enter your email"
-                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-gray-500 outline-none focus:border-[#0856DF] focus:bg-white/[0.07] transition-all duration-300"
+                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-[#EEEEEE] outline-none focus:border-[#00ADB5] focus:bg-white/[0.07] transition-all duration-300"
                             />
-                            <button className="w-full px-4 py-3 bg-gradient-to-r from-[#061F95] to-[#0856DF] text-white text-sm font-bold rounded-xl hover:shadow-lg hover:shadow-[#0856DF]/30 active:scale-[0.98] transition-all duration-300 uppercase tracking-wider">
+                            <button className="w-full px-4 py-3 bg-gradient-to-r from-[#00ADB5] to-[#00ADB5] text-white text-sm font-bold rounded-xl hover:shadow-lg hover:shadow-[#00ADB5]/30 active:scale-[0.98] transition-all duration-300 uppercase tracking-wider">
                                 Subscribe
                             </button>
                         </div>
@@ -177,10 +177,10 @@ const Footer: React.FC = () => {
 
                 {/* Footer Bottom */}
                 <div className="relative mt-14 pt-6 border-t border-white/[0.06]">
-                    <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+                    <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-[#EEEEEE]">
                         <p>
                             &copy; {new Date().getFullYear()}{" "}
-                            <span className="text-[#0856DF] font-bold">ZeeF Trendy Store</span>. All
+                            <span className="text-[#00ADB5] font-bold">ZeeF Trendy Store</span>. All
                             rights reserved.
                         </p>
                         <div className="flex items-center gap-6">

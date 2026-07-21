@@ -10,12 +10,12 @@ import { Package, ChevronRight, ArrowLeft, Clock } from "lucide-react";
 import { baseUrl, showToast } from "@/app/utils/commonFunctions";
 
 const statusColor: Record<string, string> = {
-  Pending: "bg-yellow-100 text-yellow-800",
-  Processing: "bg-blue-100 text-blue-800",
-  Shipped: "bg-indigo-100 text-indigo-800",
-  "Out for Delivery": "bg-purple-100 text-purple-800",
-  Delivered: "bg-green-100 text-green-800",
-  Cancelled: "bg-red-100 text-red-800",
+  Pending: "bg-[#FFFFFF] text-[#222831]",
+  Processing: "bg-[#FFFFFF] text-[#222831]",
+  Shipped: "bg-[#FFFFFF] text-[#222831]",
+  "Out for Delivery": "bg-[#FFFFFF] text-[#222831]",
+  Delivered: "bg-[#FFFFFF] text-[#222831]",
+  Cancelled: "bg-[#FFFFFF] text-[#222831]",
 };
 
 const MyOrdersPage = () => {
@@ -44,25 +44,25 @@ const MyOrdersPage = () => {
   }, [auth.username]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-400 via-white to-gray-100 px-4 pt-24 pb-6">
+    <div className="min-h-screen bg-gradient-to-b from-[#FFFFFF] via-white to-[#FFFFFF] px-4 pt-24 pb-6">
       <div className="max-w-4xl mx-auto">
-        <Link href="/profile" className="inline-flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-[#0856DF] transition-colors mb-4">
+        <Link href="/profile" className="inline-flex items-center gap-2 text-sm font-semibold text-[#222831] hover:text-[#00ADB5] transition-colors mb-4">
           <ArrowLeft size={16} /> Back to Profile
         </Link>
-        <h1 className="text-4xl font-black text-gray-900 tracking-tight mb-2">My Orders</h1>
-        <p className="text-gray-600 font-semibold mb-8">Track and manage your orders</p>
+        <h1 className="text-4xl font-black text-[#222831] tracking-tight mb-2">My Orders</h1>
+        <p className="text-[#222831] font-semibold mb-8">Track and manage your orders</p>
 
         {loading ? (
           <div className="text-center py-16">
-            <Package size={48} className="mx-auto text-gray-300 mb-4" />
-            <p className="text-gray-500 font-semibold">Loading orders...</p>
+            <Package size={48} className="mx-auto text-[#222831] mb-4" />
+            <p className="text-[#222831] font-semibold">Loading orders...</p>
           </div>
         ) : orders.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-2xl border border-gray-200 shadow-sm">
-            <Package size={48} className="mx-auto text-gray-300 mb-4" />
-            <p className="text-lg font-bold text-gray-700">No orders yet</p>
-            <p className="text-sm text-gray-500 mt-1">Start shopping to see your orders here.</p>
-            <Link href="/" className="inline-block mt-6 px-6 py-3 bg-[#0856DF] text-white rounded-xl font-semibold hover:bg-[#0645c8] transition-colors">
+          <div className="text-center py-16 bg-white rounded-2xl border border-[#EEEEEE] shadow-sm">
+            <Package size={48} className="mx-auto text-[#222831] mb-4" />
+            <p className="text-lg font-bold text-[#222831]">No orders yet</p>
+            <p className="text-sm text-[#222831] mt-1">Start shopping to see your orders here.</p>
+            <Link href="/" className="inline-block mt-6 px-6 py-3 bg-[#00ADB5] text-white rounded-xl font-semibold hover:bg-[#00ADB5] transition-colors">
               Browse Products
             </Link>
           </div>
@@ -70,24 +70,24 @@ const MyOrdersPage = () => {
           <div className="space-y-4">
             {orders.map((order) => (
               <Link key={order._id} href={`/profile/orders/${order._id}`}
-                className="block bg-white rounded-2xl border border-gray-200 p-5 shadow-sm hover:shadow-md transition-shadow">
+                className="block bg-white rounded-2xl border border-[#EEEEEE] p-5 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <span className="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-1 rounded-md">
+                      <span className="text-xs font-mono text-[#222831] bg-[#FFFFFF] px-2 py-1 rounded-md">
                         #{order.serialNumber || order._id.slice(-8)}
                       </span>
-                      <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${statusColor[order.status] || "bg-gray-100 text-gray-700"}`}>
+                      <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${statusColor[order.status] || "bg-[#FFFFFF] text-[#222831]"}`}>
                         {order.status || "Pending"}
                       </span>
                     </div>
-                    <p className="text-lg font-bold text-gray-900">Rs {order.totalPrice?.toLocaleString()}</p>
-                    <div className="flex items-center gap-4 mt-1 text-xs text-gray-500">
+                    <p className="text-lg font-bold text-[#222831]">Rs {order.totalPrice?.toLocaleString()}</p>
+                    <div className="flex items-center gap-4 mt-1 text-xs text-[#222831]">
                       <span className="flex items-center gap-1"><Clock size={12} /> {new Date(order.createdAt).toLocaleDateString()}</span>
                       <span>{order.orderItems?.length || 0} item(s)</span>
                     </div>
                   </div>
-                  <ChevronRight size={20} className="text-gray-400" />
+                  <ChevronRight size={20} className="text-[#222831]" />
                 </div>
               </Link>
             ))}

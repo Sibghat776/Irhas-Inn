@@ -5,7 +5,7 @@ import { createError, createSuccess } from "../utils/commonFunctions.js";
 const populateUserCart = async (user) => {
   await user.populate(
     "cart.product",
-    "name price stock description images slug brand category",
+    "name price stock description images slug brand category colors sizes",
   );
   return user.cart;
 };

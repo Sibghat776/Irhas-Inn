@@ -53,18 +53,17 @@ const ProductCardImageCarousel: React.FC<{
   }, [normalizedImages.length]);
 
   return (
-    <div className="relative h-36 overflow-hidden sm:h-44 md:h-56 lg:h-64">
+    <div className="relative h-36 overflow-hidden bg-[#FFFFFF] p-2 sm:h-44 md:h-56 lg:h-64">
       {normalizedImages.map((image, index) => (
         <img
           key={`${image.url}-${index}`}
           src={image.url}
           alt={`${label} ${index + 1}`}
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-out ${index === currentIndex ? "opacity-100" : "opacity-0"
+          className={`absolute inset-0 h-full w-full object-contain p-2 transition-opacity duration-700 ease-out ${index === currentIndex ? "opacity-100" : "opacity-0"
             }`}
         />
       ))}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-      <div className="absolute left-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-[9px] font-semibold text-[#041241] shadow-sm sm:left-3 sm:top-3 sm:px-2.5 sm:py-1 sm:text-[10px]">
+      <div className="absolute left-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-[9px] font-semibold text-[#222831] shadow-sm sm:left-3 sm:top-3 sm:px-2.5 sm:py-1 sm:text-[10px]">
         {label}
       </div>
       <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-1 sm:bottom-3 sm:gap-1.5">
@@ -162,13 +161,13 @@ const ProductsPage: React.FC<ProductsPageProps> = ({
     <>
       <Navbar />
 
-      <section className="min-h-screen bg-gradient-to-b from-gray-400 via-white to-white py-10 pt-24 sm:py-16 sm:pt-28">
+      <section className="min-h-screen bg-gradient-to-b from-[#FFFFFF] via-white to-white py-10 pt-24 sm:py-16 sm:pt-28">
         <div className="mx-auto max-w-7xl px-3 sm:px-6">
           <div className="mb-8 space-y-1.5 text-center sm:mb-16 sm:space-y-3">
-            <span className="inline-block text-[9px] font-black uppercase tracking-[0.25em] text-[#EDAE17] sm:text-xs sm:tracking-[0.3em]">
+            <span className="inline-block text-[9px] font-black uppercase tracking-[0.25em] text-[#EEEEEE] sm:text-xs sm:tracking-[0.3em]">
               {categoryName ? "Category" : "All Products"}
             </span>
-            <h1 className="text-xl font-black tracking-tight text-[#041241] sm:text-3xl md:text-5xl">
+            <h1 className="text-xl font-black tracking-tight text-[#222831] sm:text-3xl md:text-5xl">
               {categoryName || title}
             </h1>
           </div>
@@ -176,18 +175,18 @@ const ProductsPage: React.FC<ProductsPageProps> = ({
           {loading ? (
             <div className="grid grid-cols-2 gap-3 sm:gap-8 md:grid-cols-3 lg:grid-cols-4">
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg sm:rounded-[32px]">
-                  <div className="h-36 animate-pulse bg-slate-100 sm:h-56" />
+                <div key={i} className="overflow-hidden rounded-2xl border border-[#EEEEEE] bg-white shadow-lg sm:rounded-[32px]">
+                  <div className="h-36 animate-pulse bg-[#FFFFFF] sm:h-56" />
                   <div className="space-y-2 p-3 sm:space-y-3 sm:p-5">
-                    <div className="h-3 w-3/4 rounded-full bg-slate-200 animate-pulse sm:h-4" />
-                    <div className="h-3 w-1/2 rounded-full bg-slate-200 animate-pulse sm:h-4" />
+                    <div className="h-3 w-3/4 rounded-full bg-[#FFFFFF] animate-pulse sm:h-4" />
+                    <div className="h-3 w-1/2 rounded-full bg-[#FFFFFF] animate-pulse sm:h-4" />
                   </div>
                 </div>
               ))}
             </div>
           ) : products.length === 0 ? (
             <div className="py-16 text-center sm:py-20">
-              <p className="text-sm text-slate-500 sm:text-lg">No products available in this category.</p>
+              <p className="text-sm text-[#222831] sm:text-lg">No products available in this category.</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-3 sm:gap-8 md:grid-cols-3 lg:grid-cols-4">
@@ -200,22 +199,22 @@ const ProductsPage: React.FC<ProductsPageProps> = ({
                     tabIndex={0}
                     onClick={() => router.push(`/product/${prod._id}`)}
                     onKeyDown={(e) => { if (e.key === "Enter") router.push(`/product/${prod._id}`); }}
-                    className="cursor-pointer overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_10px_30px_rgba(6,18,75,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(6,18,75,0.14)] sm:rounded-[32px] sm:shadow-[0_20px_60px_rgba(6,18,75,0.08)] sm:hover:shadow-[0_30px_90px_rgba(6,18,75,0.16)]"
+                    className="cursor-pointer overflow-hidden rounded-2xl border border-[#EEEEEE] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(0,0,0,0.14)] sm:rounded-[32px] sm:shadow-[0_20px_60px_rgba(0,0,0,0.08)] sm:hover:shadow-[0_30px_90px_rgba(0,0,0,0.16)]"
                   >
                     <ProductCardImageCarousel
                       images={prod.images}
                       label={prodAny.category?.name ?? "Product"}
                     />
 
-                    <div className="space-y-2 p-3 text-[#041241] sm:space-y-4 sm:p-5">
+                    <div className="space-y-2 p-3 text-[#222831] sm:space-y-4 sm:p-5">
                       <div className="flex flex-wrap items-center justify-between gap-1.5 text-[10px] sm:gap-3 sm:text-sm">
-                        <span className="inline-flex items-center rounded-full border border-[#0856DF]/20 bg-[#0856DF]/10 px-2 py-0.5 font-semibold text-[#0856DF] sm:px-3 sm:py-1">
+                        <span className="inline-flex items-center rounded-full border border-[#00ADB5]/20 bg-[#00ADB5]/10 px-2 py-0.5 font-semibold text-[#222831] sm:px-3 sm:py-1">
                           {prodAny.brand ?? "ZeeF"}
                         </span>
-                        <span className="hidden text-[10px] text-slate-500 sm:inline-block sm:text-xs">
+                        <span className="hidden text-[10px] text-[#222831] sm:inline-block sm:text-xs">
                           {prodAny.stock > 0 ? `${prodAny.stock} in stock` : "Out of stock"}
                         </span>
-                        <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-1.5 py-0.5 text-[8px] font-semibold text-emerald-600 sm:px-2 sm:text-[10px]">
+                        <span className="inline-flex items-center gap-1 rounded-full border border-[#EEEEEE] bg-[#FFFFFF] px-1.5 py-0.5 text-[8px] font-semibold text-[#222831] sm:px-2 sm:text-[10px]">
                           <Truck size={10} className="sm:hidden" />
                           <Truck size={12} className="hidden sm:block" />
                           <span className="hidden sm:inline">Free Shipping</span>
@@ -224,32 +223,32 @@ const ProductsPage: React.FC<ProductsPageProps> = ({
                       </div>
                       <div className="space-y-0.5 sm:space-y-1">
                         <h3 className="line-clamp-1 text-sm font-black leading-tight sm:text-xl">{prod.name}</h3>
-                        <p className="line-clamp-2 text-xs text-slate-600 sm:line-clamp-3 sm:text-sm">{prod.description}</p>
+                        <p className="line-clamp-2 text-xs text-[#222831] sm:line-clamp-3 sm:text-sm">{prod.description}</p>
                       </div>
                       <div>
                         <div className="flex items-end gap-1.5 sm:gap-2">
-                          <p className="text-base font-black text-[#041241] sm:text-2xl">
+                          <p className="text-base font-black text-[#222831] sm:text-2xl">
                             Rs {prod.price.toLocaleString()}
                           </p>
-                          <p className="pb-0.5 text-[11px] font-medium text-slate-400 line-through sm:pb-1 sm:text-sm">
+                          <p className="pb-0.5 text-[11px] font-medium text-[#222831] line-through sm:pb-1 sm:text-sm">
                             Rs {Math.round(prod.price * 1.4).toLocaleString()}
                           </p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="grid gap-1.5 border-t border-slate-200/70 bg-[#F7F7FA] p-3 sm:gap-3 sm:p-5">
+                    <div className="grid gap-1.5 border-t border-[#EEEEEE] bg-[#FFFFFF] p-3 sm:gap-3 sm:p-5">
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); buyNow(prod); }}
-                        className="inline-flex min-h-[36px] items-center justify-center rounded-xl bg-[#0856DF] px-3 text-xs font-semibold text-white transition hover:bg-[#0645c8] sm:min-h-[48px] sm:rounded-2xl sm:px-4 sm:text-sm"
+                        className="inline-flex min-h-[36px] items-center justify-center rounded-xl bg-[#00ADB5] px-3 text-xs font-semibold text-white transition hover:bg-[#00ADB5] sm:min-h-[48px] sm:rounded-2xl sm:px-4 sm:text-sm"
                       >
                         Buy Now
                       </button>
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); addToCart(prod); }}
-                        className="inline-flex min-h-[36px] items-center justify-center rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-[#041241] transition hover:border-[#0856DF] hover:bg-[#f3f8ff] sm:min-h-[48px] sm:rounded-2xl sm:px-4 sm:text-sm"
+                        className="inline-flex min-h-[36px] items-center justify-center rounded-xl border border-[#EEEEEE] bg-white px-3 text-xs font-semibold text-[#222831] transition hover:border-[#00ADB5] hover:bg-[#FFFFFF] sm:min-h-[48px] sm:rounded-2xl sm:px-4 sm:text-sm"
                       >
                         Add to Cart
                       </button>

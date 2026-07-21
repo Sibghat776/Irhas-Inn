@@ -3,7 +3,13 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #222831;
+  --brand-primary: #00ADB5;
+  --brand-secondary: #00ADB5;
+  --brand-beige: #EEEEEE;
+  --brand-cream: #FFFFFF;
+  --brand-white: #FFFFFF;
+  --brand-black: #222831;
 }
 
 * {
@@ -70,7 +76,7 @@
     width: 100%;
     box-sizing: border-box;
     padding: 8mm 10mm;
-    border-bottom: 1px dashed #cbd5e1;
+    border-bottom: 1px dashed #EEEEEE;
     overflow: hidden;
     page-break-inside: avoid;
   }
@@ -93,7 +99,7 @@
   pointer-events: none;
 }
 #nprogress .bar {
-  background: #0856df;
+  background: #00ADB5;
   position: fixed;
   z-index: 1031;
   top: 0;
@@ -101,7 +107,7 @@
   width: 100%;
   height: 3px;
   border-radius: 0 3px 3px 0;
-  box-shadow: 0 0 8px rgba(8, 86, 223, 0.6);
+  box-shadow: 0 0 8px rgba(84, 107, 65, 0.6);
 }
 #nprogress .peg {
   display: block;
@@ -109,7 +115,7 @@
   right: 0;
   width: 100px;
   height: 100%;
-  box-shadow: 0 0 10px #0856df, 0 0 5px #0856df;
+  box-shadow: 0 0 10px #00ADB5, 0 0 5px #00ADB5;
   opacity: 1;
   transform: rotate(3deg) translate(0px, -4px);
 }

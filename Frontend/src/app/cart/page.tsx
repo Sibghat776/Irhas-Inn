@@ -25,6 +25,9 @@ interface CartItem {
   category?: string | null;
   selectedColor?: string;
   selectedSize?: string;
+  colors?: string[];
+  sizes?: string[];
+  addedBy?: string;
 }
 
 const normalizeCartItem = (item: any): CartItem => ({
@@ -83,6 +86,8 @@ const CartPage = () => {
                 cartItems: normalizedLocalCart.map((item) => ({
                   productId: getCartItemProductId(item),
                   quantity: item.quantity,
+                  selectedColor: item.selectedColor || "",
+                  selectedSize: item.selectedSize || "",
                 })),
               },
               {
@@ -142,6 +147,9 @@ const CartPage = () => {
             images: product.images ?? item.images ?? [],
             stock: product.stock ?? item.stock ?? 0,
             category: categoryId,
+            colors: product.colors ?? item.colors ?? [],
+            sizes: product.sizes ?? item.sizes ?? [],
+            addedBy: product.addedBy ?? item.addedBy,
             selectedColor: item.selectedColor ?? product.selectedColor ?? item.color ?? item.variant?.color,
             selectedSize: item.selectedSize ?? product.selectedSize ?? item.size ?? item.variant?.size,
           };
@@ -358,8 +366,8 @@ const CartPage = () => {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-slate-100 py-24">
-        <div className="max-w-6xl mx-auto px-6 text-center text-slate-700">
+      <main className="min-h-screen bg-[#FFFFFF] py-24">
+        <div className="max-w-6xl mx-auto px-6 text-center text-[#222831]">
           Loading cart...
         </div>
       </main>
@@ -368,19 +376,19 @@ const CartPage = () => {
 
   if (isEmpty) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-gray-400 via-white to-white py-24">
-        <div className="max-w-6xl mx-auto px-6 text-center rounded-3xl border border-slate-200 bg-white p-16 shadow-sm">
-          <XCircle className="mx-auto mb-5 h-16 w-16 text-slate-400" />
-          <h1 className="text-3xl font-black text-slate-900">
+      <main className="min-h-screen bg-gradient-to-b from-[#FFFFFF] via-white to-white pt-22">
+        <div className="max-w-6xl mx-auto px-6 text-center rounded-3xl border border-[#EEEEEE] bg-white p-16 shadow-sm">
+          <XCircle className="mx-auto mb-5 h-16 w-16 text-[#222831]" />
+          <h1 className="text-3xl font-black text-[#222831]">
             Your cart is empty
           </h1>
-          <p className="mt-4 text-slate-600">
+          <p className="mt-4 text-[#222831]">
             Add products to your cart from the product page, and they will be
             saved for you.
           </p>
           <button
-            onClick={() => router.push("/")}
-            className="mt-8 inline-flex items-center gap-2 rounded-3xl bg-[#0856DF] px-6 py-3 text-white transition hover:bg-[#0645c8]"
+            onClick={() => router.push("/productsPage")}
+            className="mt-8 inline-flex items-center gap-2 rounded-3xl bg-[#00ADB5] px-6 py-3 text-white transition hover:bg-[#00ADB5]"
           >
             <ShoppingCart size={18} /> Shop now
           </button>
@@ -390,27 +398,27 @@ const CartPage = () => {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-400 via-white to-white py-16">
+    <main className="min-h-screen bg-gradient-to-b from-[#FFFFFF] via-white to-white py-16 pt-22">
       <div className="max-w-6xl mx-auto px-6">
         <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <p className="text-sm uppercase tracking-[0.3em] text-slate-500">
+            <p className="text-sm uppercase tracking-[0.3em] text-[#222831]">
               Your Cart
             </p>
-            <h1 className="text-4xl font-black text-[#041241]">
+            <h1 className="text-4xl font-black text-[#222831]">
               Shopping Cart
             </h1>
           </div>
           <div className="flex flex-wrap gap-3">
             <button
               onClick={clearCart}
-              className="rounded-3xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 flex items-center gap-2"
+              className="rounded-3xl border border-[#EEEEEE] bg-white px-5 py-3 text-sm font-semibold text-[#222831] transition hover:bg-[#EEEEEE] flex items-center gap-2"
             >
               <Trash2 size={18} /> Clear Cart
             </button>
             <button
               onClick={proceedToCheckout}
-              className="rounded-3xl bg-[#0856DF] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#0645c8]"
+              className="rounded-3xl bg-[#00ADB5] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#00ADB5]"
             >
               Proceed to Checkout
             </button>
@@ -418,7 +426,7 @@ const CartPage = () => {
         </div>
 
         {syncError && (
-          <div className="mb-6 rounded-3xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-700">
+          <div className="mb-6 rounded-3xl border border-[#EEEEEE] bg-[#FFFFFF] p-5 text-sm text-[#222831]">
             {syncError}
           </div>
         )}
@@ -428,7 +436,7 @@ const CartPage = () => {
             {cartItems.map((item) => (
               <div
                 key={item._id}
-                className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm"
+                className="rounded-[28px] border border-[#EEEEEE] bg-white p-6 shadow-sm"
               >
                 <div className="flex flex-col gap-6 lg:flex-row">
                   <img
@@ -439,40 +447,40 @@ const CartPage = () => {
                   <div className="flex-1">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                       <div>
-                        <h2 className="text-xl font-bold text-[#041241]">
+                        <h2 className="text-xl font-bold text-[#222831]">
                           {item.name}
                         </h2>
-                        <p className="mt-2 text-sm text-slate-600 line-clamp-2">
+                        <p className="mt-2 text-sm text-[#222831] line-clamp-2">
                           {item.description ?? "High quality product"}
                         </p>
                         {(item.selectedColor || item.selectedSize) && (
                           <div className="mt-3 flex flex-wrap gap-2 text-sm">
                             {item.selectedColor && (
-                              <span className="rounded-full border border-slate-300 bg-slate-100 px-3 py-1 text-slate-700">
+                              <span className="rounded-full border border-[#EEEEEE] bg-[#FFFFFF] px-3 py-1 text-[#222831]">
                                 Color: {item.selectedColor}
                               </span>
                             )}
                             {item.selectedSize && (
-                              <span className="rounded-full border border-slate-300 bg-slate-100 px-3 py-1 text-slate-700">
+                              <span className="rounded-full border border-[#EEEEEE] bg-[#FFFFFF] px-3 py-1 text-[#222831]">
                                 Size: {item.selectedSize}
                               </span>
                             )}
                           </div>
                         )}
                       </div>
-                      <div className="rounded-3xl bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700">
+                      <div className="rounded-3xl bg-[#FFFFFF] px-4 py-3 text-sm font-semibold text-[#222831]">
                         Rs {item.price.toLocaleString()}
                       </div>
                     </div>
 
                     <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                      <div className="inline-flex items-center gap-3 rounded-3xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700">
+                      <div className="inline-flex items-center gap-3 rounded-3xl border border-[#EEEEEE] bg-[#FFFFFF] px-3 py-2 text-sm font-semibold text-[#222831]">
                         <button
                           type="button"
                           onClick={() =>
                             updateCart(item._id, Math.max(1, item.quantity - 1))
                           }
-                          className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#041241] shadow-sm transition hover:bg-slate-100"
+                          className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#222831] shadow-sm transition hover:bg-[#EEEEEE]"
                         >
                           <Minus size={18} />
                         </button>
@@ -482,17 +490,17 @@ const CartPage = () => {
                           onClick={() =>
                             updateCart(item._id, item.quantity + 1)
                           }
-                          className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#041241] shadow-sm transition hover:bg-slate-100"
+                          className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#222831] shadow-sm transition hover:bg-[#EEEEEE]"
                         >
                           <Plus size={18} />
                         </button>
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
+                      <div className="flex flex-wrap items-center gap-3 text-sm text-[#222831]">
                         <span>Stock: {item.stock ?? 0}</span>
                         <button
                           onClick={() => removeItem(item._id)}
-                          className="inline-flex items-center gap-2 rounded-3xl bg-red-50 px-4 py-2 text-red-700 transition hover:bg-red-100"
+                          className="inline-flex items-center gap-2 rounded-3xl bg-[#FFFFFF] px-4 py-2 text-[#222831] transition hover:bg-[#EEEEEE]"
                         >
                           <XCircle size={16} /> Remove
                         </button>
@@ -505,14 +513,14 @@ const CartPage = () => {
 
             {relatedProducts.length > 0 && (
               <div className="mt-6">
-                <h3 className="mb-4 text-lg font-semibold text-[#041241]">
+                <h3 className="mb-4 text-lg font-semibold text-[#222831]">
                   You may also like
                 </h3>
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
                   {relatedProducts.map((p) => (
                     <div
                       key={p._id}
-                      className="rounded-xl border border-slate-200 bg-white p-3 flex flex-col items-start"
+                      className="rounded-xl border border-[#EEEEEE] bg-white p-3 flex flex-col items-start"
                     >
                       <img
                         src={p.images?.[0]?.url ?? "/carousel/Pens.avif"}
@@ -520,7 +528,7 @@ const CartPage = () => {
                         className="h-28 w-full object-cover rounded-md mb-3"
                       />
                       <div className="flex-1 w-full">
-                        <h4 className="text-sm font-semibold text-[#041241] line-clamp-2">
+                        <h4 className="text-sm font-semibold text-[#222831] line-clamp-2">
                           {p.name}
                         </h4>
                         <div className="mt-2 flex items-center justify-between w-full">
@@ -532,13 +540,13 @@ const CartPage = () => {
                       <div className="mt-3 w-full flex gap-2">
                         <button
                           onClick={() => addSuggestedToCart(p)}
-                          className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                          className="flex-1 rounded-lg border border-[#EEEEEE] bg-white px-3 py-2 text-sm font-semibold text-[#222831] hover:bg-[#EEEEEE]"
                         >
                           Add
                         </button>
                         <button
                           onClick={() => buyNowSuggested(p)}
-                          className="flex-1 rounded-lg bg-[#0856DF] px-3 py-2 text-sm font-semibold text-white hover:bg-[#0645c8]"
+                          className="flex-1 rounded-lg bg-[#00ADB5] px-3 py-2 text-sm font-semibold text-white hover:bg-[#00ADB5]"
                         >
                           Buy Now
                         </button>
@@ -550,36 +558,36 @@ const CartPage = () => {
             )}
           </div>
 
-          <aside className="rounded-[32px] border border-slate-200 bg-white p-8 shadow-sm h-fit">
+          <aside className="rounded-[32px] border border-[#EEEEEE] bg-white p-8 shadow-sm h-fit">
             <div className="space-y-5">
               <div>
-                <p className="text-sm uppercase tracking-[0.3em] text-slate-500">
+                <p className="text-sm uppercase tracking-[0.3em] text-[#222831]">
                   Order summary
                 </p>
-                <h2 className="mt-2 text-3xl font-black text-[#041241]">
+                <h2 className="mt-2 text-3xl font-black text-[#222831]">
                   Payment details
                 </h2>
               </div>
 
-              <div className="space-y-4 rounded-3xl bg-slate-50 p-5 text-slate-700">
+              <div className="space-y-4 rounded-3xl bg-[#FFFFFF] p-5 text-[#222831]">
                 <div className="flex justify-between text-sm">
                   <span>Items</span>
                   <span>Rs {totals.itemsPrice.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Shipping</span>
-                  <span className="font-semibold text-emerald-600">
+                  <span className="font-semibold text-[#222831]">
                     Free Shipping
                   </span>
                 </div>
-                <div className="border-t border-slate-200 pt-4 text-lg font-black text-[#041241] flex justify-between">
+                <div className="border-t border-[#EEEEEE] pt-4 text-lg font-black text-[#222831] flex justify-between">
                   <span>Total</span>
                   <span>Rs {totals.totalPrice.toLocaleString()}</span>
                 </div>
               </div>
 
-              <div className="rounded-3xl bg-[#F7F7FA] p-5 text-sm text-slate-600">
-                <p className="font-semibold text-slate-900">Cash on Delivery</p>
+              <div className="rounded-3xl bg-[#FFFFFF] p-5 text-sm text-[#222831]">
+                <p className="font-semibold text-[#222831]">Cash on Delivery</p>
                 <p className="mt-2">
                   Your items will be reserved now. Pay only when the delivery
                   arrives.
@@ -588,7 +596,7 @@ const CartPage = () => {
 
               <button
                 onClick={proceedToCheckout}
-                className="w-full rounded-3xl bg-[#0856DF] px-6 py-4 text-sm font-bold uppercase tracking-[0.2em] text-white transition hover:bg-[#0645c8]"
+                className="w-full rounded-3xl bg-[#00ADB5] px-6 py-4 text-sm font-bold uppercase tracking-[0.2em] text-white transition hover:bg-[#00ADB5]"
               >
                 Checkout now
               </button>

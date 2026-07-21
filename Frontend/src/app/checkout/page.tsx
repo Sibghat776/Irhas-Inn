@@ -29,6 +29,7 @@ interface CartItem {
   selectedSize?: string;
   colors?: string[];
   sizes?: string[];
+  addedBy?: string;
 }
 
 interface UserData {
@@ -54,6 +55,12 @@ const normalizeCartItem = (item: any): CartItem => ({
   sizes: item.sizes || item.product?.sizes || [],
 });
 
+const cleanVariantOption = (value: string) =>
+  String(value).replace(/[\[\]"']/g, "").trim();
+
+const getVariantOptions = (options?: string[]) =>
+  (options ?? []).map(cleanVariantOption).filter(Boolean);
+
 // ── Step indicator ────────────────────────────────────────────────────────────
 const steps = ["Shipping", "Review", "Done"];
 const StepBar: React.FC<{ current: number }> = ({ current }) => (
@@ -66,24 +73,24 @@ const StepBar: React.FC<{ current: number }> = ({ current }) => (
           <div className="flex flex-col items-center gap-1.5">
             <div
               className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-black transition-all duration-300 ${done
-                ? "bg-emerald-500 text-white"
+                ? "bg-[#00ADB5] text-white"
                 : active
-                  ? "bg-[#0856DF] text-white scale-110"
-                  : "bg-slate-100 text-slate-400"
+                  ? "bg-[#00ADB5] text-white scale-110"
+                  : "bg-[#FFFFFF] text-[#222831]"
                 }`}
             >
               {done ? <CheckCircle size={16} /> : i + 1}
             </div>
-            <span className={`text-[10px] font-bold uppercase tracking-wider ${active ? "text-[#0856DF]" : done ? "text-emerald-500" : "text-slate-400"}`}>
+            <span className={`text-[10px] font-bold uppercase tracking-wider ${active ? "text-[#222831]" : done ? "text-[#222831]" : "text-[#222831]"}`}>
               {label}
             </span>
           </div>
           {i < steps.length - 1 && (
             <div className="flex-1 mx-3 mb-5">
-              <div className="h-0.5 w-full rounded-full overflow-hidden bg-slate-100">
+              <div className="h-0.5 w-full rounded-full overflow-hidden bg-[#FFFFFF]">
                 <div
                   className="h-full rounded-full transition-all duration-500"
-                  style={{ width: done ? "100%" : "0%", background: "#22c55e" }}
+                  style={{ width: done ? "100%" : "0%", background: "#00ADB5" }}
                 />
               </div>
             </div>
@@ -129,7 +136,14 @@ const CheckoutPage = () => {
         if (localCart.length > 0) {
           await axios.post(
             `${baseUrl}cart/sync`,
-            { cartItems: localCart.map((i: any) => ({ productId: i._id || i.id || i.productId || i.product?._id, quantity: i.quantity })) },
+            {
+              cartItems: localCart.map((i: any) => ({
+                productId: i._id || i.id || i.productId || i.product?._id,
+                quantity: i.quantity,
+                selectedColor: i.selectedColor || i.color || i.variant?.color || "",
+                selectedSize: i.selectedSize || i.size || i.variant?.size || "",
+              })),
+            },
             { withCredentials: true },
           );
           setLocalCart([]);
@@ -146,6 +160,7 @@ const CheckoutPage = () => {
             stock: item.product.stock,
             colors: item.product.colors,
             sizes: item.product.sizes,
+            addedBy: item.product.addedBy,
             selectedColor: item.selectedColor || item.color,
             selectedSize: item.selectedSize || item.size,
           }),
@@ -195,7 +210,14 @@ const CheckoutPage = () => {
   };
 
   const handleVariantChange = (itemId: string, field: "selectedColor" | "selectedSize", value: string) => {
-    setCartItems((prev) => prev.map((item) => item._id === itemId ? { ...item, [field]: value } : item));
+    setCartItems((prev) => {
+      const nextItems = prev.map((item) =>
+        item._id === itemId ? { ...item, [field]: value } : item,
+      );
+
+      if (!auth.username) setLocalCart(nextItems);
+      return nextItems;
+    });
   };
 
   const saveAddressToProfileIfMissing = async () => {
@@ -213,6 +235,14 @@ const CheckoutPage = () => {
     if (validItems.length === 0) { showToast("Your cart is empty.", "error"); return; }
     if (!form.fullName.trim() || !form.phoneNo.trim() || !form.address.trim()) {
       showToast("Please complete all shipping fields.", "error"); return;
+    }
+    const itemMissingVariant = validItems.find((item) =>
+      (getVariantOptions(item.colors).length > 0 && !item.selectedColor) ||
+      (getVariantOptions(item.sizes).length > 0 && !item.selectedSize),
+    );
+    if (itemMissingVariant) {
+      showToast(`Choose the available color and size for ${itemMissingVariant.name}.`, "error");
+      return;
     }
     setLoading(true);
     try {
@@ -243,21 +273,21 @@ const CheckoutPage = () => {
   };
 
   return (
-    <main className="min-h-screen py-12 sm:py-20 bg-gradient-to-b from-gray-400 via-white to-white">
+    <main className="min-h-screen py-12 sm:py-20 bg-gradient-to-b from-[#FFFFFF] via-white to-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
 
         {/* Top bar */}
         <div className="flex items-center justify-between mb-10">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#0856DF] mb-1">Secure Checkout</p>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-[#041241]">
+            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#222831] mb-1">Secure Checkout</p>
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-[#222831]">
               Cash on Delivery
             </h1>
           </div>
           <button
             type="button"
             onClick={() => router.push("/")}
-            className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 shadow-sm transition hover:border-[#0856DF]/30 hover:bg-slate-50"
+            className="inline-flex items-center gap-2 rounded-2xl border border-[#EEEEEE] bg-white px-4 py-2.5 text-sm font-semibold text-[#222831] shadow-sm transition hover:border-[#00ADB5]/30 hover:bg-[#EEEEEE]"
           >
             <ArrowLeft size={16} /> Back
           </button>
@@ -267,33 +297,33 @@ const CheckoutPage = () => {
 
         {/* Order confirmed */}
         {orderPlaced ? (
-          <div className="rounded-3xl overflow-hidden" style={{ background: "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)", border: "1px solid #bbf7d0" }}>
+          <div className="rounded-3xl overflow-hidden" style={{ background: "linear-gradient(135deg, #FFFFFF 0%, #EEEEEE 100%)", border: "1px solid #00ADB5" }}>
             <div className="p-10 sm:p-16 text-center">
-              <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500 mb-6 shadow-lg shadow-emerald-200">
+              <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-[#FFFFFF] mb-6 shadow-lg shadow-[#00ADB5]/20">
                 <CheckCircle className="h-10 w-10 text-white" />
               </div>
-              <h2 className="text-3xl sm:text-4xl font-black text-emerald-900">Order Confirmed!</h2>
-              <p className="mt-3 text-slate-600 text-base">
+              <h2 className="text-3xl sm:text-4xl font-black text-[#222831]">Order Confirmed!</h2>
+              <p className="mt-3 text-[#222831] text-base">
                 Your order is placed. We'll dispatch it shortly — payment on delivery.
               </p>
-              <p className="mt-2 text-sm text-slate-400">Redirecting to homepage…</p>
-              <div className="mt-6 h-1 w-40 mx-auto rounded-full bg-emerald-100 overflow-hidden">
-                <div className="h-full bg-emerald-400 animate-[progress_3s_linear_forwards]" />
+              <p className="mt-2 text-sm text-[#222831]">Redirecting to homepage…</p>
+              <div className="mt-6 h-1 w-40 mx-auto rounded-full bg-[#FFFFFF] overflow-hidden">
+                <div className="h-full bg-[#FFFFFF] animate-[progress_3s_linear_forwards]" />
               </div>
             </div>
           </div>
         ) : cartItems.length === 0 ? (
           // Empty cart
-          <div className="rounded-3xl bg-white border border-slate-100 p-12 text-center shadow-sm">
-            <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-50 mb-5">
-              <XCircle className="h-8 w-8 text-slate-300" />
+          <div className="rounded-3xl bg-white border border-[#EEEEEE] p-12 text-center shadow-sm">
+            <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-[#FFFFFF] mb-5">
+              <XCircle className="h-8 w-8 text-[#222831]" />
             </div>
-            <h2 className="text-2xl font-black text-[#041241]">Your cart is empty</h2>
-            <p className="mt-2 text-slate-500 text-sm">Browse our products and add something you love.</p>
+            <h2 className="text-2xl font-black text-[#222831]">Your cart is empty</h2>
+            <p className="mt-2 text-[#222831] text-sm">Browse our products and add something you love.</p>
             <button
               type="button"
               onClick={() => router.push("/")}
-              className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-[#0856DF] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#0645c8]"
+              className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-[#00ADB5] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#00ADB5]"
             >
               <ShoppingCart size={16} /> Browse products
             </button>
@@ -303,12 +333,12 @@ const CheckoutPage = () => {
 
             {/* ── LEFT: Shipping form ── */}
             <div className="space-y-5">
-              <div className="rounded-3xl bg-white border border-slate-100 shadow-sm overflow-hidden">
+              <div className="rounded-3xl bg-white border border-[#EEEEEE] shadow-sm overflow-hidden">
                 {/* Card header */}
-                <div className="flex items-center justify-between px-7 pt-7 pb-5 border-b border-slate-50">
+                <div className="flex items-center justify-between px-7 pt-7 pb-5 border-b border-[#EEEEEE]">
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#0856DF]">Step 1</p>
-                    <h2 className="text-xl font-black text-[#041241] mt-0.5">Delivery Details</h2>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#222831]">Step 1</p>
+                    <h2 className="text-xl font-black text-[#222831] mt-0.5">Delivery Details</h2>
                   </div>
                   <button
                     type="button"
@@ -316,7 +346,7 @@ const CheckoutPage = () => {
                       if (!auth.username) { dispatch(openLogin()); showToast("Login required.", "info"); return; }
                       setUseSavedAddress((p) => !p);
                     }}
-                    className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all ${useSavedAddress ? "bg-[#041241] text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all ${useSavedAddress ? "bg-[#00ADB5] text-white" : "bg-[#FFFFFF] text-[#222831] hover:bg-[#EEEEEE]"
                       }`}
                   >
                     <MapPin size={14} />
@@ -327,39 +357,39 @@ const CheckoutPage = () => {
                 <form onSubmit={handlePlaceOrder} className="p-7 space-y-5">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <label className="block space-y-1.5">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Full Name</span>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#222831]">Full Name</span>
                       <input
                         name="fullName"
                         value={form.fullName}
                         onChange={handleInputChange}
                         placeholder="Recipient name"
-                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-[#041241] placeholder:text-slate-300 outline-none transition focus:border-[#0856DF] focus:bg-white focus:ring-3 focus:ring-[#0856DF]/10"
+                        className="w-full rounded-2xl border border-[#EEEEEE] bg-[#FFFFFF] px-4 py-3 text-sm text-[#222831] placeholder:text-[#222831] outline-none transition focus:border-[#00ADB5] focus:bg-white focus:ring-3 focus:ring-[#00ADB5]/10"
                       />
                     </label>
                     <label className="block space-y-1.5">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Phone Number</span>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#222831]">Phone Number</span>
                       <input
                         name="phoneNo"
                         value={form.phoneNo}
                         onChange={handleInputChange}
                         placeholder="03XX-XXXXXXX"
-                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-[#041241] placeholder:text-slate-300 outline-none transition focus:border-[#0856DF] focus:bg-white focus:ring-3 focus:ring-[#0856DF]/10"
+                        className="w-full rounded-2xl border border-[#EEEEEE] bg-[#FFFFFF] px-4 py-3 text-sm text-[#222831] placeholder:text-[#222831] outline-none transition focus:border-[#00ADB5] focus:bg-white focus:ring-3 focus:ring-[#00ADB5]/10"
                       />
                     </label>
                   </div>
 
                   <label className="block space-y-1.5">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Full Address</span>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#222831]">Full Address</span>
                     <textarea
                       name="address"
                       value={form.address}
                       onChange={handleInputChange}
                       placeholder="Street, building, area"
                       rows={3}
-                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-[#041241] placeholder:text-slate-300 outline-none transition focus:border-[#0856DF] focus:bg-white focus:ring-3 focus:ring-[#0856DF]/10 resize-none"
+                      className="w-full rounded-2xl border border-[#EEEEEE] bg-[#FFFFFF] px-4 py-3 text-sm text-[#222831] placeholder:text-[#222831] outline-none transition focus:border-[#00ADB5] focus:bg-white focus:ring-3 focus:ring-[#00ADB5]/10 resize-none"
                     />
                     {auth.username && !userResponse?.data?.address?.trim() && (
-                      <span className="text-[11px] text-slate-400">
+                      <span className="text-[11px] text-[#222831]">
                         💾 This address will be saved to your profile.
                       </span>
                     )}
@@ -367,35 +397,35 @@ const CheckoutPage = () => {
 
                   <div className="grid gap-4 sm:grid-cols-2">
                     <label className="block space-y-1.5">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">City</span>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#222831]">City</span>
                       <input name="city" value={form.city} onChange={handleInputChange}
-                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-[#041241] outline-none transition focus:border-[#0856DF] focus:bg-white focus:ring-3 focus:ring-[#0856DF]/10" />
+                        className="w-full rounded-2xl border border-[#EEEEEE] bg-[#FFFFFF] px-4 py-3 text-sm text-[#222831] outline-none transition focus:border-[#00ADB5] focus:bg-white focus:ring-3 focus:ring-[#00ADB5]/10" />
                     </label>
                     <label className="block space-y-1.5">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Country</span>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#222831]">Country</span>
                       <input name="country" value={form.country} onChange={handleInputChange}
-                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-[#041241] outline-none transition focus:border-[#0856DF] focus:bg-white focus:ring-3 focus:ring-[#0856DF]/10" />
+                        className="w-full rounded-2xl border border-[#EEEEEE] bg-[#FFFFFF] px-4 py-3 text-sm text-[#222831] outline-none transition focus:border-[#00ADB5] focus:bg-white focus:ring-3 focus:ring-[#00ADB5]/10" />
                     </label>
                   </div>
 
                   {/* COD badge */}
-                  <div className="flex items-center gap-4 rounded-2xl p-4" style={{ background: "rgba(8,86,223,0.05)", border: "1px solid rgba(8,86,223,0.12)" }}>
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#0856DF]">
+                  <div className="flex items-center gap-4 rounded-2xl p-4" style={{ background: "rgba(84,107,65,0.05)", border: "1px solid rgba(84,107,65,0.12)" }}>
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#00ADB5]">
                       <CreditCard size={18} className="text-white" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-[#041241]">Cash on Delivery</p>
-                      <p className="text-xs text-slate-500">Pay in cash when your package arrives.</p>
+                      <p className="text-sm font-bold text-[#222831]">Cash on Delivery</p>
+                      <p className="text-xs text-[#222831]">Pay in cash when your package arrives.</p>
                     </div>
                     <div className="ml-auto">
-                      <Shield size={18} className="text-[#0856DF]" />
+                      <Shield size={18} className="text-[#222831]" />
                     </div>
                   </div>
 
                   <button
                     type="submit"
                     disabled={loading}
-                    className="relative w-full overflow-hidden rounded-2xl bg-[#0856DF] py-4 text-sm font-black uppercase tracking-[0.2em] text-white shadow-lg shadow-[#0856DF]/25 transition-all hover:bg-[#0645c8] hover:shadow-xl hover:shadow-[#0856DF]/30 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:translate-y-0"
+                    className="relative w-full overflow-hidden rounded-2xl bg-[#00ADB5] py-4 text-sm font-black uppercase tracking-[0.2em] text-white shadow-lg shadow-[#00ADB5]/25 transition-all hover:bg-[#00ADB5] hover:shadow-xl hover:shadow-[#00ADB5]/30 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:translate-y-0"
                   >
                     {loading ? (
                       <span className="flex items-center justify-center gap-2">
@@ -419,10 +449,10 @@ const CheckoutPage = () => {
                   { icon: Shield, label: "Secure", sub: "100% safe" },
                   { icon: Truck, label: "Free shipping", sub: "All orders" }
                 ].map(({ icon: Icon, label, sub }) => (
-                  <div key={label} className="rounded-2xl bg-white border border-slate-100 p-3.5 text-center">
-                    <Icon size={18} className="mx-auto mb-1.5 text-[#0856DF]" />
-                    <p className="text-xs font-bold text-[#041241]">{label}</p>
-                    <p className="text-[10px] text-slate-400">{sub}</p>
+                  <div key={label} className="rounded-2xl bg-white border border-[#EEEEEE] p-3.5 text-center">
+                    <Icon size={18} className="mx-auto mb-1.5 text-[#222831]" />
+                    <p className="text-xs font-bold text-[#222831]">{label}</p>
+                    <p className="text-[10px] text-[#222831]">{sub}</p>
                   </div>
                 ))}
               </div>
@@ -430,10 +460,10 @@ const CheckoutPage = () => {
 
             {/* ── RIGHT: Order summary ── */}
             <aside className="space-y-5">
-              <div className="rounded-3xl bg-white border border-slate-100 shadow-sm overflow-hidden">
-                <div className="px-6 pt-6 pb-4 border-b border-slate-50">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#0856DF]">Order Summary</p>
-                  <h2 className="text-xl font-black text-[#041241] mt-0.5">
+              <div className="rounded-3xl bg-white border border-[#EEEEEE] shadow-sm overflow-hidden">
+                <div className="px-6 pt-6 pb-4 border-b border-[#EEEEEE]">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#222831]">Order Summary</p>
+                  <h2 className="text-xl font-black text-[#222831] mt-0.5">
                     {cartItems.length} {cartItems.length === 1 ? "item" : "items"}
                   </h2>
                 </div>
@@ -442,53 +472,59 @@ const CheckoutPage = () => {
                   {cartItems.map((item) => (
                     <div
                       key={item._id}
-                      className="rounded-2xl p-3.5 transition hover:bg-slate-50"
-                      style={{ border: "1px solid #f1f5f9" }}
+                      className="rounded-2xl p-3.5 transition hover:bg-[#EEEEEE]"
+                      style={{ border: "1px solid #EEEEEE" }}
                     >
                       <div className="flex gap-3">
                         <img
                           src={item.images?.[0]?.url ?? "/carousel/Pens.avif"}
                           alt={item.name}
-                          className="h-16 w-16 rounded-xl object-cover ring-1 ring-slate-100 shrink-0"
+                          className="h-16 w-16 rounded-xl object-cover ring-1 ring-[#EEEEEE] shrink-0"
                         />
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-sm font-black text-[#041241] truncate">{item.name}</h3>
-                          <p className="text-xs text-slate-400 line-clamp-1 mt-0.5">{item.description ?? "Premium item"}</p>
+                          <h3 className="text-sm font-black text-[#222831] truncate">{item.name}</h3>
+                          <p className="text-xs text-[#222831] line-clamp-1 mt-0.5">{item.description ?? "Premium item"}</p>
 
                           {/* Variant selectors */}
-                          {(Boolean(item.colors?.length) || Boolean(item.sizes?.length)) ? (
-                            <div className="mt-2 flex flex-wrap gap-1.5">
-                              {Boolean(item.colors?.length) && (
-                                <select
-                                  value={item.selectedColor || ""}
-                                  onChange={(e) => handleVariantChange(item._id, "selectedColor", e.target.value)}
-                                  className="rounded-xl border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-700 outline-none focus:border-[#0856DF]"
-                                >
-                                  <option value="" disabled>Color</option>
-                                  {item.colors?.map((c) => <option key={c} value={c}>{c}</option>)}
-                                </select>
+                          {(Boolean(getVariantOptions(item.colors).length) || Boolean(getVariantOptions(item.sizes).length)) ? (
+                            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                              {Boolean(getVariantOptions(item.colors).length) && (
+                                <label className="grid gap-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#222831]/60">
+                                  Color
+                                  <select
+                                    value={item.selectedColor || ""}
+                                    onChange={(e) => handleVariantChange(item._id, "selectedColor", e.target.value)}
+                                    className="min-h-9 rounded-lg border border-[#EEEEEE] bg-white px-2.5 text-[11px] font-semibold normal-case tracking-normal text-[#222831] outline-none transition focus:border-[#00ADB5]"
+                                  >
+                                    <option value="" disabled>Select color</option>
+                                    {getVariantOptions(item.colors).map((color) => <option key={color} value={color}>{color}</option>)}
+                                  </select>
+                                </label>
                               )}
-                              {Boolean(item.sizes?.length) && (
-                                <select
-                                  value={item.selectedSize || ""}
-                                  onChange={(e) => handleVariantChange(item._id, "selectedSize", e.target.value)}
-                                  className="rounded-xl border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-700 outline-none focus:border-[#0856DF]"
-                                >
-                                  <option value="" disabled>Size</option>
-                                  {item.sizes?.map((s) => <option key={s} value={s}>{s}</option>)}
-                                </select>
+                              {Boolean(getVariantOptions(item.sizes).length) && (
+                                <label className="grid gap-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[#222831]/60">
+                                  Size
+                                  <select
+                                    value={item.selectedSize || ""}
+                                    onChange={(e) => handleVariantChange(item._id, "selectedSize", e.target.value)}
+                                    className="min-h-9 rounded-lg border border-[#EEEEEE] bg-white px-2.5 text-[11px] font-semibold normal-case tracking-normal text-[#222831] outline-none transition focus:border-[#00ADB5]"
+                                  >
+                                    <option value="" disabled>Select size</option>
+                                    {getVariantOptions(item.sizes).map((size) => <option key={size} value={size}>{size}</option>)}
+                                  </select>
+                                </label>
                               )}
                             </div>
                           ) : (
                             (item.selectedColor || item.selectedSize) && (
                               <div className="mt-2 flex flex-wrap gap-1.5">
                                 {item.selectedColor && (
-                                  <span className="rounded-lg bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600 capitalize">
+                                  <span className="rounded-lg bg-[#FFFFFF] px-2 py-0.5 text-[10px] font-bold text-[#222831] capitalize">
                                     {item.selectedColor}
                                   </span>
                                 )}
                                 {item.selectedSize && (
-                                  <span className="rounded-lg bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600">
+                                  <span className="rounded-lg bg-[#FFFFFF] px-2 py-0.5 text-[10px] font-bold text-[#222831]">
                                     {item.selectedSize}
                                   </span>
                                 )}
@@ -497,8 +533,8 @@ const CheckoutPage = () => {
                           )}
 
                           <div className="mt-2 flex items-center gap-2">
-                            <span className="text-[11px] text-slate-400">Qty {item.quantity}</span>
-                            <span className="text-xs font-black text-[#041241]">
+                            <span className="text-[11px] text-[#222831]">Qty {item.quantity}</span>
+                            <span className="text-xs font-black text-[#222831]">
                               Rs {(item.price * item.quantity).toLocaleString()}
                             </span>
                           </div>
@@ -509,27 +545,27 @@ const CheckoutPage = () => {
                 </div>
 
                 {/* Totals */}
-                <div className="border-t border-slate-50 p-5 space-y-2.5">
-                  <div className="flex justify-between text-sm text-slate-500">
+                <div className="border-t border-[#EEEEEE] p-5 space-y-2.5">
+                  <div className="flex justify-between text-sm text-[#222831]">
                     <span>Subtotal</span>
-                    <span className="font-semibold text-slate-700">Rs {totals.itemsPrice.toLocaleString()}</span>
+                    <span className="font-semibold text-[#222831]">Rs {totals.itemsPrice.toLocaleString()}</span>
                   </div>
-                  <div className="flex justify-between text-sm text-slate-500">
+                  <div className="flex justify-between text-sm text-[#222831]">
                     <span>Shipping</span>
-                    <span className="font-bold text-emerald-500">Free</span>
+                    <span className="font-bold text-[#222831]">Free</span>
                   </div>
-                  <div className="flex justify-between items-center pt-3 border-t border-slate-100">
-                    <span className="text-base font-black text-[#041241]">Total</span>
-                    <span className="text-xl font-black text-[#0856DF]">
+                  <div className="flex justify-between items-center pt-3 border-t border-[#EEEEEE]">
+                    <span className="text-base font-black text-[#222831]">Total</span>
+                    <span className="text-xl font-black text-[#222831]">
                       Rs {totals.totalPrice.toLocaleString()}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="rounded-2xl p-4 text-sm" style={{ background: "rgba(8,86,223,0.04)", border: "1px solid rgba(8,86,223,0.10)" }}>
-                <p className="font-bold text-[#041241] text-xs mb-1">Need help?</p>
-                <p className="text-xs text-slate-500 leading-relaxed">
+              <div className="rounded-2xl p-4 text-sm" style={{ background: "rgba(84,107,65,0.04)", border: "1px solid rgba(84,107,65,0.10)" }}>
+                <p className="font-bold text-[#222831] text-xs mb-1">Need help?</p>
+                <p className="text-xs text-[#222831] leading-relaxed">
                   Contact support to update your address before the order is dispatched.
                 </p>
               </div>

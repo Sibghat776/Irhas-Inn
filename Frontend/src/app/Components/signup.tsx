@@ -172,16 +172,16 @@ const Signup = () => {
     <>
       {/* FULL PAGE VIEWPORT LOADER (Managed by Redux Loading State) */}
       {data.loading && (
-        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/40 backdrop-blur-md transition-all duration-500">
-          <div className="bg-white/90 px-8 py-6 rounded-3xl shadow-2xl border border-neutral-100 flex flex-col items-center max-w-xs text-center">
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#222831]/40 backdrop-blur-md transition-all duration-500">
+          <div className="bg-white/90 px-8 py-6 rounded-3xl shadow-2xl border border-[#EEEEEE] flex flex-col items-center max-w-xs text-center">
             <div className="relative flex items-center justify-center mb-4">
-              <div className="absolute w-12 h-12 border-2 border-neutral-200 rounded-full"></div>
-              <Loader2 className="w-12 h-12 text-neutral-900 animate-spin relative z-10 stroke-[1.5]" />
+              <div className="absolute w-12 h-12 border-2 border-[#EEEEEE] rounded-full"></div>
+              <Loader2 className="w-12 h-12 text-[#222831] animate-spin relative z-10 stroke-[1.5]" />
             </div>
-            <h3 className="text-neutral-900 font-semibold tracking-tight text-lg">
+            <h3 className="text-[#222831] font-semibold tracking-tight text-lg">
               ZeeF Store Authenticating
             </h3>
-            <p className="text-neutral-500 text-xs mt-1 leading-relaxed">
+            <p className="text-[#222831] text-xs mt-1 leading-relaxed">
               Loading...
             </p>
           </div>
@@ -189,26 +189,26 @@ const Signup = () => {
       )}
 
       {/* MODAL WRAPPER */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-950/30 backdrop-blur-sm p-4 animate-fade-in">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#FFFFFF] backdrop-blur-sm p-4 animate-fade-in">
         {/* MAIN CONTAINER */}
-        <div className="relative w-full max-w-[480px] bg-white rounded-[28px] shadow-[0_24px_60px_-15px_rgba(0,0,0,0.08)] border border-neutral-100/80 p-8 sm:p-9 max-h-[92vh] overflow-y-auto no-scrollbar">
+        <div className="relative w-full max-w-[480px] bg-white rounded-[28px] shadow-[0_24px_60px_-15px_rgba(0,0,0,0.08)] border border-[#EEEEEE] p-8 sm:p-9 max-h-[92vh] overflow-y-auto no-scrollbar">
           {/* CLOSE MODAL BUTTON */}
           <button
             onClick={() => dispatch(closeSignup())}
-            className="absolute right-5 top-5 p-2 text-neutral-400 hover:text-neutral-900 bg-neutral-50 hover:bg-neutral-100/80 rounded-full transition-all duration-300"
+            className="absolute right-5 top-5 p-2 text-[#222831] hover:text-[#00ADB5] bg-[#FFFFFF] hover:bg-[#EEEEEE] rounded-full transition-all duration-300"
           >
             <X className="w-4 h-4 stroke-[2.5]" />
           </button>
 
           {/* BRAND TITLE / HEADER */}
           <div className="text-center mb-8 mt-2">
-            <div className="inline-flex items-center justify-center bg-neutral-950 text-white w-10 h-10 rounded-xl mb-3 shadow-md shadow-neutral-950/10">
+            <div className="inline-flex items-center justify-center bg-[#00ADB5] text-white w-10 h-10 rounded-xl mb-3 shadow-md shadow-[#00ADB5]/10">
               <Sparkles className="w-5 h-5 fill-white/10" />
             </div>
-            <h2 className="text-2xl font-bold tracking-tight text-neutral-900 sm:text-3xl">
+            <h2 className="text-2xl font-bold tracking-tight text-[#222831] sm:text-3xl">
               Create Account
             </h2>
-            <p className="text-xs font-medium text-neutral-400 mt-1.5 uppercase tracking-widest">
+            <p className="text-xs font-medium text-[#222831] mt-1.5 uppercase tracking-widest">
               ZF Store Premium Network
             </p>
           </div>
@@ -220,11 +220,11 @@ const Signup = () => {
 
           {/* STYLISH ACCENT DIVIDER */}
           <div className="flex items-center gap-4 my-6">
-            <div className="h-[1px] bg-neutral-100 flex-1"></div>
-            <span className="text-neutral-400 text-[10px] font-bold uppercase tracking-[0.2em] select-none">
+            <div className="h-[1px] bg-[#FFFFFF] flex-1"></div>
+            <span className="text-[#222831] text-[10px] font-bold uppercase tracking-[0.2em] select-none">
               Or Register Electronically
             </span>
-            <div className="h-[1px] bg-neutral-100 flex-1"></div>
+            <div className="h-[1px] bg-[#FFFFFF] flex-1"></div>
           </div>
 
           {/* REGISTRATION FORM */}
@@ -239,8 +239,8 @@ const Signup = () => {
                   accept="image/*"
                 />
 
-                <div className="w-24 h-24 rounded-full border border-neutral-200/80 p-1 bg-white shadow-sm transition-all duration-300 group-hover:border-neutral-900 group-hover:shadow-md overflow-hidden relative">
-                  <div className="w-full h-full rounded-full overflow-hidden bg-neutral-50 flex items-center justify-center relative">
+                <div className="w-24 h-24 rounded-full border border-[#EEEEEE] p-1 bg-white shadow-sm transition-all duration-300 group-hover:border-[#EEEEEE] group-hover:shadow-md overflow-hidden relative">
+                  <div className="w-full h-full rounded-full overflow-hidden bg-[#FFFFFF] flex items-center justify-center relative">
                     {preview ? (
                       <img
                         src={preview}
@@ -248,13 +248,13 @@ const Signup = () => {
                         className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
                       />
                     ) : (
-                      <ImagePlus className="w-6 h-6 text-neutral-400 stroke-[1.5]" />
+                      <ImagePlus className="w-6 h-6 text-[#222831] stroke-[1.5]" />
                     )}
                   </div>
                 </div>
 
                 {/* Micro Camera Badge Overlay */}
-                <div className="absolute bottom-0 right-0 bg-neutral-950 text-white p-1.5 rounded-full shadow-md border border-white transition-all duration-300 group-hover:bg-neutral-800">
+                <div className="absolute bottom-0 right-0 bg-[#00ADB5] text-white p-1.5 rounded-full shadow-md border border-white transition-all duration-300 group-hover:bg-[#FFFFFF]">
                   <Camera className="w-3.5 h-3.5 stroke-[2]" />
                 </div>
               </label>
@@ -296,7 +296,7 @@ const Signup = () => {
 
               {/* PASSWORD ARCHITECTURE */}
               <div className="relative group/pass">
-                <span className="absolute left-4 top-[15px] text-neutral-400 group-focus-within/pass:text-neutral-900 transition-colors duration-300">
+                <span className="absolute left-4 top-[15px] text-[#222831] group-focus-within/pass:text-[#222831] transition-colors duration-300">
                   <Lock className="w-4 h-4 stroke-[1.8]" />
                 </span>
 
@@ -305,14 +305,14 @@ const Signup = () => {
                   id="password"
                   value={credentials.password}
                   onChange={handleChange}
-                  className="w-full bg-neutral-50/60 hover:bg-neutral-50 focus:bg-white border border-neutral-200/60 focus:border-neutral-900 transition-all duration-300 p-3.5 pl-11 pr-11 rounded-xl outline-none font-medium text-sm text-neutral-900 placeholder-neutral-400/90 tracking-wide"
+                  className="w-full bg-[#FFFFFF] hover:bg-[#EEEEEE] focus:bg-white border border-[#EEEEEE] focus:border-[#00ADB5] transition-all duration-300 p-3.5 pl-11 pr-11 rounded-xl outline-none font-medium text-sm text-[#222831] placeholder-[#EEEEEE]/90 tracking-wide"
                   placeholder="Password"
                 />
 
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-[15px] text-neutral-400 hover:text-neutral-900 transition-colors duration-200"
+                  className="absolute right-4 top-[15px] text-[#222831] hover:text-[#00ADB5] transition-colors duration-200"
                 >
                   {showPassword ? (
                     <EyeOff className="w-4 h-4 stroke-[1.8]" />
@@ -328,7 +328,7 @@ const Signup = () => {
               <button
                 type="submit"
                 disabled={data.loading}
-                className="w-full bg-neutral-950 hover:bg-neutral-900 text-white font-medium text-sm py-3.5 rounded-xl shadow-lg shadow-neutral-950/10 hover:shadow-xl transition-all duration-300 transform active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none tracking-wide"
+                className="w-full bg-[#00ADB5] hover:bg-[#00ADB5] text-white font-medium text-sm py-3.5 rounded-xl shadow-lg shadow-[#00ADB5]/10 hover:shadow-xl transition-all duration-300 transform active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none tracking-wide"
               >
                 Create Account
               </button>
@@ -336,7 +336,7 @@ const Signup = () => {
           </form>
 
           {/* FORMAL DISCLAIMER FOOTER */}
-          <p className="text-center text-[11px] text-neutral-400 mt-6 leading-relaxed px-4">
+          <p className="text-center text-[11px] text-[#222831] mt-6 leading-relaxed px-4">
             By accessing this portal, you align with ZF Store’s formal luxury
             operations framework & global verification guidelines.
           </p>
@@ -357,12 +357,12 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 const Input = ({ icon, ...props }: InputProps) => (
   <div className="relative group/input">
-    <span className="absolute left-4 top-[15px] text-neutral-400 group-focus-within/input:text-neutral-900 transition-colors duration-300">
+    <span className="absolute left-4 top-[15px] text-[#222831] group-focus-within/input:text-[#222831] transition-colors duration-300">
       {icon}
     </span>
     <input
       {...props}
-      className="w-full bg-neutral-50/60 hover:bg-neutral-50 focus:bg-white border border-neutral-200/60 focus:border-neutral-900 transition-all duration-300 p-3.5 pl-11 rounded-xl outline-none font-medium text-sm text-neutral-900 placeholder-neutral-400/90 tracking-wide"
+      className="w-full bg-[#FFFFFF] hover:bg-[#EEEEEE] focus:bg-white border border-[#EEEEEE] focus:border-[#00ADB5] transition-all duration-300 p-3.5 pl-11 rounded-xl outline-none font-medium text-sm text-[#222831] placeholder-[#EEEEEE]/90 tracking-wide"
     />
   </div>
 );

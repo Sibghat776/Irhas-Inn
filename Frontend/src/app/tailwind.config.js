@@ -1,4 +1,20 @@
-import theme from "./src/theme.js";
+const theme = {
+  colors: {
+    primary: "#00ADB5",
+    secondary: "#00ADB5",
+    beige: "#EEEEEE",
+    cream: "#FFFFFF",
+    textLight: "#ffffff",
+    textDark: "#222831",
+    bgDark: "#00ADB5",
+    bgLight: "#FFFFFF",
+    hover: "#00ADB5",
+  },
+  fonts: {
+    brand: "Dancing Script, cursive",
+    body: "Inter, sans-serif",
+  },
+};
 
 module.exports = {
     content: [
@@ -8,9 +24,9 @@ module.exports = {
         extend: {
             colors: {
                 primary: theme.colors.primary,
-                primaryLight: theme.colors.primaryLight,
-                primaryDark: theme.colors.primaryDark,
                 secondary: theme.colors.secondary,
+                beige: theme.colors.beige,
+                cream: theme.colors.cream,
                 textLight: theme.colors.textLight,
                 textDark: theme.colors.textDark,
                 bgDark: theme.colors.bgDark,
@@ -18,7 +34,7 @@ module.exports = {
                 hover: theme.colors.hover,
             },
             fontFamily: {
-                brand: theme.fonts.brand    ,
+                brand: theme.fonts.brand,
                 body: theme.fonts.body,
             },
         },

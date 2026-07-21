@@ -178,16 +178,16 @@ const Login = () => {
     <>
       {/* FULL PAGE VIEWPORT LOADER (Syncing with Redux State) */}
       {loading && (
-        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/40 backdrop-blur-md transition-all duration-500">
-          <div className="bg-white/90 px-8 py-6 rounded-3xl shadow-2xl border border-neutral-100 flex flex-col items-center max-w-xs text-center animate-scale-up">
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#222831]/40 backdrop-blur-md transition-all duration-500">
+          <div className="bg-white/90 px-8 py-6 rounded-3xl shadow-2xl border border-[#EEEEEE] flex flex-col items-center max-w-xs text-center animate-scale-up">
             <div className="relative flex items-center justify-center mb-4">
-              <div className="absolute w-12 h-12 border-2 border-neutral-200 rounded-full"></div>
-              <Loader2 className="w-12 h-12 text-neutral-900 animate-spin relative z-10 stroke-[1.5]" />
+              <div className="absolute w-12 h-12 border-2 border-[#EEEEEE] rounded-full"></div>
+              <Loader2 className="w-12 h-12 text-[#222831] animate-spin relative z-10 stroke-[1.5]" />
             </div>
-            <h3 className="text-neutral-900 font-semibold tracking-tight text-lg">
+            <h3 className="text-[#222831] font-semibold tracking-tight text-lg">
               ZeeF Store Verification
             </h3>
-            <p className="text-neutral-500 text-xs mt-1 leading-relaxed">
+            <p className="text-[#222831] text-xs mt-1 leading-relaxed">
               Establishing secure tunnel to your profile...
             </p>
           </div>
@@ -195,29 +195,29 @@ const Login = () => {
       )}
 
       {/* MODAL WRAPPER */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-950/30 backdrop-blur-sm p-4">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#FFFFFF] backdrop-blur-sm p-4">
         {/* MAIN CONTAINER */}
-        <div className="relative w-full max-w-[460px] bg-white rounded-[28px] shadow-[0_24px_60px_-15px_rgba(0,0,0,0.08)] border border-neutral-100/80 p-8 sm:p-9 overflow-hidden">
+        <div className="relative w-full max-w-[460px] bg-white rounded-[28px] shadow-[0_24px_60px_-15px_rgba(0,0,0,0.08)] border border-[#EEEEEE] p-8 sm:p-9 overflow-hidden">
           {/* CLOSE BUTTON */}
           <button
             onClick={handleClose}
-            className="absolute right-5 top-5 p-2 text-neutral-400 hover:text-neutral-900 bg-neutral-50 hover:bg-neutral-100/80 rounded-full transition-all duration-300"
+            className="absolute right-5 top-5 p-2 text-[#222831] hover:text-[#00ADB5] bg-[#FFFFFF] hover:bg-[#EEEEEE] rounded-full transition-all duration-300"
           >
             <X className="w-4 h-4 stroke-[2.5]" />
           </button>
 
           {/* BRAND TITLE ARCHITECTURE */}
           <div className="text-center mb-8 mt-2">
-            <div className="inline-flex items-center justify-center gap-2 bg-neutral-950 text-white w-auto py-5 px-5 h-10 rounded-xl mb-3 shadow-md shadow-neutral-950/10">
+            <div className="inline-flex items-center justify-center gap-2 bg-[#00ADB5] text-white w-auto py-5 px-5 h-10 rounded-xl mb-3 shadow-md shadow-[#00ADB5]/10">
               <Sparkles className="w-5 h-5 fill-white/10" />
               <h2 className="text-xl font-bold tracking-tight text-white">
                 Login
               </h2>
             </div>
-            <h2 className="text-2xl font-bold tracking-tight text-neutral-900 sm:text-3xl">
+            <h2 className="text-2xl font-bold tracking-tight text-[#222831] sm:text-3xl">
               Welcome Back
             </h2>
-            <p className="text-xs font-medium text-neutral-400 mt-1.5 uppercase tracking-widest">
+            <p className="text-xs font-medium text-[#222831] mt-1.5 uppercase tracking-widest">
               Access ZF Store
             </p>
           </div>
@@ -229,11 +229,11 @@ const Login = () => {
 
           {/* LUXURY ACCENT DIVIDER */}
           <div className="flex items-center gap-4 my-6">
-            <div className="h-[1px] bg-neutral-100 flex-1"></div>
-            <span className="text-neutral-400 text-[10px] font-bold uppercase tracking-[0.2em] select-none">
+            <div className="h-[1px] bg-[#FFFFFF] flex-1"></div>
+            <span className="text-[#222831] text-[10px] font-bold uppercase tracking-[0.2em] select-none">
               Or Secure Credentials
             </span>
-            <div className="h-[1px] bg-neutral-100 flex-1"></div>
+            <div className="h-[1px] bg-[#FFFFFF] flex-1"></div>
           </div>
 
           {/* LOGIN FORM */}
@@ -251,7 +251,7 @@ const Login = () => {
 
               {/* PASSWORD FIELD */}
               <div className="relative group/pass">
-                <span className="absolute left-4 top-[15px] text-neutral-400 group-focus-within/pass:text-neutral-900 transition-colors duration-300">
+                <span className="absolute left-4 top-[15px] text-[#222831] group-focus-within/pass:text-[#222831] transition-colors duration-300">
                   <Lock className="w-4 h-4 stroke-[1.8]" />
                 </span>
                 <input
@@ -260,12 +260,12 @@ const Login = () => {
                   placeholder="Enter your Password"
                   value={credentials.password}
                   onChange={handleChange}
-                  className="w-full bg-neutral-50/60 hover:bg-neutral-50 focus:bg-white border border-neutral-200/60 focus:border-neutral-900 transition-all duration-300 p-3.5 pl-11 pr-11 rounded-xl outline-none font-medium text-sm text-neutral-900 placeholder-neutral-400/90 tracking-wide"
+                  className="w-full bg-[#FFFFFF] hover:bg-[#EEEEEE] focus:bg-white border border-[#EEEEEE] focus:border-[#00ADB5] transition-all duration-300 p-3.5 pl-11 pr-11 rounded-xl outline-none font-medium text-sm text-[#222831] placeholder-[#EEEEEE]/90 tracking-wide"
                 />
                 <button
                   type="button"
                   onClick={togglePassword}
-                  className="absolute right-4 top-[15px] text-neutral-400 hover:text-neutral-900 transition-colors duration-200"
+                  className="absolute right-4 top-[15px] text-[#222831] hover:text-[#00ADB5] transition-colors duration-200"
                 >
                   {showPassword ? (
                     <EyeOff className="w-4 h-4 stroke-[1.8]" />
@@ -281,7 +281,7 @@ const Login = () => {
               <button
                 type="button"
                 onClick={handleClose}
-                className="w-1/3 bg-neutral-50 hover:bg-neutral-100 text-neutral-600 font-medium text-sm py-3.5 rounded-xl border border-neutral-200/80 transition-all duration-300 transform active:scale-[0.99]"
+                className="w-1/3 bg-[#FFFFFF] hover:bg-[#EEEEEE] text-[#222831] font-medium text-sm py-3.5 rounded-xl border border-[#EEEEEE] transition-all duration-300 transform active:scale-[0.99]"
               >
                 Cancel
               </button>
@@ -289,7 +289,7 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-2/3 bg-neutral-950 hover:bg-neutral-900 text-white font-medium text-sm py-3.5 rounded-xl shadow-lg shadow-neutral-950/10 hover:shadow-xl transition-all duration-300 transform active:scale-[0.99] disabled:opacity-50 tracking-wide"
+                className="w-2/3 bg-[#00ADB5] hover:bg-[#00ADB5] text-white font-medium text-sm py-3.5 rounded-xl shadow-lg shadow-[#00ADB5]/10 hover:shadow-xl transition-all duration-300 transform active:scale-[0.99] disabled:opacity-50 tracking-wide"
               >
                 Identity Verification
               </button>
@@ -297,7 +297,7 @@ const Login = () => {
           </form>
 
           {/* FORMAL FOOTER NOTE */}
-          <p className="text-center text-[11px] text-neutral-400 mt-6 leading-relaxed px-4">
+          <p className="text-center text-[11px] text-[#222831] mt-6 leading-relaxed px-4">
             Secured interface environment. System access subject to formal
             verification audit logs.
           </p>
@@ -318,12 +318,12 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 const Input = ({ icon, ...props }: InputProps) => (
   <div className="relative group/input">
-    <span className="absolute left-4 top-[15px] text-neutral-400 group-focus-within/input:text-neutral-900 transition-colors duration-300">
+    <span className="absolute left-4 top-[15px] text-[#222831] group-focus-within/input:text-[#222831] transition-colors duration-300">
       {icon}
     </span>
     <input
       {...props}
-      className="w-full bg-neutral-50/60 hover:bg-neutral-50 focus:bg-white border border-neutral-200/60 focus:border-neutral-900 transition-all duration-300 p-3.5 pl-11 rounded-xl outline-none font-medium text-sm text-neutral-900 placeholder-neutral-400/90 tracking-wide"
+      className="w-full bg-[#FFFFFF] hover:bg-[#EEEEEE] focus:bg-white border border-[#EEEEEE] focus:border-[#00ADB5] transition-all duration-300 p-3.5 pl-11 rounded-xl outline-none font-medium text-sm text-[#222831] placeholder-[#EEEEEE]/90 tracking-wide"
     />
   </div>
 );

@@ -30,18 +30,18 @@ const TrackOrderPage = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
-        <p className="text-slate-500">Loading order details…</p>
+      <div className="flex min-h-screen items-center justify-center bg-[#FFFFFF]">
+        <p className="text-[#222831]">Loading order details…</p>
       </div>
     );
   }
 
   if (error || !order) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
-        <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-          <h1 className="text-xl font-bold text-slate-900">Order Not Found</h1>
-          <p className="mt-2 text-sm text-slate-500">
+      <div className="flex min-h-screen items-center justify-center bg-[#FFFFFF] p-6">
+        <div className="w-full max-w-md rounded-2xl border border-[#EEEEEE] bg-white p-8 text-center shadow-sm">
+          <h1 className="text-xl font-bold text-[#222831]">Order Not Found</h1>
+          <p className="mt-2 text-sm text-[#222831]">
             {error || "We couldn't find an order with this ID."}
           </p>
         </div>
@@ -59,19 +59,19 @@ const TrackOrderPage = () => {
   const currentStep = statusSteps.indexOf(order.status);
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 sm:p-8">
+    <div className="min-h-screen bg-[#FFFFFF] p-4 sm:p-8">
       <div className="mx-auto max-w-2xl space-y-6">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="rounded-2xl border border-[#EEEEEE] bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-bold tracking-tight text-slate-900">
+              <h1 className="text-xl font-bold tracking-tight text-[#222831]">
                 Track Your Order
               </h1>
-              <p className="mt-1 text-xs text-slate-400">
+              <p className="mt-1 text-xs text-[#222831]">
                 Order #{order.serialNumber || order._id.slice(-8)}
               </p>
             </div>
-            <span className="rounded-full bg-[#0856DF]/10 px-3 py-1 text-sm font-semibold text-[#0856DF]">
+            <span className="rounded-full bg-[#00ADB5]/10 px-3 py-1 text-sm font-semibold text-[#222831]">
               {order.status}
             </span>
           </div>
@@ -84,18 +84,18 @@ const TrackOrderPage = () => {
                   <div
                     className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${
                       idx <= currentStep
-                        ? "bg-[#0856DF] text-white"
-                        : "bg-slate-100 text-slate-400"
+                        ? "bg-[#00ADB5] text-white"
+                        : "bg-[#FFFFFF] text-[#222831]"
                     }`}
                   >
                     {idx + 1}
                   </div>
-                  <span className="mt-1 text-[10px] text-slate-500">{step}</span>
+                  <span className="mt-1 text-[10px] text-[#222831]">{step}</span>
                 </div>
                 {idx < statusSteps.length - 1 && (
                   <div
                     className={`h-1 flex-1 ${
-                      idx < currentStep ? "bg-[#0856DF]" : "bg-slate-200"
+                      idx < currentStep ? "bg-[#00ADB5]" : "bg-[#FFFFFF]"
                     }`}
                   />
                 )}
@@ -104,8 +104,8 @@ const TrackOrderPage = () => {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-500">
+        <div className="rounded-2xl border border-[#EEEEEE] bg-white p-6 shadow-sm">
+          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-[#222831]">
             Items
           </h2>
           <div className="space-y-3">
@@ -116,37 +116,37 @@ const TrackOrderPage = () => {
                   <img
                     src={item.product.images[0]}
                     alt={item.product.name}
-                    className="h-12 w-12 rounded-lg border border-slate-200 object-cover"
+                    className="h-12 w-12 rounded-lg border border-[#EEEEEE] object-cover"
                   />
                 ) : (
-                  <div className="h-12 w-12 rounded-lg bg-slate-100" />
+                  <div className="h-12 w-12 rounded-lg bg-[#FFFFFF]" />
                 )}
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="text-sm font-semibold text-[#222831]">
                     {item.product?.name || "Product"}
                   </p>
-                  <p className="text-xs text-slate-500">Qty: {item.quantity}</p>
+                  <p className="text-xs text-[#222831]">Qty: {item.quantity}</p>
                 </div>
-                <p className="text-sm font-semibold text-slate-900">
+                <p className="text-sm font-semibold text-[#222831]">
                   Rs {((item.product?.price || 0) * item.quantity).toLocaleString()}
                 </p>
               </div>
             ))}
           </div>
 
-          <div className="mt-4 flex items-center justify-between border-t border-slate-200 pt-4">
-            <span className="text-sm font-semibold text-slate-500">Total</span>
-            <span className="text-lg font-bold text-slate-900">
+          <div className="mt-4 flex items-center justify-between border-t border-[#EEEEEE] pt-4">
+            <span className="text-sm font-semibold text-[#222831]">Total</span>
+            <span className="text-lg font-bold text-[#222831]">
               Rs {order.totalPrice?.toLocaleString() || 0}
             </span>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
+        <div className="rounded-2xl border border-[#EEEEEE] bg-white p-6 shadow-sm">
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-[#222831]">
             Shipping Address
           </h2>
-          <p className="text-sm text-slate-700">
+          <p className="text-sm text-[#222831]">
             {order.shippingAddress?.fullName}
             <br />
             {order.shippingAddress?.address}
@@ -155,7 +155,7 @@ const TrackOrderPage = () => {
             <br />
             {order.shippingAddress?.phoneNo}
           </p>
-          <div className="mt-3 flex gap-4 text-xs text-slate-500">
+          <div className="mt-3 flex gap-4 text-xs text-[#222831]">
             <span>Payment: {order.paymentStatus}</span>
             <span>Method: {order.paymentMethod}</span>
           </div>

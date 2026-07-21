@@ -268,6 +268,8 @@ export const trackOrder = async (req, res, next) => {
       shippingAddress: order.shippingAddress,
       orderItems: (order.orderItems || []).map((item) => ({
         quantity: item.quantity,
+        selectedColor: item.selectedColor,
+        selectedSize: item.selectedSize,
         product: item.product
           ? {
               name: item.product.name,

@@ -11,7 +11,7 @@ import {
   showToast,
 } from "../utils/commonFunctions";
 import { RootState } from "../Redux/store";
-import { ShoppingBag, ShoppingCart, Star, Truck } from "lucide-react";
+import { ShoppingBag, ShoppingCart, Star } from "lucide-react";
 
 interface ApiProduct {
   _id: string;
@@ -24,6 +24,9 @@ interface ApiProduct {
   images?: Array<{ url: string }>;
   averageRating?: number;
   originalPrice?: number;
+  colors?: string[];
+  sizes?: string[];
+  addedBy?: string;
 }
 
 const ProductCardImageCarousel: React.FC<{
@@ -50,27 +53,26 @@ const ProductCardImageCarousel: React.FC<{
   }, [normalizedImages.length]);
 
   return (
-    <div className="relative h-72 overflow-hidden bg-slate-100">
+    <div className="relative h-72 overflow-hidden bg-[#FFFFFF] p-4">
       {normalizedImages.map((image, index) => (
         <img
           key={`${image.url}-${index}`}
           src={image.url}
           alt={`${label} ${index + 1}`}
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-out ${
+          className={`absolute inset-0 h-full w-full object-contain p-4 transition duration-700 ease-out group-hover:scale-[1.015] ${
             index === currentIndex ? "opacity-100" : "opacity-0"
           }`}
         />
       ))}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-      <div className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-[#041241] shadow-sm">
+      <div className="absolute left-4 top-4 rounded-full border border-[#EEEEEE] bg-white/95 px-3 py-1 text-[11px] font-semibold text-[#222831] shadow-sm">
         {label}
       </div>
       <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
         {normalizedImages.map((_, dotIndex) => (
           <span
             key={dotIndex}
-            className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${
-              dotIndex === currentIndex ? "bg-white" : "bg-white/50"
+            className={`h-2.5 rounded-full transition-all duration-300 ${
+              dotIndex === currentIndex ? "w-5 bg-white" : "w-2 bg-white/55"
             }`}
           />
         ))}
@@ -83,7 +85,6 @@ export default function ProductCard({ product }: { product: ApiProduct }) {
   const router = useRouter();
   const auth = useSelector((state: RootState) => state.auth);
   const cardRef = useRef<HTMLDivElement | null>(null);
-
   const categoryName =
     typeof product.category === "string"
       ? product.category
@@ -97,18 +98,21 @@ export default function ProductCard({ product }: { product: ApiProduct }) {
       try {
         await axios.post(
           `${baseUrl}cart`,
-          { productId: product._id, quantity: 1 },
+          {
+            productId: product._id,
+            quantity: 1,
+          },
           { withCredentials: true },
         );
         showToast(`${product.name} added to cart`, "success");
         window.dispatchEvent(new Event("cart-updated"));
-        return;
+        return true;
       } catch (err: any) {
         showToast(
           err?.response?.data?.message || "Failed to add product to cart",
           "error",
         );
-        return;
+        return false;
       }
     }
 
@@ -118,17 +122,21 @@ export default function ProductCard({ product }: { product: ApiProduct }) {
     if (existing) {
       existing.quantity += 1;
     } else {
-      currentCart.push({ ...product, quantity: 1 });
+      currentCart.push({
+        ...product,
+        quantity: 1,
+      } as ApiProduct & { quantity: number });
     }
 
     setLocalCart(currentCart);
     showToast(`${product.name} added to cart`, "success");
+    return true;
   };
 
   const handleBuyNow = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    await handleAddToCart(e);
-    router.push("/checkout");
+    const added = await handleAddToCart(e);
+    if (added) router.push("/checkout");
   };
 
   return (
@@ -142,42 +150,40 @@ export default function ProductCard({ product }: { product: ApiProduct }) {
           router.push(`/product/${product._id}`);
         }
       }}
-      className="flex h-full cursor-pointer flex-col overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_20px_60px_rgba(6,18,75,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_30px_90px_rgba(6,18,75,0.16)]"
+      className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-[24px] border border-[#EEEEEE] bg-white shadow-[0_14px_40px_rgba(34,40,49,0.06)] transition duration-300 hover:-translate-y-1 hover:border-[#00ADB5]/35 hover:shadow-[0_22px_60px_rgba(34,40,49,0.10)]"
     >
       <ProductCardImageCarousel images={product.images} label={categoryName} />
 
-      <div className="flex-1 space-y-4 p-5 text-[#041241]">
-        <div className="flex items-center justify-between gap-3 text-sm text-slate-500">
-          <span className="inline-flex items-center gap-2 rounded-full border border-[#0856DF]/20 bg-[#0856DF]/10 px-3 py-1 font-semibold text-[#0856DF]">
+      <div className="flex-1 space-y-4 p-5 text-[#222831]">
+        <div className="flex items-center justify-between gap-3 text-sm text-[#222831]">
+          <span className="truncate text-[11px] font-bold uppercase tracking-[0.18em] text-[#222831]/70">
             {product.brand ?? "ZeeF"}
           </span>
-          <span className="inline-flex items-center gap-1 text-amber-500">
-            <Star size={14} />
+          <span className="inline-flex items-center gap-1 rounded-full border border-[#EEEEEE] bg-[#FFFFFF] px-2.5 py-1 text-xs font-semibold text-[#222831]">
+            <Star size={13} className="fill-[#00ADB5] text-[#00ADB5]" />
             {product.averageRating?.toFixed(1) ?? "4.8"}
           </span>
-          <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-600">
-            <Truck size={12} />
-            Free Shipping
-          </span>
         </div>
-        <div className="space-y-2">
-          <h3 className="text-xl font-black leading-tight">{product.name}</h3>
-          <p className="text-sm leading-6 text-slate-600 line-clamp-3 whitespace-pre-wrap break-words">
+        <div className="space-y-2.5">
+          <h3 className="line-clamp-2 min-h-[3.25rem] text-xl font-black leading-tight text-[#222831]">
+            {product.name}
+          </h3>
+          <p className="line-clamp-2 min-h-[3rem] whitespace-pre-wrap break-words text-sm leading-6 text-[#222831]/70">
             {product.description}
           </p>
         </div>
         <div className="flex items-end justify-between gap-4">
           <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
+            <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#222831]/45">
               Price
             </p>
             <div className="flex items-end gap-2">
-              <p className="text-2xl font-black text-[#041241]">
+              <p className="text-2xl font-black text-[#222831]">
                 Rs {product.price.toLocaleString()}
               </p>
               {(product.originalPrice ?? Math.round(product.price * 1.4)) >
                 product.price && (
-                <p className="pb-1 text-sm font-medium text-slate-400 line-through">
+                <p className="pb-1 text-sm font-medium text-[#222831]/35 line-through">
                   Rs{" "}
                   {(
                     product.originalPrice ?? Math.round(product.price * 1.4)
@@ -186,18 +192,17 @@ export default function ProductCard({ product }: { product: ApiProduct }) {
               )}
             </div>
           </div>
-          <div className="text-right text-xs text-slate-500">
-            <p>{product.stock ?? 0} in stock</p>
-            <p>{product.stock && product.stock > 0 ? "Ready to ship" : "Out of stock"}</p>
+          <div className="rounded-full border border-[#EEEEEE] px-3 py-1 text-right text-xs font-semibold text-[#222831]/70">
+            {product.stock && product.stock > 0 ? "In stock" : "Out of stock"}
           </div>
         </div>
       </div>
 
-      <div className="grid gap-3 border-t border-slate-200/70 bg-[#F7F7FA] p-5">
+      <div className="grid gap-3 border-t border-[#EEEEEE] bg-[#FFFFFF] p-5">
         <button
           type="button"
           onClick={handleBuyNow}
-          className="inline-flex min-h-[48px] items-center justify-center rounded-2xl bg-[#0856DF] px-4 text-sm font-semibold text-white transition hover:bg-[#0645c8]"
+          className="inline-flex min-h-[46px] items-center justify-center rounded-2xl bg-[#00ADB5] px-4 text-sm font-bold text-white transition hover:bg-[#0099a1]"
         >
           <ShoppingBag size={18} />
           <span className="ml-2">Buy Now</span>
@@ -205,7 +210,7 @@ export default function ProductCard({ product }: { product: ApiProduct }) {
         <button
           type="button"
           onClick={handleAddToCart}
-          className="inline-flex min-h-[48px] items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 text-sm font-semibold text-[#041241] transition hover:border-[#0856DF] hover:bg-[#f3f8ff]"
+          className="inline-flex min-h-[46px] items-center justify-center rounded-2xl border border-[#EEEEEE] bg-white px-4 text-sm font-semibold text-[#222831] transition hover:border-[#00ADB5] hover:text-[#00ADB5]"
         >
           <ShoppingCart size={18} />
           <span className="ml-2">Add to Cart</span>

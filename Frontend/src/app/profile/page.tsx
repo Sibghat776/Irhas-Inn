@@ -158,26 +158,26 @@ const ProfilePage = () => {
   if (!isMounted) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-400 via-white to-gray-100 px-4 pt-24 pb-6 font-sans">
+    <div className="min-h-screen bg-gradient-to-b from-[#FFFFFF] via-white to-[#FFFFFF] px-4 pt-24 pb-6 font-sans">
       <div className="max-w-2xl mx-auto">
         {/* Back + Header */}
         <div className="mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-[#0856DF] transition-colors mb-4">
+          <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-[#222831] hover:text-[#00ADB5] transition-colors mb-4">
             <ArrowLeft size={16} /> Back to Home
           </Link>
-          <h1 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight">My Profile</h1>
-          <p className="text-lg text-gray-600 font-semibold mt-1">Keep your information up to date</p>
+          <h1 className="text-4xl md:text-5xl font-black text-[#222831] tracking-tight">My Profile</h1>
+          <p className="text-lg text-[#222831] font-semibold mt-1">Keep your information up to date</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
-          <div className="h-1 bg-gradient-to-r from-blue-600 to-blue-400" />
+        <div className="bg-white rounded-2xl shadow-xl border border-[#EEEEEE] overflow-hidden">
+          <div className="h-1 bg-gradient-to-r from-[#00ADB5] to-[#FFFFFF]" />
           <div className="p-8 md:p-12">
             {/* Avatar */}
             <div className="flex flex-col items-center mb-12">
               <label className="relative cursor-pointer group mb-4">
-                <div className="relative w-40 h-40 rounded-2xl overflow-hidden ring-4 ring-blue-100 group-hover:ring-blue-300 transition-all duration-300 shadow-lg bg-gray-100">
+                <div className="relative w-40 h-40 rounded-2xl overflow-hidden ring-4 ring-[#EEEEEE] group-hover:ring-[#EEEEEE] transition-all duration-300 shadow-lg bg-[#FFFFFF]">
                   <img src={preview} alt="Profile Avatar" className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-sm">
+                  <div className="absolute inset-0 bg-[#222831]/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-sm">
                     <div className="flex flex-col items-center gap-2">
                       <Camera className="text-white w-8 h-8" />
                       <span className="text-white text-xs font-semibold uppercase">Change Photo</span>
@@ -186,60 +186,60 @@ const ProfilePage = () => {
                 </div>
                 <input type="file" hidden accept="image/*" onChange={handleImage} />
               </label>
-              <p className="text-center text-sm text-gray-500 font-medium">PNG, JPG, GIF or WebP &bull; Max 5MB</p>
+              <p className="text-center text-sm text-[#222831] font-medium">PNG, JPG, GIF or WebP &bull; Max 5MB</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-bold text-gray-900 mb-2 uppercase tracking-wider">Username</label>
+                <label className="block text-sm font-bold text-[#222831] mb-2 uppercase tracking-wider">Username</label>
                 <div className="relative">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-600"><User size={20} /></div>
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#222831]"><User size={20} /></div>
                   <input type="text" name="username" value={form.username} onChange={handleChange}
                     placeholder="Enter your username"
-                    className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl text-gray-900 outline-none transition-all font-semibold ${
-                      errors.username ? "border-red-500 bg-red-50 focus:border-red-600 focus:ring-2 focus:ring-red-200"
-                        : "border-gray-300 bg-gray-50 hover:border-gray-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-200"
+                    className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl text-[#222831] outline-none transition-all font-semibold ${
+                      errors.username ? "border-[#EEEEEE] bg-[#FFFFFF] focus:border-[#00ADB5] focus:ring-2 focus:ring-[#00ADB5]"
+                        : "border-[#EEEEEE] bg-[#FFFFFF] hover:border-[#EEEEEE] focus:border-[#00ADB5] focus:ring-2 focus:ring-[#00ADB5]"
                     }`} />
                 </div>
                 {errors.username && (
-                  <div className="flex items-center gap-2 mt-2 text-red-600 text-sm font-semibold">
+                  <div className="flex items-center gap-2 mt-2 text-[#222831] text-sm font-semibold">
                     <AlertCircle size={16} /> {errors.username}
                   </div>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-gray-900 mb-2 uppercase tracking-wider">Phone Number</label>
+                <label className="block text-sm font-bold text-[#222831] mb-2 uppercase tracking-wider">Phone Number</label>
                 <div className="relative">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-600"><Phone size={20} /></div>
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#222831]"><Phone size={20} /></div>
                   <input type="tel" name="phoneNo" value={form.phoneNo} onChange={handleChange}
                     placeholder="Enter phone number (10-15 digits)"
-                    className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl text-gray-900 outline-none transition-all font-semibold ${
-                      errors.phoneNo ? "border-red-500 bg-red-50 focus:border-red-600 focus:ring-2 focus:ring-red-200"
-                        : "border-gray-300 bg-gray-50 hover:border-gray-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-200"
+                    className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl text-[#222831] outline-none transition-all font-semibold ${
+                      errors.phoneNo ? "border-[#EEEEEE] bg-[#FFFFFF] focus:border-[#00ADB5] focus:ring-2 focus:ring-[#00ADB5]"
+                        : "border-[#EEEEEE] bg-[#FFFFFF] hover:border-[#EEEEEE] focus:border-[#00ADB5] focus:ring-2 focus:ring-[#00ADB5]"
                     }`} />
                 </div>
                 {errors.phoneNo && (
-                  <div className="flex items-center gap-2 mt-2 text-red-600 text-sm font-semibold">
+                  <div className="flex items-center gap-2 mt-2 text-[#222831] text-sm font-semibold">
                     <AlertCircle size={16} /> {errors.phoneNo}
                   </div>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-gray-900 mb-2 uppercase tracking-wider">Full Address</label>
+                <label className="block text-sm font-bold text-[#222831] mb-2 uppercase tracking-wider">Full Address</label>
                 <div className="relative">
-                  <div className="absolute left-4 top-4 text-blue-600"><MapPin size={20} /></div>
+                  <div className="absolute left-4 top-4 text-[#222831]"><MapPin size={20} /></div>
                   <textarea name="address" value={form.address} onChange={handleChange}
                     placeholder="Enter your full address (street, city, country)" rows={4} maxLength={500}
-                    className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl text-gray-900 outline-none transition-all font-semibold resize-none ${
-                      errors.address ? "border-red-500 bg-red-50 focus:border-red-600 focus:ring-2 focus:ring-red-200"
-                        : "border-gray-300 bg-gray-50 hover:border-gray-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-200"
+                    className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl text-[#222831] outline-none transition-all font-semibold resize-none ${
+                      errors.address ? "border-[#EEEEEE] bg-[#FFFFFF] focus:border-[#00ADB5] focus:ring-2 focus:ring-[#00ADB5]"
+                        : "border-[#EEEEEE] bg-[#FFFFFF] hover:border-[#EEEEEE] focus:border-[#00ADB5] focus:ring-2 focus:ring-[#00ADB5]"
                     }`} />
-                  <p className="text-xs text-gray-500 mt-1 text-right font-medium">{form.address.length}/500</p>
+                  <p className="text-xs text-[#222831] mt-1 text-right font-medium">{form.address.length}/500</p>
                 </div>
                 {errors.address && (
-                  <div className="flex items-center gap-2 mt-2 text-red-600 text-sm font-semibold">
+                  <div className="flex items-center gap-2 mt-2 text-[#222831] text-sm font-semibold">
                     <AlertCircle size={16} /> {errors.address}
                   </div>
                 )}
@@ -247,18 +247,18 @@ const ProfilePage = () => {
 
               <div className="flex flex-col sm:flex-row gap-4 pt-6">
                 <button type="submit" disabled={auth.loading || !hasChanges}
-                  className="flex-1 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-black uppercase tracking-wider transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-400">
+                  className="flex-1 py-3 rounded-xl bg-gradient-to-r from-[#00ADB5] to-[#00ADB5] hover:from-[#00ADB5] hover:to-[#00ADB5] text-white font-black uppercase tracking-wider transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed border border-[#EEEEEE]">
                   {auth.loading ? <><Loader2 className="animate-spin" size={20} /> Updating...</>
                     : <><Save size={20} /> Save Changes</>}
                 </button>
                 <button type="button" onClick={() => { setForm(originalForm); setFile(null); setPreview(apiResponse?.data?.profilePic || "/defaultAvatar.jpg"); setHasChanges(false); setErrors({}); }}
-                  className="flex-1 py-3 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-900 font-black uppercase tracking-wider transition-all duration-200 border border-gray-400">
+                  className="flex-1 py-3 rounded-xl bg-[#FFFFFF] hover:bg-[#EEEEEE] text-[#222831] font-black uppercase tracking-wider transition-all duration-200 border border-[#EEEEEE]">
                   Cancel
                 </button>
               </div>
 
-              <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                <p className="text-sm text-blue-900 font-semibold flex items-start gap-2">
+              <div className="mt-8 p-4 bg-[#FFFFFF] border border-[#EEEEEE] rounded-xl">
+                <p className="text-sm text-[#222831] font-semibold flex items-start gap-2">
                   <Check size={18} className="flex-shrink-0 mt-0.5" />
                   <span>Your information is secure and encrypted with industry-standard protocols.</span>
                 </p>
