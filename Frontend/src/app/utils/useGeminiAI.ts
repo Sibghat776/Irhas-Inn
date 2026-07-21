@@ -24,7 +24,7 @@ export interface UseGeminiAIResult {
 }
 
 // ✅ Google's currently supported active model
-const DEFAULT_MODEL = "gemini-2.5-flash-lite";
+const DEFAULT_MODEL = "gemini-3-flash";
 
 // Minimum acceptable word count before we retry / give up
 // (Lowered from 60 → 40 since the new bullet-point format is intentionally short)
