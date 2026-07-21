@@ -3,229 +3,262 @@
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 
 interface Slide {
   image: string;
   tag: string;
   title: string;
-  description: string;
 }
 
 const slides: Slide[] = [
   {
-    image: "/carousel/Accessories.jpeg",
-    tag: "Exclusive Collection",
-    title: "Mens Accessories",
-    description: "Premium accessories designed to complete your everyday style.",
+    image: "/carousel/Accessories.jpg",
+    tag: "New In",
+    title: "Accessories",
   },
   {
-    image: "/carousel/Clothes-Carousel.jpeg",
-    tag: "New Arrivals",
-    title: "Stylish Clothes",
-    description: "Modern styles made for comfort, confidence, and everyday living.",
+    image: "/carousel/Clothes.jpg",
+    tag: "Trending",
+    title: "Fashion",
   },
   {
-    image: "/carousel/pens.avif",
-    tag: "Office Luxury",
-    title: "Smooth Pens",
-    description: "Premium pens made for writing, gifting, and making an impression.",
+    image: "/carousel/Decors.jpg",
+    tag: "Lifestyle",
+    title: "Décor",
   },
   {
-    image: "/carousel/Pens-and-Men-Accessories.jpg",
-    tag: "Medical Essentials",
-    title: "Premium Scrubs",
-    description: "Comfortable and durable scrubs designed for everyday performance.",
+    image: "/carousel/Electronic Devices.jpg",
+    tag: "Tech",
+    title: "Electronics",
+  },
+  {
+    image: "/carousel/Home appliances.jpg",
+    tag: "Smart Home",
+    title: "Appliances",
   },
 ];
 
 const Carousel = () => {
   const router = useRouter();
-
   const [currentIndex, setCurrentIndex] = useState(0);
   const [animating, setAnimating] = useState(false);
 
-  const handleSlideChange = useCallback(
+  const goTo = useCallback(
     (newIndex: number) => {
       if (animating || newIndex === currentIndex) return;
-
       setAnimating(true);
       setCurrentIndex(newIndex);
-
-      window.setTimeout(() => {
-        setAnimating(false);
-      }, 700);
+      window.setTimeout(() => setAnimating(false), 800);
     },
     [animating, currentIndex],
   );
 
-  const handleNext = () => {
-    handleSlideChange(
-      currentIndex === slides.length - 1 ? 0 : currentIndex + 1,
-    );
-  };
+  const next = useCallback(() => {
+    goTo(currentIndex === slides.length - 1 ? 0 : currentIndex + 1);
+  }, [currentIndex, goTo]);
 
-  const handlePrevious = () => {
-    handleSlideChange(
-      currentIndex === 0 ? slides.length - 1 : currentIndex - 1,
-    );
-  };
+  const prev = useCallback(() => {
+    goTo(currentIndex === 0 ? slides.length - 1 : currentIndex - 1);
+  }, [currentIndex, goTo]);
 
+  /* Auto-play — bypasses animating guard intentionally */
   useEffect(() => {
     const timer = window.setInterval(() => {
-      setCurrentIndex((previousIndex) =>
-        previousIndex === slides.length - 1 ? 0 : previousIndex + 1,
-      );
+      setCurrentIndex((i) => (i === slides.length - 1 ? 0 : i + 1));
     }, 6000);
-
     return () => window.clearInterval(timer);
   }, []);
 
-  const activeSlide = slides[currentIndex];
+  const slide = slides[currentIndex];
+  const num = String(currentIndex + 1).padStart(2, "0");
+  const total = String(slides.length).padStart(2, "0");
 
   return (
-    <section className="relative h-[calc(100vh-72px)] min-h-[580px] w-full overflow-hidden bg-[#EEEEEE]">
-      {/* =========================================================
-          HERO IMAGE
-          Full screen image with subtle neutral treatment
-      ========================================================== */}
+    <section className="relative h-[calc(100vh-72px)] min-h-[580px] w-full overflow-hidden bg-black">
 
-      {slides.map((slide, index) => (
+      {/* =====================================================
+          IMAGES — fade + subtle scale
+      ===================================================== */}
+      {slides.map((s, i) => (
         <div
-          key={slide.image}
-          className={`absolute inset-0 transition-all duration-1000 ease-out ${currentIndex === index
-              ? "visible scale-100 opacity-100"
-              : "invisible scale-[1.03] opacity-0"
+          key={s.image}
+          className={`absolute inset-0 transition-all duration-1000 ease-in-out ${currentIndex === i
+              ? "scale-100 opacity-100"
+              : "scale-[1.04] opacity-0"
             }`}
         >
           <Image
-            src={slide.image}
-            alt={slide.title}
+            src={s.image}
+            alt={s.title}
             fill
-            priority={index === 0}
+            priority={i === 0}
             sizes="100vw"
             className="object-cover object-center"
           />
         </div>
       ))}
 
-      {/* =========================================================
-          SOFT NEUTRAL CONTENT BACKDROP
-          Not white, not dark
-      ========================================================== */}
+      {/* =====================================================
+          OVERLAYS — cinematic darkness
+      ===================================================== */}
+      {/* Bottom-up (primary dark mass) */}
+      <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-black/90 via-black/25 to-transparent" />
+      {/* Left vignette */}
+      <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-r from-black/60 via-black/10 to-transparent" />
+      {/* Top edge softener */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-28 bg-gradient-to-b from-black/30 to-transparent" />
 
-      <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-r from-[#EEEEEE]/95 via-[#EEEEEE]/75 via-45% to-transparent" />
-
-      {/* Very subtle bottom depth */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-24 bg-gradient-to-t from-[#222831]/10 to-transparent" />
-
-      {/* =========================================================
-          CONTENT
-      ========================================================== */}
-
-      <div className="relative z-20 mx-auto flex h-full min-h-[580px] max-w-7xl items-center px-6 sm:px-10 md:px-14 lg:px-16 xl:px-20">
-        <div
-          key={activeSlide.title}
-          className="max-w-[430px] animate-carousel-content"
-        >
-          {/* Small Tag */}
-          <div className="mb-4 flex items-center gap-3">
-            <span className="h-[2px] w-7 rounded-full bg-[#00ADB5]" />
-
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#00ADB5]">
-              {activeSlide.tag}
-            </span>
-          </div>
-
-          {/* Short Title */}
-          <h1 className="text-4xl font-extrabold leading-[1.05] tracking-[-0.035em] text-[#222831] sm:text-5xl md:text-6xl">
-            {activeSlide.title}
-          </h1>
-
-          {/* Short Description */}
-          <p className="mt-5 max-w-[370px] text-sm font-medium leading-6 text-[#222831]/65 sm:text-base">
-            {activeSlide.description}
-          </p>
-
-          {/* Single CTA */}
-          <button
-            type="button"
-            onClick={() => router.push("/productsPage")}
-            className="mt-7 rounded-lg bg-[#00ADB5] px-7 py-3.5 text-sm font-bold text-white shadow-[0_8px_22px_rgba(0,173,181,0.2)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#0099A1] hover:shadow-[0_12px_28px_rgba(0,173,181,0.28)] active:translate-y-0"
-          >
-            Explore Now
-          </button>
-        </div>
+      {/* =====================================================
+          GHOST SLIDE NUMBER — signature editorial element
+      ===================================================== */}
+      <div
+        key={`ghost-${currentIndex}`}
+        aria-hidden="true"
+        className="animate-ghost-fade pointer-events-none absolute right-4 top-3 z-20 select-none font-black leading-none tracking-tighter text-white/[0.05] sm:right-8 sm:top-5"
+        style={{ fontSize: "clamp(110px, 17vw, 250px)" }}
+      >
+        {num}
       </div>
 
-      {/* =========================================================
-          PREVIOUS BUTTON
-      ========================================================== */}
-
-      <button
-        type="button"
-        onClick={handlePrevious}
-        disabled={animating}
-        aria-label="Previous Slide"
-        className="absolute left-5 top-1/2 z-30 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#222831]/10 bg-[#EEEEEE]/80 text-[#222831] shadow-md backdrop-blur-sm transition-all duration-300 hover:border-[#00ADB5] hover:bg-[#00ADB5] hover:text-white md:flex lg:left-8"
-      >
-        <ChevronLeft size={20} strokeWidth={2} />
-      </button>
-
-      {/* =========================================================
-          NEXT BUTTON
-      ========================================================== */}
-
-      <button
-        type="button"
-        onClick={handleNext}
-        disabled={animating}
-        aria-label="Next Slide"
-        className="absolute right-5 top-1/2 z-30 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#222831]/10 bg-[#EEEEEE]/80 text-[#222831] shadow-md backdrop-blur-sm transition-all duration-300 hover:border-[#00ADB5] hover:bg-[#00ADB5] hover:text-white md:flex lg:right-8"
-      >
-        <ChevronRight size={20} strokeWidth={2} />
-      </button>
-
-      {/* =========================================================
-          SLIDE INDICATORS
-      ========================================================== */}
-
-      <div className="absolute bottom-7 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2">
-        {slides.map((slide, index) => (
+      {/* =====================================================
+          VERTICAL PROGRESS BARS — desktop only
+      ===================================================== */}
+      <div className="absolute right-6 top-1/2 z-30 hidden -translate-y-1/2 flex-col items-center gap-3 lg:flex xl:right-10">
+        {slides.map((_, i) => (
           <button
-            key={slide.title}
-            type="button"
-            onClick={() => handleSlideChange(index)}
-            aria-label={`Go to ${slide.title} slide`}
-            aria-current={index === currentIndex ? "true" : "false"}
-            className={`h-1.5 rounded-full transition-all duration-500 ${index === currentIndex
-                ? "w-9 bg-[#00ADB5]"
-                : "w-2 bg-[#222831]/25 hover:bg-[#00ADB5]/60"
+            key={i}
+            onClick={() => goTo(i)}
+            aria-label={`Go to slide ${i + 1}`}
+            className={`rounded-full transition-all duration-500 ease-in-out ${i === currentIndex
+                ? "h-11 w-[2px] bg-[#00ADB5]"
+                : "h-4 w-[2px] bg-white/25 hover:bg-white/55"
               }`}
           />
         ))}
       </div>
 
-      {/* =========================================================
-          ANIMATION
-      ========================================================== */}
+      {/* =====================================================
+          BOTTOM CONTENT — tag · title · CTA  +  counter · nav
+      ===================================================== */}
+      <div className="absolute inset-x-0 bottom-0 z-20 mx-auto max-w-7xl px-6 pb-10 sm:px-10 md:px-14 lg:px-16 xl:px-20">
+        <div className="flex items-end justify-between gap-6">
 
+          {/* ── Left: text ── */}
+          <div key={slide.title} className="animate-content-rise">
+
+            {/* Tag */}
+            <div className="mb-3 flex items-center gap-3">
+              <span className="h-px w-8 bg-[#00ADB5]" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.32em] text-[#00ADB5]">
+                {slide.tag}
+              </span>
+            </div>
+
+            {/* Title */}
+            <h1
+              className="font-black leading-[0.88] tracking-[-0.03em] text-white"
+              style={{ fontSize: "clamp(50px, 8.5vw, 108px)" }}
+            >
+              {slide.title}
+            </h1>
+
+            {/* CTA */}
+            <button
+              type="button"
+              onClick={() => router.push("/productsPage")}
+              className="group mt-7 flex items-center gap-3"
+            >
+              <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-white transition-colors duration-300 group-hover:text-[#00ADB5]">
+                Shop Now
+              </span>
+              <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-white/25 text-white transition-all duration-300 group-hover:border-[#00ADB5] group-hover:bg-[#00ADB5]">
+                <ArrowRight size={15} strokeWidth={2.5} />
+              </span>
+            </button>
+          </div>
+
+          {/* ── Right: counter + arrows (desktop) ── */}
+          <div className="hidden flex-shrink-0 flex-col items-end gap-5 md:flex">
+
+            {/* Slide counter */}
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-2xl font-black tabular-nums leading-none text-white">
+                {num}
+              </span>
+              <span className="text-xs text-white/30">/ {total}</span>
+            </div>
+
+            {/* Prev / Next arrows */}
+            <div className="flex gap-2">
+              <button
+                onClick={prev}
+                disabled={animating}
+                aria-label="Previous slide"
+                className="flex h-10 w-10 items-center justify-center border border-white/15 text-white/50 transition-all duration-300 hover:border-[#00ADB5]/60 hover:text-[#00ADB5] disabled:opacity-30"
+              >
+                <ChevronLeft size={18} strokeWidth={2} />
+              </button>
+              <button
+                onClick={next}
+                disabled={animating}
+                aria-label="Next slide"
+                className="flex h-10 w-10 items-center justify-center bg-[#00ADB5] text-white transition-all duration-300 hover:bg-[#009aa2] disabled:opacity-30"
+              >
+                <ChevronRight size={18} strokeWidth={2} />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Mobile dot indicators ── */}
+        <div className="mt-5 flex items-center gap-2 md:hidden">
+          {slides.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => goTo(i)}
+              aria-label={`Slide ${i + 1}`}
+              className={`h-[2px] rounded-full transition-all duration-500 ${i === currentIndex
+                  ? "w-8 bg-[#00ADB5]"
+                  : "w-2 bg-white/30 hover:bg-white/60"
+                }`}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* =====================================================
+          ANIMATIONS
+      ===================================================== */}
       <style jsx global>{`
-        @keyframes carouselContent {
+        @keyframes contentRise {
           from {
             opacity: 0;
-            transform: translateY(14px);
+            transform: translateY(22px);
           }
-
           to {
             opacity: 1;
             transform: translateY(0);
           }
         }
 
-        .animate-carousel-content {
-          animation: carouselContent 0.65s
-            cubic-bezier(0.16, 1, 0.3, 1) both;
+        @keyframes ghostFade {
+          from {
+            opacity: 0;
+            transform: translateX(12px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        .animate-content-rise {
+          animation: contentRise 0.72s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .animate-ghost-fade {
+          animation: ghostFade 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
       `}</style>
     </section>
