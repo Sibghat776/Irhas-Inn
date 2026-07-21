@@ -57,28 +57,30 @@ const ProductCardImageCarousel: React.FC<{
   }, [normalizedImages.length]);
 
   return (
-    <div className="relative h-56 shrink-0 overflow-hidden bg-[#FFFFFF] p-3">
+    <div className="relative aspect-square w-full shrink-0 overflow-hidden bg-gradient-to-br from-[#F8F9FA] to-[#F1F2F4]">
       {normalizedImages.map((image, index) => (
         <img
           key={`${image.url}-${index}`}
           src={image.url}
           alt={`${label} ${index + 1}`}
-          className={`absolute inset-0 h-full w-full object-contain p-3 transition duration-700 ease-out group-hover:scale-[1.015] ${
-            index === currentIndex ? "opacity-100" : "opacity-0"
-          }`}
+          className={`absolute inset-0 h-full w-full object-contain p-6 transition duration-700 ease-out group-hover:scale-[1.04] ${index === currentIndex ? "opacity-100" : "opacity-0"
+            }`}
         />
       ))}
-      <span className="absolute left-3 top-3 rounded-full border border-[#EEEEEE] bg-white/95 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#222831] shadow-sm">
+
+      <span className="absolute left-3 top-3 rounded-full border border-[#EEEEEE] bg-white/95 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#222831] shadow-sm backdrop-blur-sm">
         {label}
       </span>
+
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/[0.03] to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
       {normalizedImages.length > 1 && (
         <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
           {normalizedImages.map((_, dotIndex) => (
             <span
               key={dotIndex}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                dotIndex === currentIndex ? "w-5 bg-white" : "w-1.5 bg-white/55"
-              }`}
+              className={`h-1.5 rounded-full transition-all duration-300 ${dotIndex === currentIndex ? "w-5 bg-[#00ADB5]" : "w-1.5 bg-[#222831]/20"
+                }`}
             />
           ))}
         </div>
@@ -210,14 +212,13 @@ const Products: React.FC = () => {
   const skeletonCards = Array.from({ length: 5 }, (_, index) => (
     <div
       key={`product-skeleton-${index}`}
-      className="snap-start overflow-hidden rounded-3xl border border-[#EEEEEE] bg-white min-w-[230px] sm:min-w-[260px] md:min-w-[290px]"
+      className="flex aspect-square w-[240px] shrink-0 snap-start flex-col overflow-hidden rounded-[28px] border border-[#EEEEEE] bg-white sm:w-[270px] md:w-[300px]"
     >
-      <div className="h-56 animate-pulse bg-[#EEEEEE]" />
+      <div className="aspect-square w-full animate-pulse bg-[#F1F2F4]" />
       <div className="space-y-3 p-4">
-        <div className="h-3 w-20 animate-pulse rounded-full bg-[#EEEEEE]" />
-        <div className="h-5 w-4/5 animate-pulse rounded-full bg-[#EEEEEE]" />
-        <div className="h-3 w-full animate-pulse rounded-full bg-[#EEEEEE]" />
-        <div className="h-10 w-full animate-pulse rounded-2xl bg-[#EEEEEE]" />
+        <div className="h-3 w-20 animate-pulse rounded-full bg-[#F1F2F4]" />
+        <div className="h-5 w-4/5 animate-pulse rounded-full bg-[#F1F2F4]" />
+        <div className="h-10 w-full animate-pulse rounded-2xl bg-[#F1F2F4]" />
       </div>
     </div>
   ));
@@ -244,7 +245,7 @@ const Products: React.FC = () => {
                 onClick={() => handleScroll("left")}
                 type="button"
                 aria-label="Scroll left"
-                className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#EEEEEE] bg-white text-[#222831] transition hover:border-[#00ADB5] hover:text-[#00ADB5]"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#EEEEEE] bg-white text-[#222831] transition hover:border-[#00ADB5] hover:text-[#00ADB5] active:scale-95"
               >
                 <ArrowLeft size={17} />
               </button>
@@ -252,7 +253,7 @@ const Products: React.FC = () => {
                 onClick={() => handleScroll("right")}
                 type="button"
                 aria-label="Scroll right"
-                className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#EEEEEE] bg-white text-[#222831] transition hover:border-[#00ADB5] hover:text-[#00ADB5]"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#EEEEEE] bg-white text-[#222831] transition hover:border-[#00ADB5] hover:text-[#00ADB5] active:scale-95"
               >
                 <ArrowRight size={17} />
               </button>
@@ -268,85 +269,89 @@ const Products: React.FC = () => {
           <div
             ref={sliderRef}
             onScroll={handleSliderScroll}
-            className="hide-scrollbar flex snap-x snap-mandatory items-stretch gap-4 overflow-x-auto scroll-smooth pb-2 md:gap-5"
+            className="hide-scrollbar flex snap-x snap-mandatory items-stretch gap-5 overflow-x-auto scroll-smooth pb-2"
           >
             {loading
               ? skeletonCards
               : products.length > 0
                 ? products.slice(0, 10).map((product) => (
-                    <div
-                      key={product._id}
-                      role="button"
-                      tabIndex={0}
-                      onClick={() => router.push(`/product/${product._id}`)}
-                      onKeyDown={(event) => {
-                        if (event.key === "Enter") router.push(`/product/${product._id}`);
-                      }}
-                      className="group flex min-w-[230px] snap-start cursor-pointer flex-col overflow-hidden rounded-3xl border border-[#EEEEEE] bg-white shadow-[0_14px_40px_rgba(34,40,49,0.06)] transition duration-300 hover:-translate-y-1 hover:border-[#00ADB5]/35 hover:shadow-[0_22px_60px_rgba(34,40,49,0.10)] sm:min-w-[260px] md:min-w-[290px]"
-                    >
-                      <ProductCardImageCarousel
-                        images={product.images}
-                        label={product.category?.name ?? "Product"}
-                      />
+                  <div
+                    key={product._id}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => router.push(`/product/${product._id}`)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") router.push(`/product/${product._id}`);
+                    }}
+                    className="group flex w-[240px] shrink-0 snap-start cursor-pointer flex-col overflow-hidden rounded-[28px] border border-[#EEEEEE] bg-white shadow-[0_14px_40px_rgba(34,40,49,0.06)] transition duration-300 hover:-translate-y-1.5 hover:border-[#00ADB5]/40 hover:shadow-[0_26px_60px_rgba(34,40,49,0.12)] sm:w-[270px] md:w-[300px]"
+                  >
+                    <ProductCardImageCarousel
+                      images={product.images}
+                      label={product.category?.name ?? "Product"}
+                    />
 
-                      <div className="flex flex-1 flex-col p-4">
-                        <div className="flex items-center justify-between gap-3">
-                          <span className="truncate text-[10px] font-bold uppercase tracking-[0.18em] text-[#222831]/60">
-                            {product.brand ?? "ZeeF"}
-                          </span>
-                          <span className="inline-flex items-center gap-1 rounded-full border border-[#EEEEEE] px-2 py-1 text-[11px] font-bold text-[#222831]">
-                            <Star size={11} className="fill-[#00ADB5] text-[#00ADB5]" />
-                            {product.averageRating?.toFixed(1) ?? "4.8"}
-                          </span>
-                        </div>
+                    <div className="flex flex-1 flex-col p-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="truncate text-[10px] font-bold uppercase tracking-[0.18em] text-[#222831]/55">
+                          {product.brand ?? "ZeeF"}
+                        </span>
+                        <span className="inline-flex items-center gap-1 rounded-full bg-[#F1F2F4] px-2 py-1 text-[11px] font-bold text-[#222831]">
+                          <Star size={11} className="fill-[#00ADB5] text-[#00ADB5]" />
+                          {product.averageRating?.toFixed(1) ?? "4.8"}
+                        </span>
+                      </div>
 
-                        <h3 className="mt-3 line-clamp-2 min-h-[2.6rem] text-base font-black leading-snug text-[#222831]">
-                          {product.name}
-                        </h3>
-                        <p className="mt-2 line-clamp-2 min-h-[2.5rem] text-xs leading-5 text-[#222831]/65">
-                          {product.description}
-                        </p>
+                      <h3 className="mt-3 line-clamp-1 text-[15px] font-black leading-snug text-[#222831]">
+                        {product.name}
+                      </h3>
 
-                        <div className="mt-auto pt-5">
+                      <div className="mt-auto pt-4">
+                        <div className="flex items-end justify-between">
                           <div className="flex items-end gap-2">
-                            <p className="text-xl font-black text-[#222831]">
+                            <p className="text-lg font-black text-[#222831]">
                               Rs {product.price.toLocaleString()}
                             </p>
-                            <p className="pb-1 text-xs font-medium text-[#222831]/35 line-through">
+                            <p className="pb-0.5 text-[11px] font-medium text-[#222831]/35 line-through">
                               Rs {Math.round(product.price * 1.4).toLocaleString()}
                             </p>
                           </div>
-                          <p className="mt-1 text-[11px] font-semibold text-[#222831]/55">
-                            {product.stock && product.stock > 0 ? "In stock" : "Out of stock"}
-                          </p>
+                          <span
+                            className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-bold ${product.stock && product.stock > 0
+                                ? "bg-[#00ADB5]/10 text-[#00ADB5]"
+                                : "bg-red-50 text-red-500"
+                              }`}
+                          >
+                            {product.stock && product.stock > 0 ? "In Stock" : "Sold Out"}
+                          </span>
                         </div>
                       </div>
+                    </div>
 
-                      <div className="grid gap-2 border-t border-[#EEEEEE] bg-[#FFFFFF] px-4 pb-4 pt-3">
-                        <button
-                          type="button"
-                          onClick={(event) => handleBuyNow(event, product)}
-                          className="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-2xl bg-[#00ADB5] text-xs font-bold text-white transition hover:bg-[#0099a1]"
-                        >
-                          <ShoppingBag size={14} />
-                          Buy Now
-                        </button>
-                        <button
-                          type="button"
-                          onClick={(event) => handleAddToCart(event, product)}
-                          className="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-2xl border border-[#EEEEEE] bg-white text-xs font-bold text-[#222831] transition hover:border-[#00ADB5] hover:text-[#00ADB5]"
-                        >
-                          <ShoppingCart size={14} />
-                          Add to Cart
-                        </button>
-                      </div>
+                    <div className="grid grid-cols-2 gap-2 border-t border-[#EEEEEE] bg-[#FAFAFA] px-3 pb-3 pt-3">
+                      <button
+                        type="button"
+                        onClick={(event) => handleBuyNow(event, product)}
+                        className="inline-flex min-h-[40px] items-center justify-center gap-1.5 rounded-xl bg-[#00ADB5] text-[11px] font-bold text-white transition hover:bg-[#0099a1] active:scale-95"
+                      >
+                        <ShoppingBag size={13} />
+                        Buy Now
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(event) => handleAddToCart(event, product)}
+                        className="inline-flex min-h-[40px] items-center justify-center gap-1.5 rounded-xl border border-[#EEEEEE] bg-white text-[11px] font-bold text-[#222831] transition hover:border-[#00ADB5] hover:text-[#00ADB5] active:scale-95"
+                      >
+                        <ShoppingCart size={13} />
+                        Add to Cart
+                      </button>
                     </div>
-                  ))
+                  </div>
+                ))
                 : (
-                    <div className="min-w-full rounded-3xl border border-dashed border-[#EEEEEE] bg-white p-10 text-center text-sm text-[#222831]/65">
-                      No products found right now.
-                    </div>
-                  )}
+                  <div className="min-w-full rounded-3xl border border-dashed border-[#EEEEEE] bg-white p-10 text-center text-sm text-[#222831]/65">
+                    No products found right now.
+                  </div>
+                )}
           </div>
 
           {!loading && products.length > 0 && (
