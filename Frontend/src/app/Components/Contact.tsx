@@ -1,6 +1,6 @@
 "use client";
 
-import { Mail, Phone, MapPin, Linkedin, Instagram, Twitter } from "lucide-react";
+import { Mail, Phone, MapPin, Linkedin, Instagram, Twitter, Facebook } from "lucide-react";
 import { useState, FormEvent } from "react";
 import axios from "axios";
 import { baseUrl, showToast } from "../utils/commonFunctions";
@@ -77,16 +77,19 @@ const Contact: React.FC = () => {
                             <Linkedin size={28} />
                         </a>
                         <a
-                            href="#"
+                            href="https://www.instagram.com/zeeftrendystore/"
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-[#E4405F] transition hover:scale-105 hover:bg-[#E4405F] hover:text-white"
                         >
                             <Instagram size={28} />
                         </a>
                         <a
-                            href="#"
+                            href="https://www.facebook.com/zeeftrendystore"
+                            target="_blank"
                             className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-[#1DA1F2] transition hover:scale-105 hover:bg-[#1DA1F2] hover:text-white"
                         >
-                            <Twitter size={28} />
+                            <Facebook size={28} />
                         </a>
                     </div>
                 </div>

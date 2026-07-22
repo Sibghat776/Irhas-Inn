@@ -613,7 +613,7 @@ const Navbar: React.FC = () => {
           >
             <div
               className={clsx(
-                "flex w-full items-center rounded-full border px-3 transition-all",
+                "flex w-full items-center rounded-full border px-2 transition-all",
                 !isHomePage
                   ? "bg-white text-white"
                   : isScrolled
