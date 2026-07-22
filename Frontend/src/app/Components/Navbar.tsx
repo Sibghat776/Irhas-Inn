@@ -829,10 +829,10 @@ const Navbar: React.FC = () => {
                 <button
                   onClick={() => dispatch(openSignup())}
                   className={clsx(
-                    "flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-semibold transition",
+                    "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-300",
                     isScrolled || !isHomePage
-                      ? "border-[#EEEEEE] text-[#222831] hover:bg-[#EEEEEE]"
-                      : "border-white/40 text-white hover:bg-white/10",
+                      ? "bg-[#222831] text-white shadow-lg hover:bg-[#00ADB5] hover:shadow-xl"
+                      : "border border-white/40 bg-white/10 text-white backdrop-blur-md hover:bg-white/20",
                   )}
                 >
                   <UserPlus size={16} />
