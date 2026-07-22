@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../Redux/store";
@@ -19,8 +19,9 @@ import {
   ShoppingCart,
   Package,
   Bell,
+  Search,
 } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import clsx from "clsx";
 import useFetch, { baseUrl, showToast } from "../utils/commonFunctions";
 import axios from "axios";
@@ -29,8 +30,15 @@ const NAV_LINKS = [
   { name: "Home", href: "/" },
   { name: "About", href: "/#about" },
   { name: "Products", href: "/#collection" },
-  { name: "Cart", href: "/cart" },
   { name: "Contact", href: "/#contact" },
+];
+
+const CATEGORIES = [
+  "All",
+  "Clothes",
+  "Accessories",
+  "Pens",
+  "Scrubs",
 ];
 
 interface BeforeInstallPromptEvent extends Event {
@@ -42,15 +50,37 @@ interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
 }
 
+interface myResponseData {
+  success: boolean;
+  data: {
+    username: string;
+    email: string;
+    password?: string | null;
+    phoneNo?: number | null;
+    googleId?: string | null;
+    isAdmin: boolean;
+    role?: string;
+    isVerified: boolean;
+    profilePic: string;
+    createdAt?: string;
+    updatedAt?: string;
+  };
+  message: string;
+}
+
 const Navbar: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
   const pathname = usePathname();
 
   const { username, isVerified, profilePic } = useSelector(
     (state: RootState) => state.auth,
   );
 
+  const authData = useSelector((state: RootState) => state.auth);
+
   const isHomePage = pathname === "/";
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -58,16 +88,39 @@ const Navbar: React.FC = () => {
   const [isMounted, setIsMounted] = useState(false);
   const [ready, setReady] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
-  const isAdmin = role === "admin" || role === "superadmin";
   const [cartCount, setCartCount] = useState(0);
+
+  const [searchQuery, setSearchQuery] = useState("");
+
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
+
   const [isAppInstalled, setIsAppInstalled] = useState(false);
 
-  const authData = useSelector((state: RootState) => state.auth);
+  const isAdmin = role === "admin" || role === "superadmin";
+
+
+  const userMenuRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target as Node)
+      ) {
+        setUserMenuOpen(false);
+      }
+    };
+    if (userMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [userMenuOpen]);
 
   const isStandaloneMode = () => {
     if (typeof window === "undefined") return false;
+
     return (
       window.matchMedia?.("(display-mode: standalone)")?.matches ||
       (navigator as any)?.standalone === true
@@ -78,13 +131,22 @@ const Navbar: React.FC = () => {
     setIsMounted(true);
   }, []);
 
+  /* ============================================================
+     USER ROLE
+  ============================================================ */
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedUser = window.localStorage.getItem("user");
+
       if (storedUser) {
         try {
           const parsedUser = JSON.parse(storedUser);
-          const userRole = parsedUser?.role ?? (parsedUser?.isAdmin ? "superadmin" : "user");
+
+          const userRole =
+            parsedUser?.role ??
+            (parsedUser?.isAdmin ? "superadmin" : "user");
+
           setRole(userRole);
         } catch {
           setRole("user");
@@ -92,47 +154,86 @@ const Navbar: React.FC = () => {
       } else {
         setRole("user");
       }
+
       setReady(true);
     }
   }, []);
 
+  /* ============================================================
+     LOCAL CART
+  ============================================================ */
+
   useEffect(() => {
     if (authData.username) return;
+
     const updateCartCount = () => {
       try {
-        const cart = JSON.parse(localStorage.getItem("zeef_store_cart") ?? "[]");
-        const total = cart.reduce((sum: number, item: any) => sum + (item.quantity || 1), 0);
+        const cart = JSON.parse(
+          localStorage.getItem("zeef_store_cart") ?? "[]",
+        );
+
+        const total = cart.reduce(
+          (sum: number, item: any) => sum + (item.quantity || 1),
+          0,
+        );
+
         setCartCount(total);
       } catch {
         setCartCount(0);
       }
     };
+
     updateCartCount();
+
     window.addEventListener("storage", updateCartCount);
+
     const interval = setInterval(updateCartCount, 1000);
+
     return () => {
       window.removeEventListener("storage", updateCartCount);
       clearInterval(interval);
     };
   }, [authData.username]);
 
+  /* ============================================================
+     BACKEND CART
+  ============================================================ */
+
   useEffect(() => {
     if (!authData.username) return;
+
     const fetchBackendCart = async () => {
       try {
-        const res = await axios.get(`${baseUrl}cart/`, { withCredentials: true });
+        const res = await axios.get(`${baseUrl}cart/`, {
+          withCredentials: true,
+        });
+
         const items = res.data.data || [];
-        const total = items.reduce((sum: number, item: any) => sum + (item.quantity || 1), 0);
+
+        const total = items.reduce(
+          (sum: number, item: any) => sum + (item.quantity || 1),
+          0,
+        );
+
         setCartCount(total);
       } catch {
         /* ignore */
       }
     };
+
     fetchBackendCart();
+
     const handleCartUpdate = () => fetchBackendCart();
+
     window.addEventListener("cart-updated", handleCartUpdate);
-    return () => window.removeEventListener("cart-updated", handleCartUpdate);
+
+    return () =>
+      window.removeEventListener("cart-updated", handleCartUpdate);
   }, [authData.username]);
+
+  /* ============================================================
+     PWA INSTALL
+  ============================================================ */
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (event: any) => {
@@ -140,14 +241,18 @@ const Navbar: React.FC = () => {
       setDeferredPrompt(event);
     };
 
-    const handleAppInstalled : any= () => {
+    const handleAppInstalled = () => {
       setIsAppInstalled(true);
       setDeferredPrompt(null);
     };
 
     setIsAppInstalled(isStandaloneMode());
 
-    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    window.addEventListener(
+      "beforeinstallprompt",
+      handleBeforeInstallPrompt,
+    );
+
     window.addEventListener("appinstalled", handleAppInstalled);
 
     return () => {
@@ -155,55 +260,70 @@ const Navbar: React.FC = () => {
         "beforeinstallprompt",
         handleBeforeInstallPrompt,
       );
-      window.removeEventListener("appinstalled", handleAppInstalled);
+
+      window.removeEventListener(
+        "appinstalled",
+        handleAppInstalled,
+      );
     };
   }, []);
 
+  /* ============================================================
+     BODY SCROLL LOCK
+  ============================================================ */
+
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "auto";
+
     return () => {
       document.body.style.overflow = "auto";
     };
   }, [menuOpen]);
 
-  interface myResponseData {
-    success: boolean;
-    data: {
-      username: string;
-      email: string;
-      password?: string | null;
-      phoneNo?: number | null;
-      googleId?: string | null;
-      isAdmin: boolean;
-      role?: string;
-      isVerified: boolean;
-      profilePic: string;
-      createdAt?: string;
-      updatedAt?: string;
-    };
-    message: string;
-  }
+  /* ============================================================
+     USER DATA
+  ============================================================ */
 
   const { data: userData } = useFetch<myResponseData>(
-    authData.username ? `${baseUrl}auth/getUser/${authData.username}` : "",
+    authData.username
+      ? `${baseUrl}auth/getUser/${authData.username}`
+      : "",
   );
 
   useEffect(() => {
     if (userData?.data) {
-      setRole(userData.data.role ?? (userData.data.isAdmin ? "superadmin" : "user"));
-      // Keep localStorage role in sync with fresh server data
+      setRole(
+        userData.data.role ??
+        (userData.data.isAdmin ? "superadmin" : "user"),
+      );
+
       const stored = localStorage.getItem("user");
+
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
-          const freshRole = userData.data.role ?? (userData.data.isAdmin ? "superadmin" : "user");
+
+          const freshRole =
+            userData.data.role ??
+            (userData.data.isAdmin ? "superadmin" : "user");
+
           if (parsed.role !== freshRole) {
-            localStorage.setItem("user", JSON.stringify({ ...parsed, role: freshRole }));
+            localStorage.setItem(
+              "user",
+              JSON.stringify({
+                ...parsed,
+                role: freshRole,
+              }),
+            );
           }
-        } catch {}
+        } catch { }
       }
     }
   }, [userData]);
+
+  /* ============================================================
+     SCROLL
+  ============================================================ */
 
   const handleScroll = useCallback(() => {
     setIsScrolled(window.scrollY > 40);
@@ -211,55 +331,123 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    return () =>
+      window.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
 
+  /* ============================================================
+     SEARCH
+  ============================================================ */
+
+  const handleSearch = (event?: React.FormEvent) => {
+    event?.preventDefault();
+
+    const query = searchQuery.trim();
+
+    if (!query) return;
+
+    setMenuOpen(false);
+
+    router.push(
+      `/productsPage?search=${encodeURIComponent(query)}`,
+    );
+  };
+
+  const handleCategoryClick = (category: string) => {
+    if (category === "All") {
+      router.push("/productsPage");
+      setMenuOpen(false);
+      return;
+    }
+
+    router.push(
+      `/productsPage?search=${encodeURIComponent(category)}`,
+    );
+
+    setMenuOpen(false);
+  };
+
+  /* ============================================================
+     NAVBAR STYLE
+  ============================================================ */
+
   const navbarClasses = clsx(
-    "fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out py-3",
+    "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
     !isHomePage
-      ? "bg-[#222831] shadow-md border-b border-white/10 text-white"
+      ? "bg-[#222831] text-white shadow-md border-b border-[#222831]"
       : isScrolled
-        ? "bg-white shadow-md border-b border-[#EEEEEE] text-[#222831]"
-        : "bg-transparent text-white",
+        ? "bg-white/95 backdrop-blur-md shadow-md border-b border-[#EEEEEE]"
+        : "bg-transparent",
   );
+  /* ============================================================
+     LOGOUT
+  ============================================================ */
 
   const handleLogout = async () => {
     dispatch(logout());
+
     await axios.get(`${baseUrl}auth/logout`);
+
     setUserMenuOpen(false);
     setMenuOpen(false);
+
     window.location.reload();
+
     setTimeout(() => {
       window.location.href = "/";
     }, 1000);
   };
 
+  /* ============================================================
+     INSTALL APP
+  ============================================================ */
+
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
+
     deferredPrompt.prompt();
+
     const { outcome } = await deferredPrompt.userChoice;
+
     if (outcome === "accepted") {
       setDeferredPrompt(null);
     }
   };
 
+  /* ============================================================
+     LOGIN STATE
+  ============================================================ */
+
   useEffect(() => {
     const user = localStorage.getItem("user");
-    if (user) dispatch(loginSuccess(JSON.parse(user)));
+
+    if (user) {
+      dispatch(loginSuccess(JSON.parse(user)));
+    }
   }, [dispatch]);
 
-  // ========== NOTIFICATIONS: fetch unread count on app load ==========
+  /* ============================================================
+     NOTIFICATIONS
+  ============================================================ */
+
   const fetchUnreadCount = useCallback(async () => {
     if (!authData.username) return;
+
     try {
-      const res = await axios.get(`${baseUrl}notifications/`, {
-        withCredentials: true,
-      });
-      const all = res.data.data || [];
-      const unread = all.filter((n: any) => !n.isRead).length;
-      console.log(
-        `[Navbar Notifications] ${unread} unread out of ${all.length}`,
+      const res = await axios.get(
+        `${baseUrl}notifications/`,
+        {
+          withCredentials: true,
+        },
       );
+
+      const all = res.data.data || [];
+
+      const unread = all.filter(
+        (n: any) => !n.isRead,
+      ).length;
+
       setUnreadCount(unread);
     } catch {
       setUnreadCount(0);
@@ -269,141 +457,286 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     if (authData.username) {
       fetchUnreadCount();
-      const interval = setInterval(fetchUnreadCount, 30000);
-      const handleRead = () => { setUnreadCount(0); };
-      window.addEventListener("notifications-read", handleRead);
+
+      const interval = setInterval(
+        fetchUnreadCount,
+        30000,
+      );
+
+      const handleRead = () => {
+        setUnreadCount(0);
+      };
+
+      window.addEventListener(
+        "notifications-read",
+        handleRead,
+      );
+
       return () => {
         clearInterval(interval);
-        window.removeEventListener("notifications-read", handleRead);
+
+        window.removeEventListener(
+          "notifications-read",
+          handleRead,
+        );
       };
     }
-  }, [authData.username, fetchUnreadCount]);
+  }, [
+    authData.username,
+    fetchUnreadCount,
+  ]);
+
+  /* ============================================================
+     USER MENU
+  ============================================================ */
 
   const handleUserMenuToggle = () => {
     setUserMenuOpen((prev) => !prev);
   };
 
+  /* ============================================================
+     ADMIN
+  ============================================================ */
+
   const handleAdminPage = () => {
     try {
       setUserMenuOpen(false);
+
       if (isAdmin) {
         window.location.href = "/Admin/Overview";
       } else {
-        showToast("Unauthorized: Admin access only", "error");
+        showToast(
+          "Unauthorized: Admin access only",
+          "error",
+        );
       }
     } catch (error) {
       console.log(error);
-      showToast("Failed to access admin panel", "error");
+
+      showToast(
+        "Failed to access admin panel",
+        "error",
+      );
     }
   };
 
   const handleMobileAdminPage = () => {
     try {
       setMenuOpen(false);
+
       if (isAdmin) {
         window.location.href = "/Admin/Overview";
       } else {
-        showToast("Unauthorized: Admin access only", "error");
+        showToast(
+          "Unauthorized: Admin access only",
+          "error",
+        );
       }
     } catch (error) {
       console.log(error);
-      showToast("Failed to access admin panel", "error");
+
+      showToast(
+        "Failed to access admin panel",
+        "error",
+      );
     }
   };
 
   return (
     <nav className={navbarClasses}>
-      <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-        {/* Brand */}
-        <Link
-          href="/"
-          className="text-2xl md:text-3xl font-bold flex items-center gap-3 tracking-tight active:scale-95 transition-all duration-300"
-        >
-          <img
-            src="/Logo.png"
-            alt="Logo"
-            className="h-10 w-10 rounded-full border border-white/30 object-cover"
-          />
-          <span
-            className={clsx(
-              "font-bold text-lg",
-              !isHomePage ? "text-white" : isScrolled ? "text-[#222831]" : "text-white",
-            )}
+      {/* ========================================================
+          MAIN NAVBAR
+      ======================================================== */}
+
+      <div className="mx-auto max-w-7xl px-3 sm:px-6">
+        <div className="flex min-h-[64px] items-center justify-between gap-2 sm:min-h-[68px] sm:gap-4">
+
+          {/* ====================================================
+              BRAND
+          ==================================================== */}
+
+          <Link
+            href="/"
+            className="flex min-w-0 shrink-0 items-center gap-2 transition-transform active:scale-95"
           >
-            ZeeF Trendy Store
-          </span>
-        </Link>
-        <div className="hidden md:flex items-center gap-8">
-          {NAV_LINKS.map((item, i) => (
-            <Link
-              key={i}
-              href={item.href}
+            <img
+              src="/Logo.png"
+              alt="ZeeF Trendy Store"
+              className="h-9 w-9 shrink-0 rounded-full border border-black/10 object-cover sm:h-10 sm:w-10"
+            />
+
+            {/* Store name is now visible on mobile */}
+            <span
               className={clsx(
-                "relative text-sm font-semibold transition-colors duration-300 pb-1 border-b-2 border-transparent",
+                "max-w-[145px] truncate text-sm font-bold tracking-tight transition-colors sm:max-w-none sm:text-base md:text-lg",
                 !isHomePage
-                  ? "text-[#EEEEEE] hover:text-white hover:border-[#00ADB5]"
+                  ? "text-white"
                   : isScrolled
-                    ? "text-[#222831] hover:text-[#00ADB5] hover:border-[#00ADB5]"
-                    : "text-white/90 hover:text-white hover:border-white",
+                    ? "text-[#222831]"
+                    : "text-white"
               )}
             >
-              {item.name}
-              {item.name === "Cart" && cartCount > 0 && (
-                <span className="absolute -top-2 -right-3 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-[#222831] text-white text-[10px] font-bold px-1">
-                  {cartCount}
+              ZeeF Trendy Store
+            </span>
+          </Link>
+
+          {/* ====================================================
+              DESKTOP NAV
+          ==================================================== */}
+
+          <div className="hidden items-center gap-5 lg:flex">
+            {NAV_LINKS.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={clsx(
+                  "relative border-b-2 border-transparent pb-1 text-sm font-semibold transition-all",
+                  !isHomePage
+                    ? "text-white"
+                    : isScrolled
+                      ? "text-[#222831] hover:border-[#00ADB5] hover:text-[#00ADB5]"
+                      : "text-white hover:border-black"
+                )}
+              >
+                {item.name}
+              </Link>
+            ))}
+          </div>
+
+          {/* ====================================================
+              SEARCH
+          ==================================================== */}
+
+          <form
+            onSubmit={handleSearch}
+            className="hidden min-w-0 max-w-[320px] flex-1 md:flex"
+          >
+            <div
+              className={clsx(
+                "flex w-full items-center rounded-full border px-3 transition-all",
+                !isHomePage
+                  ? "bg-white text-white"
+                  : isScrolled
+                    ? "text-[#222831] hover:border-[#00ADB5] hover:text-[#00ADB5]"
+                    : "text-white hover:border-black"
+              )}
+            >
+              <Search
+                size={17}
+                className={clsx(
+                  "shrink-0",
+                  isScrolled || !isHomePage
+                    ? "text-[#222831]/50"
+                    : "text-white/70",
+                )}
+              />
+
+              <input
+                type="search"
+                value={searchQuery}
+                onChange={(e) =>
+                  setSearchQuery(e.target.value)
+                }
+                placeholder="Search products..."
+                className={clsx(
+                  "w-full bg-transparent px-2.5 py-2 text-sm outline-none placeholder:text-xs",
+                  isScrolled || !isHomePage
+                    ? "text-[#222831] placeholder:text-[#222831]/40"
+                    : "text-white placeholder:text-white/60",
+                )}
+              />
+
+              <button
+                type="submit"
+                className="rounded-full bg-[#00ADB5] px-3 py-1.5 text-xs font-bold text-white transition hover:bg-[#0099A1]"
+              >
+                Search
+              </button>
+            </div>
+          </form>
+
+          {/* ====================================================
+              RIGHT ACTIONS
+          ==================================================== */}
+
+          <div className="hidden items-center gap-2 md:flex">
+
+            {/* CART */}
+
+            <Link
+              href="/cart"
+              aria-label="Shopping Cart"
+              className={clsx(
+                "relative flex h-10 w-10 items-center justify-center rounded-full transition-all",
+                !isHomePage
+                  ? "text-white"
+                  : isScrolled
+                    ? "text-[#222831]"
+                    : "text-white"
+              )}
+            >
+              <ShoppingCart size={20} />
+
+              {cartCount > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#00ADB5] px-1 text-[10px] font-bold text-white">
+                  {cartCount > 99 ? "99+" : cartCount}
                 </span>
               )}
             </Link>
-          ))}
 
-          {deferredPrompt && !isAppInstalled && (
-            <button
-              onClick={handleInstallClick}
-              className={clsx(
-                "px-4 py-2 rounded-lg font-semibold transition-all duration-300",
-                isScrolled || !isHomePage
-                  ? "bg-[#00ADB5] text-white hover:bg-[#00ADB5]"
-                  : "bg-white/10 border border-white/30 text-white hover:bg-white/20",
-              )}
-            >
-              Download App
-            </button>
-          )}
+            {/* INSTALL APP */}
 
-          {isMounted && isVerified ? (
-            <div className="relative flex items-center gap-3">
-              <div className="relative">
+            {deferredPrompt && !isAppInstalled && (
+              <button
+                onClick={handleInstallClick}
+                className="rounded-lg bg-[#00ADB5] px-3 py-2 text-xs font-bold text-white transition hover:bg-[#0099A1]"
+              >
+                Download App
+              </button>
+            )}
+
+            {/* AUTH */}
+
+            {isMounted && isVerified ? (
+              <div
+                ref={userMenuRef}
+                className="relative"
+              >
                 <button
                   onClick={handleUserMenuToggle}
                   className={clsx(
-                    "flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-300",
+                    "flex items-center gap-2 rounded-lg border px-3 py-1.5 transition-all",
                     !isHomePage
-                      ? "bg-white/5 border-white/15 text-[#EEEEEE] hover:bg-white/10 hover:text-white"
+                      ? "border-white/20 bg-white/10 text-white hover:bg-white/20"
                       : isScrolled
-                        ? "bg-[#FFFFFF] border-[#EEEEEE] text-[#222831] hover:bg-[#EEEEEE]"
-                        : "bg-white/10 border-white/30 text-white hover:bg-white/20",
+                        ? "border-[#EEEEEE] bg-white text-[#222831] hover:bg-[#EEEEEE]"
+                        : "border-white/30 bg-white/10 text-white hover:bg-white/20",
                   )}
                 >
                   {profilePic ? (
                     <img
                       src={profilePic}
-                      className="w-7 h-7 rounded-full object-cover"
+                      className="h-7 w-7 rounded-full object-cover"
                       alt="profile"
                     />
                   ) : (
-                    <div className="w-7 h-7 rounded-full bg-[#00ADB5] flex items-center justify-center text-white text-xs font-bold">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#00ADB5] text-xs font-bold text-white">
                       {username?.charAt(0).toUpperCase()}
                     </div>
                   )}
-                  <span className="capitalize font-semibold text-sm">
+
+                  <span className="max-w-[100px] truncate text-sm font-semibold capitalize">
                     {username}
                   </span>
+
                   <div className="relative">
                     <Bell size={14} />
+
                     {unreadCount > 0 && (
-                      <span className="absolute -top-1.5 -right-1.5 w-2.5 h-2.5 bg-[#222831] rounded-full border-2 border-white" />
+                      <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full border-2 border-white bg-[#00ADB5]" />
                     )}
                   </div>
+
                   {userMenuOpen ? (
                     <ChevronUp size={14} />
                   ) : (
@@ -412,138 +745,246 @@ const Navbar: React.FC = () => {
                 </button>
 
                 {userMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-white/10 bg-[#222831] text-[#EEEEEE] shadow-xl z-50">
-                    <div className="flex flex-col border-b border-white/10 py-1">
+                  <div className="absolute right-0 top-full mt-2 w-56 overflow-hidden rounded-xl border border-[#EEEEEE] bg-white text-[#222831] shadow-xl">
+                    <div className="border-b border-[#EEEEEE] p-1">
                       <Link
                         href="/profile"
                         onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg text-[#EEEEEE] transition-colors hover:bg-white/10 hover:text-white whitespace-nowrap"
+                        className="flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold hover:bg-[#EEEEEE] hover:text-[#00ADB5]"
                       >
-                        <User size={16} /> Profile
+                        <User size={16} />
+                        Profile
                       </Link>
+
                       <Link
                         href="/profile/orders"
                         onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg text-[#EEEEEE] transition-colors hover:bg-white/10 hover:text-[#00ADB5] whitespace-nowrap"
+                        className="flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold hover:bg-[#EEEEEE] hover:text-[#00ADB5]"
                       >
-                        <Package size={16} /> Orders
+                        <Package size={16} />
+                        Orders
                       </Link>
+
                       <Link
                         href="/profile/notifications"
                         onClick={() => setUserMenuOpen(false)}
-                        className="relative flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg text-[#EEEEEE] transition-colors hover:bg-white/10 hover:text-[#00ADB5] whitespace-nowrap"
+                        className="flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold hover:bg-[#EEEEEE] hover:text-[#00ADB5]"
                       >
-                        <Bell size={16} /> Notifications
+                        <Bell size={16} />
+                        Notifications
+
                         {unreadCount > 0 && (
-                          <span className="ml-0.5 h-2 w-2 rounded-full bg-[#00ADB5]" />
+                          <span className="ml-auto h-2 w-2 rounded-full bg-[#00ADB5]" />
                         )}
                       </Link>
+
                       <Link
                         href="/cart"
                         onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg text-[#00ADB5] transition-colors hover:bg-white/10 hover:text-[#00ADB5] whitespace-nowrap"
+                        className="flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold hover:bg-[#EEEEEE] hover:text-[#00ADB5]"
                       >
-                        <ShoppingCart size={16} /> Cart
+                        <ShoppingCart size={16} />
+                        Cart
+
                         {cartCount > 0 && (
-                          <span className="ml-auto min-w-[20px] h-5 flex items-center justify-center rounded-full bg-[#00ADB5] text-white text-[10px] font-bold px-1">
+                          <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-[#00ADB5] px-1 text-[10px] font-bold text-white">
                             {cartCount}
                           </span>
                         )}
                       </Link>
+
                       {isAdmin && (
                         <button
                           onClick={handleAdminPage}
-                          className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg text-[#EEEEEE] transition-colors hover:bg-white/10 hover:text-white whitespace-nowrap"
+                          className="flex w-full items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold hover:bg-[#EEEEEE] hover:text-[#00ADB5]"
                         >
-                          <LayoutDashboard size={16} /> Admin
+                          <LayoutDashboard size={16} />
+                          Admin
                         </button>
                       )}
                     </div>
-                    <div className="py-1">
+
+                    <div className="p-1">
                       <button
                         onClick={handleLogout}
-                        className="flex w-full items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg text-[#EEEEEE] transition-colors hover:bg-white/10 hover:text-white whitespace-nowrap"
+                        className="flex w-full items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold hover:bg-[#EEEEEE] hover:text-red-500"
                       >
-                        <LogOut size={16} /> Logout
+                        <LogOut size={16} />
+                        Logout
                       </button>
                     </div>
                   </div>
                 )}
               </div>
-            </div>
-          ) : (
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => dispatch(openLogin())}
-                className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold text-white bg-[#00ADB5] hover:bg-[#00ADB5] active:scale-95 transition-all duration-300"
-              >
-                <LogIn size={16} /> Login
-              </button>
-              <button
-                onClick={() => dispatch(openSignup())}
-                className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold text-white bg-[#00ADB5] hover:bg-[#222831] active:scale-95 transition-all duration-300"
-              >
-                <UserPlus size={16} /> Sign Up
-              </button>
-            </div>
-          )}
-        </div>
+            ) : (
+              <>
+                <button
+                  onClick={() => dispatch(openLogin())}
+                  className="flex items-center gap-2 rounded-lg bg-[#00ADB5] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#0099A1]"
+                >
+                  <LogIn size={16} />
+                  Login
+                </button>
 
-        {/* Mobile Hamburger */}
-        <div className="md:hidden flex items-center">
-          <button
-            onClick={() => setMenuOpen(true)}
+                <button
+                  onClick={() => dispatch(openSignup())}
+                  className={clsx(
+                    "flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-semibold transition",
+                    isScrolled || !isHomePage
+                      ? "border-[#EEEEEE] text-[#222831] hover:bg-[#EEEEEE]"
+                      : "border-white/40 text-white hover:bg-white/10",
+                  )}
+                >
+                  <UserPlus size={16} />
+                  Sign Up
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* ====================================================
+              MOBILE CART + MENU
+          ==================================================== */}
+
+          <div className="flex shrink-0 items-center gap-1 md:hidden">
+
+            <Link
+              href="/cart"
+              aria-label="Shopping Cart"
               className={clsx(
-                "p-2 rounded-lg transition-all duration-300",
-                !isHomePage
-                  ? "bg-white/5 text-[#EEEEEE] hover:bg-white/10 hover:text-white border border-white/15"
-                  : isScrolled
-                    ? "bg-[#FFFFFF] text-[#222831] hover:bg-[#EEEEEE]"
-                    : "bg-white/10 text-white hover:bg-white/20 border border-white/20",
+                "relative flex h-10 w-10 items-center justify-center rounded-full",
+                isScrolled || !isHomePage
+                  ? "text-[#222831]"
+                  : "text-white",
               )}
-            aria-label="Open Navigation Menu"
-          >
-            <Menu size={24} />
-          </button>
+            >
+              <ShoppingCart size={21} />
+
+              {cartCount > 0 && (
+                <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#00ADB5] px-1 text-[9px] font-bold text-white">
+                  {cartCount > 99 ? "99+" : cartCount}
+                </span>
+              )}
+            </Link>
+
+            <button
+              onClick={() => setMenuOpen(true)}
+              aria-label="Open Navigation Menu"
+              className={clsx(
+                "flex h-10 w-10 items-center justify-center rounded-lg",
+                isScrolled || !isHomePage
+                  ? "text-[#222831] hover:bg-[#EEEEEE]"
+                  : "text-white hover:bg-white/10",
+              )}
+            >
+              <Menu size={24} />
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Mobile Drawer */}
-      {menuOpen && (
-        <div className="md:hidden fixed inset-0 z-[100] bg-[#222831]/30 transition-opacity duration-300 flex justify-end">
-          <div
-            className="absolute inset-0 -z-10 cursor-pointer"
-            onClick={() => setMenuOpen(false)}
-          ></div>
-          <div className="w-full max-w-xs bg-white h-full shadow-lg flex flex-col justify-between p-6 rounded-l-2xl border-l border-[#EEEEEE]">
-            <div>
-              <div className="flex items-center justify-between pb-6 border-b border-[#EEEEEE]">
-                <div className="flex items-center gap-3">
-                  <img
-                    src="Logo.png"
-                    alt="Logo"
-                    className="h-9 w-9 rounded-full object-cover border border-[#EEEEEE]"
-                  />
-                  <span className="font-bold text-lg text-[#222831]">
-                    ZeeF Trendy Store
-                  </span>
-                </div>
-                <button
-                  onClick={() => setMenuOpen(false)}
-                  className="p-2 rounded-lg bg-[#FFFFFF] text-[#222831] hover:text-[#222831] hover:bg-[#EEEEEE] transition-all duration-300"
-                  aria-label="Close Navigation Menu"
-                >
-                  <X size={20} />
-                </button>
-              </div>
+      {/* ========================================================
+          MOBILE DRAWER
+      ======================================================== */}
 
-              <div className="mt-6 space-y-1">
-                {NAV_LINKS.map((item, i) => (
+      {menuOpen && (
+        <div className="fixed inset-0 z-[100] bg-black/30 md:hidden">
+          <div
+            className="absolute inset-0"
+            onClick={() => setMenuOpen(false)}
+          />
+
+          <div className="absolute right-0 top-0 flex h-full w-full max-w-sm flex-col overflow-y-auto bg-white shadow-2xl">
+
+            {/* DRAWER HEADER */}
+
+            <div className="flex items-center justify-between border-b border-[#EEEEEE] p-5">
+              <Link
+                href="/"
+                onClick={() => setMenuOpen(false)}
+                className="flex min-w-0 items-center gap-3"
+              >
+                <img
+                  src="/Logo.png"
+                  alt="Logo"
+                  className="h-9 w-9 shrink-0 rounded-full object-cover"
+                />
+
+                <span className="truncate font-bold text-[#222831]">
+                  ZeeF Trendy Store
+                </span>
+              </Link>
+
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#EEEEEE] text-[#222831]"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* MOBILE SEARCH */}
+
+            <div className="border-b border-[#EEEEEE] p-5">
+              <form onSubmit={handleSearch}>
+                <div className="flex items-center rounded-xl border border-[#EEEEEE] bg-[#EEEEEE]/50 p-1.5 focus-within:border-[#00ADB5] focus-within:bg-white">
+                  <Search
+                    size={18}
+                    className="ml-2 text-[#222831]/50"
+                  />
+
+                  <input
+                    type="search"
+                    value={searchQuery}
+                    onChange={(e) =>
+                      setSearchQuery(e.target.value)
+                    }
+                    placeholder="Search products..."
+                    className="min-w-0 flex-1 bg-transparent px-3 py-2 text-sm text-[#222831] outline-none"
+                  />
+
+                  <button
+                    type="submit"
+                    className="rounded-lg bg-[#00ADB5] px-3 py-2 text-xs font-bold text-white"
+                  >
+                    Search
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            {/* MOBILE CATEGORIES */}
+
+            <div className="border-b border-[#EEEEEE] p-5">
+              <p className="mb-3 text-xs font-bold uppercase tracking-wider text-[#222831]/50">
+                Categories
+              </p>
+
+              <div className="flex flex-wrap gap-2">
+                {CATEGORIES.map((category) => (
+                  <button
+                    key={category}
+                    onClick={() =>
+                      handleCategoryClick(category)
+                    }
+                    className="rounded-full border border-[#EEEEEE] bg-[#EEEEEE]/50 px-4 py-2 text-xs font-semibold text-[#222831] transition hover:border-[#00ADB5] hover:text-[#00ADB5]"
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* MOBILE NAV LINKS */}
+
+            <div className="p-5">
+              <div className="space-y-1">
+                {NAV_LINKS.map((item) => (
                   <Link
-                    key={i}
+                    key={item.name}
                     href={item.href}
                     onClick={() => setMenuOpen(false)}
-                    className="flex items-center py-3 px-4 rounded-lg text-sm font-semibold text-[#222831] hover:text-[#00ADB5] hover:bg-[#FFFFFF] transition-all duration-300"
+                    className="flex items-center rounded-xl px-4 py-3 text-sm font-semibold text-[#222831] transition hover:bg-[#EEEEEE] hover:text-[#00ADB5]"
                   >
                     {item.name}
                   </Link>
@@ -551,155 +992,166 @@ const Navbar: React.FC = () => {
               </div>
             </div>
 
-            {/* Mobile Auth */}
-            <div className="mt-auto pt-6 border-t border-[#EEEEEE] space-y-4">
+            {/* MOBILE AUTH */}
+
+            <div className="mt-auto border-t border-[#EEEEEE] p-5">
               {isMounted && isVerified ? (
                 <div className="space-y-4">
-                  <div className="flex items-center gap-3 px-4 py-3 bg-[#FFFFFF] border border-[#EEEEEE] rounded-lg">
+
+                  <div className="flex items-center gap-3 rounded-xl bg-[#EEEEEE]/60 p-3">
                     {profilePic ? (
                       <img
-                        src={profilePic || "/defaultAvatar.png"}
-                        className="w-10 h-10 rounded-full object-cover"
+                        src={profilePic}
+                        className="h-10 w-10 rounded-full object-cover"
                         alt="profile"
                       />
                     ) : (
-                      <div className="w-10 h-10 rounded-full bg-[#00ADB5] flex items-center justify-center text-white font-bold text-sm">
-                        {username?.charAt(0).toUpperCase()}
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#00ADB5] font-bold text-white">
+                        {username
+                          ?.charAt(0)
+                          .toUpperCase()}
                       </div>
                     )}
+
                     <div>
-                      <p className="text-sm font-bold text-[#222831] capitalize">
+                      <p className="text-sm font-bold capitalize text-[#222831]">
                         {username}
                       </p>
-                      <p className="text-xs text-[#00ADB5] font-semibold">
+
+                      <p className="text-xs font-semibold text-[#00ADB5]">
                         Verified
                       </p>
                     </div>
                   </div>
 
-                  {/* Mobile Nav Links for Profile */}
-                  <div className="space-y-1">
+                  <div className="grid grid-cols-2 gap-2">
+
                     <Link
                       href="/profile"
                       onClick={() => setMenuOpen(false)}
-                      className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm font-semibold text-[#222831] hover:text-[#00ADB5] hover:bg-[#FFFFFF] transition-colors"
+                      className="flex items-center justify-center gap-2 rounded-lg bg-[#EEEEEE] py-3 text-xs font-semibold text-[#222831]"
                     >
-                      <User size={16} /> Profile
+                      <User size={15} />
+                      Profile
                     </Link>
+
                     <Link
                       href="/profile/orders"
                       onClick={() => setMenuOpen(false)}
-                      className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm font-semibold text-[#222831] hover:text-[#00ADB5] hover:bg-[#FFFFFF] transition-colors"
+                      className="flex items-center justify-center gap-2 rounded-lg bg-[#EEEEEE] py-3 text-xs font-semibold text-[#222831]"
                     >
-                      <Package size={16} /> Orders
+                      <Package size={15} />
+                      Orders
                     </Link>
+
                     <Link
                       href="/profile/notifications"
                       onClick={() => setMenuOpen(false)}
-                      className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm font-semibold text-[#222831] hover:text-[#00ADB5] hover:bg-[#FFFFFF] transition-colors"
+                      className="flex items-center justify-center gap-2 rounded-lg bg-[#EEEEEE] py-3 text-xs font-semibold text-[#222831]"
                     >
-                      <Bell size={16} /> Notifications
+                      <Bell size={15} />
+                      Notifications
+
                       {unreadCount > 0 && (
-                          <span className="ml-auto w-2 h-2 bg-[#222831] rounded-full" />
+                        <span className="h-2 w-2 rounded-full bg-[#00ADB5]" />
                       )}
                     </Link>
+
                     <Link
                       href="/cart"
                       onClick={() => setMenuOpen(false)}
-                      className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm font-semibold text-[#222831] hover:text-[#00ADB5] hover:bg-[#FFFFFF] transition-colors"
+                      className="flex items-center justify-center gap-2 rounded-lg bg-[#EEEEEE] py-3 text-xs font-semibold text-[#222831]"
                     >
-                      <ShoppingCart size={16} /> Cart
+                      <ShoppingCart size={15} />
+                      Cart
+
                       {cartCount > 0 && (
-                          <span className="ml-auto min-w-[20px] h-5 flex items-center justify-center rounded-full bg-[#222831] text-white text-[10px] font-bold px-1">
+                        <span className="rounded-full bg-[#00ADB5] px-1.5 py-0.5 text-[9px] font-bold text-white">
                           {cartCount}
                         </span>
                       )}
                     </Link>
                   </div>
 
-
                   {deferredPrompt && !isAppInstalled && (
                     <button
                       onClick={handleInstallClick}
-                      className="w-full py-2.5 px-4 rounded-lg text-center text-sm font-semibold bg-[#00ADB5] text-white hover:bg-[#00ADB5] transition-colors"
+                      className="w-full rounded-lg bg-[#00ADB5] py-3 text-sm font-bold text-white"
                     >
                       Download App
                     </button>
                   )}
+
                   <div className="grid grid-cols-2 gap-2">
+
                     <button
                       onClick={() => {
                         setMenuOpen(false);
-                        window.location.href = "/editProfile";
+                        window.location.href =
+                          "/editProfile";
                       }}
-                        className="py-2.5 px-3 rounded-lg text-center text-xs font-semibold bg-[#FFFFFF] text-[#222831] hover:bg-[#EEEEEE] transition-colors"
+                      className="rounded-lg border border-[#EEEEEE] py-3 text-xs font-semibold text-[#222831]"
                     >
                       Edit Profile
                     </button>
+
                     {isAdmin ? (
                       <button
                         onClick={handleMobileAdminPage}
-                        className="py-2.5 px-3 rounded-lg text-center text-xs font-semibold bg-[#EEEEEE] text-[#222831] hover:bg-[#00ADB5] transition-colors"
+                        className="rounded-lg bg-[#222831] py-3 text-xs font-semibold text-white"
                       >
                         Admin Panel
                       </button>
                     ) : (
                       <button
                         onClick={handleLogout}
-                        className="py-2.5 px-3 rounded-lg text-center text-xs font-semibold bg-[#FFFFFF] text-[#222831] hover:bg-[#EEEEEE] transition-colors"
+                        className="rounded-lg bg-[#222831] py-3 text-xs font-semibold text-white"
                       >
                         Logout
                       </button>
                     )}
                   </div>
+
                   {isAdmin && (
                     <button
                       onClick={handleLogout}
-                      className="w-full py-2.5 px-4 rounded-lg text-center text-xs font-semibold bg-[#FFFFFF] text-[#222831] hover:bg-[#EEEEEE] transition-colors"
+                      className="w-full rounded-lg border border-[#EEEEEE] py-3 text-xs font-semibold text-[#222831]"
                     >
                       Logout
                     </button>
                   )}
                 </div>
               ) : (
-                <div className="space-y-2">
+                <div className="grid grid-cols-2 gap-3">
+
                   <button
                     onClick={() => {
                       setMenuOpen(false);
                       dispatch(openLogin());
                     }}
-                    className="w-full py-2.5 rounded-lg text-center text-sm font-semibold bg-[#00ADB5] text-white hover:bg-[#00ADB5] transition-colors flex justify-center items-center gap-2"
+                    className="flex items-center justify-center gap-2 rounded-lg bg-[#00ADB5] py-3 text-sm font-semibold text-white"
                   >
-                    <LogIn size={16} /> Login
+                    <LogIn size={16} />
+                    Login
                   </button>
+
                   <button
                     onClick={() => {
                       setMenuOpen(false);
                       dispatch(openSignup());
                     }}
-                    className="w-full py-2.5 rounded-lg text-center text-sm font-semibold bg-white border-2 border-[#EEEEEE] text-[#222831] hover:bg-[#FFFFFF] transition-colors flex justify-center items-center gap-2"
+                    className="flex items-center justify-center gap-2 rounded-lg border border-[#EEEEEE] py-3 text-sm font-semibold text-[#222831]"
                   >
-                    <UserPlus size={16} /> Sign Up
+                    <UserPlus size={16} />
+                    Sign Up
                   </button>
+
                 </div>
               )}
             </div>
           </div>
         </div>
       )}
-
-      <style jsx global>{`
-        @keyframes drawerSlideLeft {
-          from {
-            transform: translateX(100%);
-            opacity: 0.8;
-          }
-          to {
-            transform: translateX(0);
-            opacity: 1;
-          }
-        }
-      `}</style>
     </nav>
   );
 };
