@@ -103,9 +103,9 @@ const Carousel = () => {
           OVERLAYS — cinematic darkness
       ===================================================== */}
       {/* Bottom-up (primary dark mass) */}
-      <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-black/90 via-black/25 to-transparent" />
+      <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-black/40 via-black/25 to-transparent" />
       {/* Left vignette */}
-      <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-r from-black/60 via-black/10 to-transparent" />
+      <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-r from-black/40 via-black/10 to-transparent" />
       {/* Top edge softener */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-28 bg-gradient-to-b from-black/30 to-transparent" />
 
