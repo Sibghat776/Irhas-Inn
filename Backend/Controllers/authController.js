@@ -6,7 +6,7 @@ import { generateOTP, sendEmail } from "../utils/sendEmail.js"; // OTP generator
 import { OAuth2Client } from "google-auth-library";
 import twilio from "twilio";
 import dotenv from "dotenv";
-import { sendWhatsAppOTP } from "../utils/whatsapp.js";
+// import { sendWhatsAppOTP } from "../utils/whatsapp.js";
 import { uploadToCloudinary } from "../utils/cloudinary.js";
 import { sendPushToAdmins } from "./pushNotificationController.js";
 dotenv.config();
@@ -172,7 +172,7 @@ export const register = async (req, res, next) => {
     });
     await newUser.save();
 
-    const whatsappSent = await sendWhatsAppOTP(phoneNo, otp);
+    // const whatsappSent = await sendWhatsAppOTP(phoneNo, otp);
     const { password: _, otpExpires, otp: __, ...userDetails } = newUser._doc;
 
     let emailSent = false;
@@ -297,7 +297,7 @@ export const resendOtp = async (req, res, next) => {
     user.otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes expiry
     console.log(identifier, "OTP", otp);
     await user.save();
-    const isSent = await sendWhatsAppOTP(user.phoneNo, otp);
+    // const isSent = await sendWhatsAppOTP(user.phoneNo, otp);
     if (!isSent) {
       console.warn("WhatsApp OTP failed on resend, falling back to email.");
     }
@@ -315,7 +315,7 @@ export const resendOtp = async (req, res, next) => {
         console.error("Email Error:", error.message || error);
       }
     } else {
-      await sendWhatsAppOTP(user.phoneNo, otp);
+      // await sendWhatsAppOTP(user.phoneNo, otp);
     }
 
     res
@@ -372,7 +372,7 @@ export const login = async (req, res, next) => {
           console.error("Email Error:", error.message || error);
         }
       } else {
-        whatsappSent = await sendWhatsAppOTP(user.phoneNo, otp);
+        // whatsappSent = await sendWhatsAppOTP(user.phoneNo, otp);
       }
 
       const otpSent = identifier.includes("@") ? emailSent : whatsappSent;
