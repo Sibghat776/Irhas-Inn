@@ -53,22 +53,22 @@ const buildOtpEmailHtml = (otp) => `
   }
 </style>
 </head>
-<body style="margin:0; padding:0; background-color:#f0f0f2; font-family: Arial, Helvetica, sans-serif;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f0f0f2; padding: 40px 12px;">
+<body style="margin:0; padding:0; background-color:#f0f2f2; font-family: Arial, Helvetica, sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f0f2f2; padding: 40px 12px;">
     <tr>
       <td align="center">
         <table role="presentation" class="container" width="480" cellpadding="0" cellspacing="0" style="width:480px; max-width:480px; background-color:#ffffff; border-radius:16px; overflow:hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08);">
 
-          <!-- Header with colorful gradient -->
+          <!-- Header with teal gradient (matches site theme #00ADB5) -->
           <tr>
-            <td class="header-pad" style="background: linear-gradient(135deg, #7b2ff7 0%, #f107a3 50%, #d4af37 100%); padding: 32px 32px;" align="center">
+            <td class="header-pad" style="background: linear-gradient(135deg, #00ADB5 0%, #007e84 100%); padding: 32px 32px;" align="center">
               <span style="color:#ffffff; font-size:24px; font-weight:bold; letter-spacing:1.5px; font-family: Arial, Helvetica, sans-serif; text-shadow: 0 1px 3px rgba(0,0,0,0.2);">ZeeF Trendy Store</span>
             </td>
           </tr>
 
-          <!-- Colorful accent line -->
+          <!-- Accent line -->
           <tr>
-            <td style="height:5px; background: linear-gradient(90deg, #f107a3, #d4af37, #00b8a9, #7b2ff7);"></td>
+            <td style="height:5px; background: linear-gradient(90deg, #00ADB5, #222831, #00ADB5);"></td>
           </tr>
 
           <!-- Body -->
@@ -82,14 +82,14 @@ const buildOtpEmailHtml = (otp) => `
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td align="center" style="padding: 4px 0 32px 0;">
-                    <div class="otp-box" style="display:inline-block; background: linear-gradient(135deg, #fdf3fb 0%, #fdf6e3 100%); border: 1.5px solid #d4af37; border-radius:10px; padding: 18px 42px;">
-                      <span class="otp-code" style="font-size:32px; font-weight:bold; letter-spacing:8px; color:#7b2ff7; font-family: 'Courier New', monospace;">${otp}</span>
+                    <div class="otp-box" style="display:inline-block; background: linear-gradient(135deg, #e6f8f9 0%, #f0f9f9 100%); border: 1.5px solid #00ADB5; border-radius:10px; padding: 18px 42px;">
+                      <span class="otp-code" style="font-size:32px; font-weight:bold; letter-spacing:8px; color:#00ADB5; font-family: 'Courier New', monospace;">${otp}</span>
                     </div>
                   </td>
                 </tr>
               </table>
 
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#fafafa; border-radius:8px; border-left: 4px solid #00b8a9;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#fafafa; border-radius:8px; border-left: 4px solid #00ADB5;">
                 <tr>
                   <td style="padding:16px 18px;">
                     <p style="margin:0 0 6px 0; color:#888888; font-size:13px; line-height:1.6;">
@@ -112,7 +112,7 @@ const buildOtpEmailHtml = (otp) => `
           <!-- Footer -->
           <tr>
             <td class="footer-pad" style="padding: 22px 36px 30px 36px;" align="center">
-              <p style="margin:0 0 6px 0; color:#999999; font-size:12.5px;">Need help? Contact us at <a href="mailto:${process.env.EMAIL}" style="color:#f107a3; text-decoration:none; font-weight:600;">${process.env.EMAIL}</a></p>
+              <p style="margin:0 0 6px 0; color:#999999; font-size:12.5px;">Need help? Contact us at <a href="mailto:${process.env.EMAIL}" style="color:#00ADB5; text-decoration:none; font-weight:600;">${process.env.EMAIL}</a></p>
               <p style="margin:0 0 6px 0; color:#c2c2c2; font-size:11.5px;">Karachi, Pakistan</p>
               <p style="margin:0; color:#c2c2c2; font-size:12px;">© ${new Date().getFullYear()} ZeeF Trendy Store. All rights reserved.</p>
             </td>
@@ -125,7 +125,6 @@ const buildOtpEmailHtml = (otp) => `
 </body>
 </html>
 `;
-
 // ==========================================
 // 1. REGISTER (With WhatsApp Phone Verification)
 // ==========================================
@@ -172,6 +171,7 @@ export const register = async (req, res, next) => {
     });
     await newUser.save();
 
+    // WhatsApp OTP temporarily disabled — email OTP only for now
     // const whatsappSent = await sendWhatsAppOTP(phoneNo, otp);
     const { password: _, otpExpires, otp: __, ...userDetails } = newUser._doc;
 
@@ -189,7 +189,7 @@ export const register = async (req, res, next) => {
       console.error("Email Error:", error.message || error);
     }
 
-    const otpSent = emailSent || whatsappSent;
+    const otpSent = emailSent;
 
     if (!otpSent) {
       await Users.findByIdAndDelete(newUser._id);
@@ -198,9 +198,7 @@ export const register = async (req, res, next) => {
 
     const data = createSuccess(
       201,
-      whatsappSent
-        ? "Verification OTP sent to your WhatsApp and Email"
-        : "Verification OTP sent to your Email (WhatsApp unavailable)",
+      "Verification OTP sent to your Email",
       { ...userDetails, otpSent },
     );
     res.json(data);
@@ -208,7 +206,6 @@ export const register = async (req, res, next) => {
     next(error);
   }
 };
-
 // ==========================================
 // 2. VERIFY OTP (By Email)
 // ==========================================
@@ -297,11 +294,11 @@ export const resendOtp = async (req, res, next) => {
     user.otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes expiry
     console.log(identifier, "OTP", otp);
     await user.save();
-    // const isSent = await sendWhatsAppOTP(user.phoneNo, otp);
-    if (!isSent) {
-      console.warn("WhatsApp OTP failed on resend, falling back to email.");
-    }
 
+    // WhatsApp OTP temporarily disabled — email OTP only for now
+    // const isSent = await sendWhatsAppOTP(user.phoneNo, otp);
+
+    let emailSent = false;
     if (identifier.includes("@")) {
       try {
         await sendEmail(
@@ -310,6 +307,7 @@ export const resendOtp = async (req, res, next) => {
           buildOtpEmailText(otp),
           buildOtpEmailHtml(otp),
         );
+        emailSent = true;
         console.log("Email sent to", identifier);
       } catch (error) {
         console.error("Email Error:", error.message || error);
@@ -318,14 +316,17 @@ export const resendOtp = async (req, res, next) => {
       // await sendWhatsAppOTP(user.phoneNo, otp);
     }
 
+    if (!emailSent && identifier.includes("@")) {
+      return next(createError(500, "Failed to resend OTP. Please try again."));
+    }
+
     res
       .status(200)
-      .json(createSuccess(200, "OTP resent to your Whatsapp and Email!"));
+      .json(createSuccess(200, "OTP resent to your Email!"));
   } catch (error) {
     next(error);
   }
 };
-
 // ==========================================
 // 3. LOGIN (Supports Email OR Phone Login)
 // ==========================================
