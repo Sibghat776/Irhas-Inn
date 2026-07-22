@@ -2,403 +2,412 @@
 
 import { useEffect, useMemo, useState } from "react";
 import {
-    Star,
-    Quote,
-    ChevronLeft,
-    ChevronRight,
-    MessageCircle,
+  Star,
+  Quote,
+  MessageCircle,
 } from "lucide-react";
 import useFetch, { baseUrl } from "../utils/commonFunctions";
 
 interface RatingUser {
-    _id?: string;
-    username?: string;
-    avatar?: string;
+  _id?: string;
+  username?: string;
+  avatar?: string;
 }
 
 interface Rating {
-    _id?: string;
-    rating?: number;
-    review?: string;
-    comment?: string;
-    user?: RatingUser | null;
+  _id?: string;
+  rating?: number;
+  review?: string;
+  comment?: string;
+  user?: RatingUser | null;
 }
 
 interface Product {
-    _id: string;
-    name: string;
-    ratings?: Rating[];
+  _id: string;
+  name: string;
+  ratings?: Rating[];
 }
 
 interface ProductsResponse {
-    success?: boolean;
-    data?: {
-        products?: Product[];
-    };
+  success?: boolean;
+  data?: {
+    products?: Product[];
+  };
 }
 
 interface Review {
-    id: string;
-    username: string;
-    avatar?: string;
-    rating: number;
-    review: string;
-    productName: string;
+  id: string;
+  username: string;
+  avatar?: string;
+  rating: number;
+  review: string;
+  productName: string;
 }
 
 const Reviews = () => {
-    const [reviews, setReviews] = useState<Review[]>([]);
-    const [currentIndex, setCurrentIndex] = useState(0);
+  const [reviews, setReviews] = useState<Review[]>([]);
 
-    const { data, loading, error } =
-        useFetch<ProductsResponse>(
-            `${baseUrl}product/getAllProducts?limit=100&sort=rating`,
-        );
+  const { data, loading, error } =
+    useFetch<ProductsResponse>(
+      `${baseUrl}product/getAllProducts?limit=100&sort=rating`,
+    );
 
-    /*
-    ============================================================
-    EXTRACT REVIEWS WHEN API DATA ARRIVES
-    ============================================================
-    */
+  /*
+  ============================================================
+  EXTRACT REVIEWS FROM API
+  ============================================================
+  */
 
-    useEffect(() => {
-        if (!data) return;
+  useEffect(() => {
+    if (!data) return;
 
+    const products = data?.data?.products || [];
 
-        const products = data?.data?.products || [];
+    const allReviews: Review[] = products.flatMap(
+      (product) => {
+        const ratings = product.ratings || [];
 
-        const allReviews: Review[] = products.flatMap(
-            (product) => {
-                const ratings = product.ratings || [];
-
-                return ratings
-                    .filter((rating) => {
-                        /*
-                        Accept review if either review OR comment exists.
-                        */
-
-                        return Boolean(
-                            rating.review?.trim() ||
-                            rating.comment?.trim(),
-                        );
-                    })
-                    .map((rating, index) => ({
-                        id:
-                            rating._id ||
-                            `${product._id}-${index}`,
-
-                        username:
-                            rating.user?.username ||
-                            "Happy Customer",
-
-                        avatar:
-                            rating.user?.avatar,
-
-                        rating: Math.min(
-                            5,
-                            Math.max(
-                                1,
-                                Number(rating.rating) || 5,
-                            ),
-                        ),
-
-                        review:
-                            rating.review?.trim() ||
-                            rating.comment?.trim() ||
-                            "Amazing product and excellent shopping experience!",
-
-                        productName:
-                            product.name,
-                    }));
-            },
-        );
-
-        setReviews(allReviews);
-    }, [data]);
-
-    /*
-    ============================================================
-    AUTO SLIDER
-    ============================================================
-    */
-
-    useEffect(() => {
-        if (reviews.length <= 1) return;
-
-        const timer = setInterval(() => {
-            setCurrentIndex((prev) =>
-                prev === reviews.length - 1
-                    ? 0
-                    : prev + 1,
+        return ratings
+          .filter((rating) => {
+            return Boolean(
+              rating.review?.trim() ||
+              rating.comment?.trim(),
             );
-        }, 5000);
+          })
+          .map((rating, index) => ({
+            id:
+              rating._id ||
+              `${product._id}-${index}`,
 
-        return () => clearInterval(timer);
-    }, [reviews.length]);
+            username:
+              rating.user?.username ||
+              "Happy Customer",
 
-    /*
-    ============================================================
-    SLIDER CONTROLS
-    ============================================================
-    */
+            avatar:
+              rating.user?.avatar,
 
-    const nextReview = () => {
-        if (!reviews.length) return;
+            rating: Math.min(
+              5,
+              Math.max(
+                1,
+                Number(rating.rating) || 5,
+              ),
+            ),
 
-        setCurrentIndex((prev) =>
-            prev === reviews.length - 1
-                ? 0
-                : prev + 1,
-        );
-    };
+            review:
+              rating.review?.trim() ||
+              rating.comment?.trim() ||
+              "Amazing product and excellent shopping experience!",
 
-    const previousReview = () => {
-        if (!reviews.length) return;
+            productName:
+              product.name,
+          }));
+      },
+    );
 
-        setCurrentIndex((prev) =>
-            prev === 0
-                ? reviews.length - 1
-                : prev - 1,
-        );
-    };
+    setReviews(allReviews);
+  }, [data]);
 
-    /*
-    ============================================================
-    LOADING
-    ============================================================
-    */
+  /*
+  ============================================================
+  ERROR
+  ============================================================
+  */
 
-    if (loading) {
-        return (
-            <section className="w-full py-20">
-                <div className="mx-auto max-w-6xl px-6">
-                    <div className="mx-auto h-8 w-48 animate-pulse rounded-lg bg-[#EEEEEE]" />
+  if (error) {
+    console.error(
+      "Reviews API Error:",
+      error,
+    );
 
-                    <div className="mx-auto mt-4 h-4 w-72 animate-pulse rounded bg-[#EEEEEE]" />
+    return null;
+  }
 
-                    <div className="mx-auto mt-10 h-[280px] max-w-3xl animate-pulse rounded-3xl bg-[#EEEEEE]" />
-                </div>
-            </section>
-        );
-    }
+  /*
+  ============================================================
+  LOADING
+  ============================================================
+  */
 
-    /*
-    ============================================================
-    ERROR
-    ============================================================
-    */
-
-    if (error) {
-        console.error(
-            "Reviews API Error:",
-            error,
-        );
-
-        return null;
-    }
-
-    /*
-    ============================================================
-    NO REVIEWS
-    ============================================================
-    */
-
-    if (!reviews.length) {
-        console.log(
-            "No reviews found. Products were fetched successfully, but no product contains review/comment data.",
-        );
-
-        return null;
-    }
-
-    const activeReview =
-        reviews[currentIndex];
-
+  if (loading) {
     return (
-        <section className="relative w-full overflow-hidden bg-[#F8FAFA] py-20 md:py-28">
-            {/* Decorative Background */}
+      <section className="w-full bg-[#F8FAFA] py-16">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="mx-auto h-7 w-44 animate-pulse rounded-lg bg-[#EEEEEE]" />
 
-            <div className="pointer-events-none absolute left-0 top-0 h-64 w-64 rounded-full bg-[#00ADB5]/5 blur-3xl" />
+          <div className="mx-auto mt-3 h-4 w-64 animate-pulse rounded bg-[#EEEEEE]" />
 
-            <div className="pointer-events-none absolute bottom-0 right-0 h-72 w-72 rounded-full bg-[#00ADB5]/5 blur-3xl" />
+          <div className="mt-8 flex gap-5 overflow-hidden">
+            {[1, 2, 3, 4].map((item) => (
+              <div
+                key={item}
+                className="h-[260px] min-w-[280px] flex-1 animate-pulse rounded-2xl bg-[#EEEEEE]"
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
-            <div className="relative mx-auto max-w-6xl px-5 sm:px-6">
+  /*
+  ============================================================
+  NO REVIEWS
+  ============================================================
+  */
 
-                {/* HEADER */}
+  if (!reviews.length) {
+    console.log(
+      "No reviews found. Products were fetched successfully, but no product contains review/comment data.",
+    );
 
-                <div className="mb-12 text-center">
+    return null;
+  }
 
-                    <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#00ADB5]/20 bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#00ADB5] shadow-sm">
-                        <MessageCircle size={14} />
-                        Customer Reviews
-                    </div>
+  /*
+  ============================================================
+  DUPLICATE REVIEWS FOR SEAMLESS INFINITE LOOP
+  ============================================================
+  */
 
-                    <h2 className="text-3xl font-black tracking-tight text-[#222831] sm:text-4xl md:text-5xl">
-                        What Our Customers Say
-                    </h2>
+  const infiniteReviews = [
+    ...reviews,
+    ...reviews,
+  ];
 
-                    <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-[#222831]/60 sm:text-base">
-                        Real experiences from customers who
-                        love shopping with ZeeF Trendy Store.
-                    </p>
-                </div>
+  return (
+    <section className="relative w-full overflow-hidden bg-[#F8FAFA] py-16 md:py-20">
 
-                {/* REVIEW CARD */}
+      {/* ======================================================
+          SOFT BACKGROUND DECORATION
+      ======================================================= */}
 
-                <div className="relative mx-auto max-w-4xl">
+      <div className="pointer-events-none absolute left-[-100px] top-[-100px] h-64 w-64 rounded-full bg-[#00ADB5]/5 blur-3xl" />
 
-                    <div
-                        key={activeReview.id}
-                        className="animate-reviewSlide relative overflow-hidden rounded-[28px] border border-white bg-white p-7 shadow-[0_20px_70px_rgba(34,40,49,0.08)] sm:p-10 md:p-14"
-                    >
+      <div className="pointer-events-none absolute bottom-[-100px] right-[-100px] h-72 w-72 rounded-full bg-[#00ADB5]/5 blur-3xl" />
 
-                        {/* Quote */}
+      <div className="relative">
 
-                        <div className="absolute right-8 top-8 opacity-[0.06]">
-                            <Quote size={100} />
-                        </div>
+        {/* ====================================================
+            SECTION HEADER
+        ===================================================== */}
 
-                        <div className="relative z-10">
+        <div className="mx-auto mb-10 max-w-7xl px-6 text-center">
 
-                            {/* STARS */}
+          <div className="mb-3 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#00ADB5]">
+            <MessageCircle size={14} />
+            Customer Reviews
+          </div>
 
-                            <div className="mb-7 flex items-center gap-1">
-                                {Array.from({
-                                    length: 5,
-                                }).map((_, index) => (
-                                    <Star
-                                        key={index}
-                                        size={19}
-                                        className={
-                                            index <
-                                                activeReview.rating
-                                                ? "fill-[#EDAE17] text-[#EDAE17]"
-                                                : "text-[#D9D9D9]"
-                                        }
-                                    />
-                                ))}
-                            </div>
+          <h2 className="text-3xl font-black tracking-tight text-[#222831] sm:text-4xl">
+            What Our Customers Say
+          </h2>
 
-                            {/* REVIEW */}
+          <p className="mx-auto mt-3 max-w-lg text-sm text-[#222831]/55">
+            Real experiences from customers who shop with
+            ZeeF Trendy Store.
+          </p>
 
-                            <blockquote className="max-w-3xl text-xl font-semibold leading-relaxed text-[#222831] sm:text-2xl md:text-3xl">
-                                “{activeReview.review}”
-                            </blockquote>
+        </div>
 
-                            {/* PRODUCT */}
+        {/* ====================================================
+            CONTINUOUS SLIDER
+        ===================================================== */}
 
-                            <div className="mt-6 text-sm text-[#222831]/50">
-                                Purchased:
-                                <span className="ml-1 font-semibold text-[#00ADB5]">
-                                    {activeReview.productName}
-                                </span>
-                            </div>
+        <div className="relative w-full overflow-hidden">
 
-                            {/* USER */}
+          {/* Left Fade */}
 
-                            <div className="mt-8 flex items-center gap-4 border-t border-[#EEEEEE] pt-7">
+          <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-16 bg-gradient-to-r from-[#F8FAFA] to-transparent md:w-28" />
 
-                                {activeReview.avatar ? (
-                                    <img
-                                        src={activeReview.avatar}
-                                        alt={
-                                            activeReview.username
-                                        }
-                                        className="h-12 w-12 rounded-full object-cover ring-4 ring-[#00ADB5]/10"
-                                    />
-                                ) : (
-                                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#00ADB5] text-lg font-bold text-white ring-4 ring-[#00ADB5]/10">
-                                        {activeReview.username
-                                            .charAt(0)
-                                            .toUpperCase()}
-                                    </div>
-                                )}
+          {/* Right Fade */}
 
-                                <div>
-                                    <p className="font-bold text-[#222831]">
-                                        {activeReview.username}
-                                    </p>
+          <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-16 bg-gradient-to-l from-[#F8FAFA] to-transparent md:w-28" />
 
-                                    <p className="text-xs font-medium text-[#222831]/50">
-                                        Verified Customer
-                                    </p>
-                                </div>
+          {/* Moving Track */}
 
-                            </div>
-                        </div>
-                    </div>
+          <div className="reviews-marquee flex w-max gap-5">
 
-                    {/* ARROWS */}
+            {infiniteReviews.map(
+              (review, index) => (
+                <article
+                  key={`${review.id}-${index}`}
+                  className="
+                    group
+                    relative
+                    w-[280px]
+                    shrink-0
+                    rounded-2xl
+                    border
+                    border-[#EEEEEE]
+                    bg-white
+                    p-5
+                    shadow-[0_8px_30px_rgba(34,40,49,0.05)]
+                    transition-all
+                    duration-300
+                    hover:-translate-y-1
+                    hover:shadow-[0_15px_40px_rgba(34,40,49,0.09)]
+                    sm:w-[300px]
+                    lg:w-[310px]
+                    xl:w-[320px]
+                  "
+                >
 
-                    {reviews.length > 1 && (
-                        <>
-                            <button
-                                onClick={previousReview}
-                                aria-label="Previous Review"
-                                className="absolute -left-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#EEEEEE] bg-white text-[#222831] shadow-lg transition hover:border-[#00ADB5] hover:bg-[#00ADB5] hover:text-white sm:-left-6"
-                            >
-                                <ChevronLeft size={20} />
-                            </button>
+                  {/* Quote Icon */}
 
-                            <button
-                                onClick={nextReview}
-                                aria-label="Next Review"
-                                className="absolute -right-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#EEEEEE] bg-white text-[#222831] shadow-lg transition hover:border-[#00ADB5] hover:bg-[#00ADB5] hover:text-white sm:-right-6"
-                            >
-                                <ChevronRight size={20} />
-                            </button>
-                        </>
+                  <div className="absolute right-4 top-4 opacity-[0.05]">
+                    <Quote size={55} />
+                  </div>
+
+                  {/* Stars */}
+
+                  <div className="relative mb-4 flex items-center gap-0.5">
+
+                    {Array.from({
+                      length: 5,
+                    }).map((_, starIndex) => (
+                      <Star
+                        key={starIndex}
+                        size={15}
+                        className={
+                          starIndex <
+                          review.rating
+                            ? "fill-[#EDAE17] text-[#EDAE17]"
+                            : "text-[#D9D9D9]"
+                        }
+                      />
+                    ))}
+
+                  </div>
+
+                  {/* Review */}
+
+                  <p className="relative line-clamp-3 min-h-[66px] text-sm font-medium leading-5 text-[#222831]/75">
+                    “{review.review}”
+                  </p>
+
+                  {/* Product */}
+
+                  <p className="mt-3 truncate text-[11px] font-medium text-[#222831]/40">
+                    Purchased:
+                    <span className="ml-1 font-semibold text-[#00ADB5]">
+                      {review.productName}
+                    </span>
+                  </p>
+
+                  {/* User */}
+
+                  <div className="mt-5 flex items-center gap-3 border-t border-[#EEEEEE] pt-4">
+
+                    {review.avatar ? (
+                      <img
+                        src={review.avatar}
+                        alt={review.username}
+                        className="
+                          h-9
+                          w-9
+                          rounded-full
+                          object-cover
+                          ring-2
+                          ring-[#00ADB5]/10
+                        "
+                      />
+                    ) : (
+                      <div
+                        className="
+                          flex
+                          h-9
+                          w-9
+                          shrink-0
+                          items-center
+                          justify-center
+                          rounded-full
+                          bg-[#00ADB5]
+                          text-sm
+                          font-bold
+                          text-white
+                          ring-2
+                          ring-[#00ADB5]/10
+                        "
+                      >
+                        {review.username
+                          .charAt(0)
+                          .toUpperCase()}
+                      </div>
                     )}
-                </div>
 
-                {/* DOTS */}
+                    <div className="min-w-0">
 
-                {reviews.length > 1 && (
-                    <div className="mt-8 flex justify-center gap-2">
-                        {reviews.map((review, index) => (
-                            <button
-                                key={review.id}
-                                onClick={() =>
-                                    setCurrentIndex(index)
-                                }
-                                aria-label={`Go to review ${index + 1
-                                    }`}
-                                className={`h-2 rounded-full transition-all duration-300 ${index === currentIndex
-                                        ? "w-8 bg-[#00ADB5]"
-                                        : "w-2 bg-[#D5DADB] hover:bg-[#00ADB5]/50"
-                                    }`}
-                            />
-                        ))}
+                      <p className="truncate text-sm font-bold text-[#222831]">
+                        {review.username}
+                      </p>
+
+                      <p className="text-[10px] font-medium text-[#222831]/40">
+                        Verified Customer
+                      </p>
+
                     </div>
-                )}
 
-                {/* REVIEW COUNT */}
+                  </div>
 
-                <p className="mt-6 text-center text-xs font-medium text-[#222831]/40">
-                    Showing {currentIndex + 1} of{" "}
-                    {reviews.length} customer reviews
-                </p>
-            </div>
+                </article>
+              ),
+            )}
 
-            <style jsx>{`
-        @keyframes reviewSlide {
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* ======================================================
+          CONTINUOUS ANIMATION
+      ======================================================= */}
+
+      <style jsx>{`
+
+        .reviews-marquee {
+          animation: reviewsScroll 45s linear infinite;
+        }
+
+        .reviews-marquee:hover {
+          animation-play-state: paused;
+        }
+
+        @keyframes reviewsScroll {
+
           from {
-            opacity: 0;
-            transform: translateY(12px);
+            transform: translateX(0);
           }
 
           to {
-            opacity: 1;
-            transform: translateY(0);
+            transform: translateX(
+              calc(-50% - 10px)
+            );
           }
+
         }
 
-        .animate-reviewSlide {
-          animation: reviewSlide 0.45s ease-out;
+        @media (max-width: 640px) {
+
+          .reviews-marquee {
+            animation-duration: 35s;
+          }
+
         }
+
+        @media (prefers-reduced-motion: reduce) {
+
+          .reviews-marquee {
+            animation: none;
+          }
+
+        }
+
       `}</style>
-        </section>
-    );
+
+    </section>
+  );
 };
 
 export default Reviews;
