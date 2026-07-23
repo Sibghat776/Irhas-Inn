@@ -223,14 +223,27 @@ const Carousel = () => {
                       : "opacity-0 scale-105"
                   }`}
                 >
-                  <Image
-                    src={s.image}
-                    alt={s.title}
-                    fill
-                    priority={i === 0 || i === 1}
-                    sizes="(max-width: 768px) 100vw, 60vw"
-                    className="object-cover"
-                  />
+                  <div className="absolute inset-0">
+                      <Image
+                        src={s.image}
+                        alt={s.title}
+                        fill
+                        priority={i === 0 || i === 1}
+                        sizes="(max-width: 768px) 100vw, 60vw"
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="absolute inset-0">
+                      <Image
+                        src={s.image}
+                        alt={s.title}
+                        fill
+                        priority={i === 0 || i === 1}
+                        sizes="(max-width: 768px) 100vw, 60vw"
+                        className="object-contain"
+                        style={{ zIndex: 2, filter: "blur(20px)", transform: "scale(1.15)" }}
+                      />
+                    </div>
                 </div>
               </div>
             ))}
@@ -329,7 +342,7 @@ const Carousel = () => {
           {/* ─── STACKED PROMO BANNERS ─── */}
           {promoA && (
             <div className="hidden md:flex md:col-span-2 flex-col gap-4">
-              {[promoA, promoB].filter(Boolean).map((promo, i) => {
+              {[promoA, promoB].filter(Boolean).map((promo:any, i) => {
                 const Icon = promo.icon;
                 return (
                   <button
@@ -337,12 +350,25 @@ const Carousel = () => {
                     onClick={() => router.push(promo.link)}
                     className="relative flex-1 min-h-[calc(50%-8px)] rounded-2xl overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-500"
                   >
-                    {/* Background image */}
-                    <img
-                      src={promo.image}
-                      alt={promo.title}
-                      className="absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
-                    />
+                    {/* Two-layer image with Instagram/Snapchat effect */}
+                    <div className="absolute inset-0">
+                      <Image
+                        src={promo.image}
+                        alt={promo.title}
+                        fill
+                        className="object-cover transition-all duration-700 group-hover:scale-110"
+                        style={{ filter: "blur(20px)", transform: "scale(1.15)", opacity: 0.7, zIndex: 1 }}
+                      />
+                    </div>
+                    <div className="absolute inset-0">
+                      <Image
+                        src={promo.image}
+                        alt={promo.title}
+                        fill
+                        className="object-contain transition-all duration-700 group-hover:scale-110"
+                        style={{ zIndex: 2 }}
+                      />
+                    </div>
 
                     {/* Gradient overlay */}
                     <div className={`absolute inset-0 bg-gradient-to-t ${promo.gradient} opacity-90`} />
