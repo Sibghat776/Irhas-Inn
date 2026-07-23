@@ -103,6 +103,7 @@ const otpContent = () => {
       setIsLoading(false);
       return;
     }
+
     try {
       const { data: responseData } = await axios.post(
         `${baseUrl}auth/verifyOtp`,
@@ -139,6 +140,7 @@ const otpContent = () => {
       setIsLoading(false);
     }
   };
+
   const handleResendOtp = async () => {
     if (timer > 0 || isResending) return;
 
@@ -155,7 +157,7 @@ const otpContent = () => {
       const { data } = await axios.post(`${baseUrl}auth/resendOtp`, {
         identifier,
       });
-      console.log(identifier)
+      console.log(identifier);
       setSuccess(data?.message || "OTP Resent Successfully!");
 
       setOtp(["", "", "", "", "", ""]);
@@ -170,29 +172,56 @@ const otpContent = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FFFFFF] via-white to-[#EEEEEE] p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-[#F7F9FC] px-4 py-8 relative overflow-hidden">
+      {/* Background Decorative Elements */}
+      <div className="absolute -top-32 -left-32 w-80 h-80 bg-[#0856DF]/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-[#EDAE17]/10 rounded-full blur-3xl pointer-events-none" />
+
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-md backdrop-blur-2xl bg-white/10 border border-white/10 rounded-3xl p-8 shadow-2xl"
+        initial={{ opacity: 0, y: 25, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.45, ease: "easeOut" }}
+        className="relative w-full max-w-md bg-white rounded-3xl border border-gray-100 shadow-[0_20px_60px_rgba(4,18,65,0.10)] p-6 sm:p-8"
       >
-        <div className="flex justify-center mb-3">
-          <ShieldCheck size={50} className="text-[#222831]" />
+        {/* Icon */}
+        <div className="flex justify-center mb-5">
+          <div className="w-16 h-16 rounded-2xl bg-[#0856DF]/10 flex items-center justify-center">
+            <ShieldCheck
+              size={34}
+              strokeWidth={2}
+              className="text-[#0856DF]"
+            />
+          </div>
         </div>
 
-        <h1 className="text-center text-3xl font-bold text-white">
-          Verify OTP
-        </h1>
+        {/* Heading */}
+        <div className="text-center">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#041241] tracking-tight">
+            Verify OTP
+          </h1>
 
-        {/* 🔥 FIXED DISPLAY */}
-        <div className="mt-4 mb-6 p-3 rounded-xl bg-white/5 border border-white/10 text-center">
-          <p className="text-xs text-white/60">Code sent to</p>
-          <p className="text-white font-semibold truncate">{identifier}</p>
+          <p className="mt-2 text-sm text-gray-500 leading-relaxed">
+            Enter the 6-digit verification code sent to your account.
+          </p>
+        </div>
+
+        {/* Identifier */}
+        <div className="mt-6 p-4 rounded-2xl bg-[#F7F9FC] border border-gray-100 text-center">
+          <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">
+            Code sent to
+          </p>
+
+          <p className="mt-1 text-sm sm:text-base font-bold text-[#041241] truncate">
+            {identifier}
+          </p>
         </div>
 
         {/* OTP INPUTS */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="flex justify-between gap-2" onPaste={handlePaste}>
+        <form onSubmit={handleSubmit} className="mt-7 space-y-6">
+          <div
+            className="flex justify-center gap-2 sm:gap-3"
+            onPaste={handlePaste}
+          >
             {otp.map((digit, i) => (
               <input
                 key={i}
@@ -201,50 +230,96 @@ const otpContent = () => {
                 }}
                 value={digit}
                 maxLength={1}
+                inputMode="numeric"
                 onChange={(e) => handleChange(e.target.value, i)}
                 onKeyDown={(e) => handleKeyDown(e, i)}
-                className="w-14 h-16 text-center text-xl font-bold text-white bg-white/10 border border-white/20 rounded-2xl focus:ring-4 focus:ring-[#C8A84E] outline-none transition"
+                className="w-11 h-14 sm:w-14 sm:h-16 text-center text-xl sm:text-2xl font-bold text-[#041241] bg-white border-2 border-gray-200 rounded-xl sm:rounded-2xl outline-none transition-all duration-200 focus:border-[#0856DF] focus:ring-4 focus:ring-[#0856DF]/10 hover:border-gray-300"
               />
             ))}
           </div>
 
+          {/* Verify Button */}
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 rounded-2xl font-bold text-white bg-gradient-to-r from-[#C8A84E] to-[#C8A84E] hover:scale-[1.02] transition-all shadow-lg"
+            className="w-full h-13 py-3.5 rounded-2xl font-bold text-white bg-[#0856DF] hover:bg-[#0649C2] active:scale-[0.98] transition-all duration-200 shadow-lg shadow-[#0856DF]/20 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:bg-[#0856DF]"
           >
-            {isLoading ? "Verifying..." : "Verify OTP"}
+            {isLoading ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Verifying...
+              </span>
+            ) : (
+              "Verify OTP"
+            )}
           </button>
         </form>
 
-        {/* TIMER */}
+        {/* TIMER / RESEND */}
         <div className="mt-6 text-center">
           {timer > 0 ? (
-            <p className="text-white/60 text-sm">
-              Resend available in {timer}s
-            </p>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 border border-gray-100">
+              <span className="text-sm text-gray-500">
+                Resend available in
+              </span>
+
+              <span className="text-sm font-bold text-[#0856DF]">
+                {timer}s
+              </span>
+            </div>
           ) : (
             <button
               onClick={handleResendOtp}
               disabled={isResending}
-              className="text-[#222831] font-semibold"
+              className="inline-flex items-center justify-center px-5 py-2.5 rounded-xl text-sm font-bold text-[#0856DF] bg-[#0856DF]/5 hover:bg-[#0856DF]/10 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isResending ? "Sending..." : "Resend OTP"}
+              {isResending ? (
+                <span className="flex items-center gap-2">
+                  <span className="w-4 h-4 border-2 border-[#0856DF]/30 border-t-[#0856DF] rounded-full animate-spin" />
+                  Sending...
+                </span>
+              ) : (
+                "Resend OTP"
+              )}
             </button>
           )}
         </div>
 
         {/* ERROR */}
         {error && (
-          <p className="mt-4 text-[#222831] text-center text-sm">{error}</p>
+          <motion.div
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-5 px-4 py-3 rounded-xl bg-red-50 border border-red-100"
+          >
+            <p className="text-red-600 text-center text-sm font-medium">
+              {error}
+            </p>
+          </motion.div>
         )}
 
         {/* SUCCESS */}
         {success && (
-          <p className="mt-4 text-[#222831] text-center text-sm">{success}</p>
+          <motion.div
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-5 px-4 py-3 rounded-xl bg-green-50 border border-green-100"
+          >
+            <p className="text-green-600 text-center text-sm font-medium">
+              {success}
+            </p>
+          </motion.div>
         )}
+
+        {/* Bottom Security Text */}
+        <div className="mt-7 pt-5 border-t border-gray-100 text-center">
+          <p className="text-xs text-gray-400">
+            Your verification code is secure and private.
+          </p>
+        </div>
       </motion.div>
     </div>
   );
 };
+
 export default otpContent;

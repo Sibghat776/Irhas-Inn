@@ -42,9 +42,9 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/favicon.ico" },
-      { url: "/Logo.png", type: "image/png", sizes: "192x192" },
+      { url: "/Irha Studio-12.jpg", type: "image/png", sizes: "192x192" },
     ],
-    apple: "/Logo.png",
+    apple: "/Irha Studio-12.jpg",
   },
   appleWebApp: {
     capable: true,
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
       "Shop the latest trendy fashion, accessories, and lifestyle products at Irhas'Inn. Premium quality, affordable prices, fast delivery across Pakistan.",
     images: [
       {
-        url: "/Logo.png",
+        url: "/Irha Studio-12.jpg",
         width: 800,
         height: 800,
         alt: "Irhas'Inn",
@@ -81,7 +81,7 @@ export const metadata: Metadata = {
     title: "Irhas'Inn | Premium Online Shopping in Pakistan",
     description:
       "Shop the latest trendy fashion, accessories, and lifestyle products at Irhas'Inn.",
-    images: ["/Logo.png"],
+    images: ["/Irha Studio-12.jpg"],
   },
   robots: {
     index: true,
@@ -126,7 +126,7 @@ export default function RootLayout({
               "@type": "Organization",
               name: "Irhas'Inn",
               url: siteUrl,
-              logo: `${siteUrl}/Logo.png`,
+              logo: `${siteUrl}/Irha Studio-12.jpg`,
               sameAs: [
                 // Yahan apne social media links daal dena (Facebook, Instagram, etc.)
               ],

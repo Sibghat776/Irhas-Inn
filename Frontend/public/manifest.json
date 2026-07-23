@@ -9,13 +9,13 @@
   "theme_color": "#0856DF",
   "icons": [
     {
-      "src": "/Logo.png",
+      "src": "/Irha Studio-12.jpg.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/Logo.png",
+      "src": "/Irha Studio-12.jpg",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

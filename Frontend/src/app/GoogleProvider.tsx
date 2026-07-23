@@ -24,6 +24,6 @@ export default function GoogleProvider({
  * To update it:
  * 1. Go to https://console.cloud.google.com/apis/credentials/consent
  * 2. Under "App information" → "App name", change it to "Irhas'Inn"
- * 3. Optionally upload /Logo.png as the app logo
+ * 3. Optionally upload /Irha Studio-12.jpg as the app logo
  * 4. Save and re-verify the consent screen if needed
  */

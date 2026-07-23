@@ -23,7 +23,7 @@ const Footer: React.FC = () => {
           <div className="space-y-4">
             <Link href="/" className="inline-flex items-center gap-2 group">
               <img
-                src="/Logo.png"
+                src="/Irha Studio-12.jpg"
                 alt="Irhas'Inn"
                 className="h-10 w-auto group-hover:scale-105 transition-transform duration-300"
               />

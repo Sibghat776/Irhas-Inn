@@ -528,7 +528,7 @@ const OrdersPage = () => {
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/Logo.png"
+                  src="/Irha Studio-12.jpg"
                   alt="Irhas'Inn"
                   style={{ width: 30, height: 30, objectFit: "contain" }}
                 />
