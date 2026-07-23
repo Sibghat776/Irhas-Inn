@@ -217,33 +217,40 @@ const Carousel = () => {
             {slides.map((s, i) => (
               <div key={s._id} className="absolute inset-0">
                 <div
-                  className={`absolute inset-0 transition-all duration-[800ms] ease-in-out ${
-                    i === currentIndex
-                      ? "opacity-100 scale-100 animate-ken-burns"
+                  className={`absolute inset-0 transition-all duration-[800ms] ease-in-out ${i === currentIndex
+                      ? "opacity-100 scale-100"
                       : "opacity-0 scale-105"
-                  }`}
+                    }`}
                 >
-                  <div className="absolute inset-0">
-                      <Image
-                        src={s.image}
-                        alt={s.title}
-                        fill
-                        priority={i === 0 || i === 1}
-                        sizes="(max-width: 768px) 100vw, 60vw"
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="absolute inset-0">
-                      <Image
-                        src={s.image}
-                        alt={s.title}
-                        fill
-                        priority={i === 0 || i === 1}
-                        sizes="(max-width: 768px) 100vw, 60vw"
-                        className="object-contain"
-                        style={{ zIndex: 2, filter: "blur(20px)", transform: "scale(1.15)" }}
-                      />
-                    </div>
+                  {/* ───────── BLURRED IMAGE BACKGROUND ───────── */}
+                  <div className="absolute inset-0 overflow-hidden">
+                    <Image
+                      src={s.image}
+                      alt=""
+                      fill
+                      priority={i === 0 || i === 1}
+                      sizes="(max-width: 768px) 100vw, 60vw"
+                      className="object-cover scale-125 blur-2xl"
+                    />
+
+                    {/* Background dark overlay */}
+                    <div className="absolute inset-0 bg-black/25" />
+
+                    {/* Soft vignette */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/10" />
+                  </div>
+
+                  {/* ───────── MAIN IMAGE ───────── */}
+                  <div className="absolute inset-0 z-10 flex items-center justify-center">
+                    <Image
+                      src={s.image}
+                      alt={s.title}
+                      fill
+                      priority={i === 0 || i === 1}
+                      sizes="(max-width: 768px) 100vw, 60vw"
+                      className="object-contain"
+                    />
+                  </div>
                 </div>
               </div>
             ))}
@@ -329,11 +336,10 @@ const Carousel = () => {
                   key={i}
                   onClick={(e) => { e.stopPropagation(); goToSlide(i); }}
                   aria-label={`Slide ${i + 1}`}
-                  className={`rounded-full transition-all duration-500 ${
-                    i === currentIndex
+                  className={`rounded-full transition-all duration-500 ${i === currentIndex
                       ? "w-5 h-1.5 bg-[#C8A84E] shadow-sm"
                       : "w-1.5 h-1.5 bg-white/40 hover:bg-white/60"
-                  }`}
+                    }`}
                 />
               ))}
             </div>
@@ -342,7 +348,7 @@ const Carousel = () => {
           {/* ─── STACKED PROMO BANNERS ─── */}
           {promoA && (
             <div className="hidden md:flex md:col-span-2 flex-col gap-4">
-              {[promoA, promoB].filter(Boolean).map((promo:any, i) => {
+              {[promoA, promoB].filter(Boolean).map((promo: any, i) => {
                 const Icon = promo.icon;
                 return (
                   <button
