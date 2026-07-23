@@ -2,10 +2,17 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import useFetch, { baseUrl } from "../utils/commonFunctions";
 
-const ProductCards: React.FC = () => {
+const defaultCategories = [
+  { _id: "1", name: "Clothes", image: "/carousel/Clothes.jpg" },
+  { _id: "2", name: "Accessories", image: "/carousel/Accessories.jpg" },
+  { _id: "3", name: "Pens", image: "/carousel/Pens.avif" },
+  { _id: "4", name: "Decors", image: "/carousel/Decors.jpg" },
+  { _id: "5", name: "Electronics", image: "/carousel/Electronic Devices.jpg" },
+];
+
+const Categories: React.FC = () => {
   const [categories, setCategories] = useState<any[]>([]);
 
   const { data: catRes } = useFetch<any>(
@@ -18,67 +25,44 @@ const ProductCards: React.FC = () => {
     }
   }, [catRes]);
 
+  const displayCats = categories.length > 0 ? categories : defaultCategories;
+
   return (
-    <section
-      id="collection"
-      className="py-2 bg-[#FFFFFF] transition-colors duration-500"
-    >
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
-          <span className="text-[#EEEEEE] text-xs font-black uppercase tracking-[0.3em] inline-block">
-            Handpicked Variations
+    <section className="py-8 md:py-10 bg-white">
+      <div className="max-w-7xl mx-auto px-4">
+        {/* Section Label */}
+        <div className="flex items-center gap-3 mb-6">
+          <span className="h-px w-6 bg-[#00ADB5]" />
+          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#00ADB5]">
+            Shop by Category
           </span>
-          <h2 className="text-3xl md:text-5xl font-black text-[#222831] tracking-tight">
-            Explore Our <span className="bg-gradient-to-r from-[#00ADB5] to-[#00ADB5] bg-clip-text text-transparent">Collections</span>
-          </h2>
-          <p className="text-[#222831] text-sm md:text-base font-medium">
-            Discover top-tier curated aesthetics tailored to match your high professional standards.
-          </p>
+          <span className="h-px flex-1 bg-gray-100" />
         </div>
 
-        {/* Updated alignment classes here */}
-        <div className="flex flex-wrap justify-center gap-6">
-          {categories.length === 0 ? (
-            <p className="text-[#222831] text-sm text-center w-full">Loading categories...</p>
-          ) : (
-            categories.map((cat: any) => (
-              <Link
-                href={`/productsPage?category=${cat._id}`}
-                key={cat._id}
-                className="relative group rounded-2xl overflow-hidden bg-white border border-[#EEEEEE] shadow-md hover:shadow-2xl transition-all duration-500 ease-in-out flex flex-row h-[340px] w-full sm:w-[calc(50%-12px)] md:w-[calc(25%-18px)] min-w-[250px]"
-              >
-                <div className="relative w-full h-full overflow-hidden">
-                  <img
-                    src={cat.image || "/carousel/Pens.avif"}
-                    alt={cat.name}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 group-hover:rotate-1"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-[#222831]/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
-                </div>
-
-                <div className="absolute bottom-0 left-0 right-0 p-6 z-20 flex flex-col justify-end transform transition-transform duration-500">
-                  <span className="text-[#EEEEEE] text-[10px] font-bold tracking-widest uppercase mb-1 opacity-90">
-                    {cat.products?.length || 0} Products
-                  </span>
-                  <h3 className="text-white text-xl md:text-2xl font-black tracking-tight mb-3 transition-colors group-hover:text-white">
-                    {cat.name}
-                  </h3>
-                  <div className="overflow-hidden max-h-0 opacity-0 group-hover:max-h-12 group-hover:opacity-100 transition-all duration-500 ease-in-out">
-                    <div className="flex items-center gap-2 text-xs font-bold text-white/90 border-t border-white/20 pt-3">
-                      <span>Explore Shop</span>
-                      <ArrowUpRight size={14} className="transform transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 text-[#EEEEEE]" />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="absolute inset-0 border-2 border-transparent group-hover:border-[#00ADB5]/40 rounded-2xl transition-all duration-500 pointer-events-none z-30" />
-              </Link>
-            ))
-          )}
+        {/* Circular Icon Strip */}
+        <div className="flex flex-wrap justify-center gap-5 md:gap-8">
+          {displayCats.map((cat: any) => (
+            <Link
+              href={`/productsPage?category=${cat._id}`}
+              key={cat._id}
+              className="flex flex-col items-center gap-2 group"
+            >
+              <div className="w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 border-transparent group-hover:border-[#00ADB5] transition-all duration-300 shadow-sm group-hover:shadow-md">
+                <img
+                  src={cat.image || "/carousel/Clothes.jpg"}
+                  alt={cat.name}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+              </div>
+              <span className="text-[11px] md:text-xs font-bold text-[#222831] group-hover:text-[#00ADB5] transition-colors text-center">
+                {cat.name}
+              </span>
+            </Link>
+          ))}
         </div>
       </div>
     </section>
   );
 };
 
-export default ProductCards;
+export default Categories;

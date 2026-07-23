@@ -8,7 +8,7 @@ const withPWA = withPWAInit({
   workboxOptions: {
     cleanupOutdatedCaches: true,
     skipWaiting: true,
-    additionalManifestEntries: [{ url: '/push-handlers.js', revision: null }],
+
   },
   customWorkerSrc: "worker",
 });

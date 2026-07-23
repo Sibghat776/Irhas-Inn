@@ -185,7 +185,7 @@ const Login = () => {
               <Loader2 className="w-12 h-12 text-[#222831] animate-spin relative z-10 stroke-[1.5]" />
             </div>
             <h3 className="text-[#222831] font-semibold tracking-tight text-lg">
-              ZeeF Store Verification
+              Irhas'Inn Verification
             </h3>
             <p className="text-[#222831] text-xs mt-1 leading-relaxed">
               Establishing secure tunnel to your profile...
@@ -218,7 +218,7 @@ const Login = () => {
               Welcome Back
             </h2>
             <p className="text-xs font-medium text-[#222831] mt-1.5 uppercase tracking-widest">
-              Access ZF Store
+              Access Irhas'Inn
             </p>
           </div>
 

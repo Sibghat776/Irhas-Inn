@@ -12,9 +12,7 @@ import {
 import axios from "axios";
 import { Truck } from "lucide-react";
 
-import Navbar from "../Components/Navbar";
 import Contact from "../Components/Contact";
-import Footer from "../Components/Footer";
 import useFetch, { baseUrl } from "../utils/commonFunctions";
 
 interface Product {
@@ -35,7 +33,7 @@ const ProductCardImageCarousel: React.FC<{
   label: string;
 }> = ({ images, label }) => {
   const normalizedImages = useMemo(
-    () => (images && images.length > 0 ? images : [{ url: "/carousel/Pens.avif" }]),
+    () => (images && images.length > 0 ? images : [{ url: "/carousel/Clothes.jpg" }]),
     [images],
   );
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -159,8 +157,6 @@ const ProductsPage: React.FC<ProductsPageProps> = ({
 
   return (
     <>
-      <Navbar />
-
       <section className="min-h-screen bg-gradient-to-b from-[#FFFFFF] via-white to-white py-10 pt-24 sm:py-16 sm:pt-28">
         <div className="mx-auto max-w-7xl px-3 sm:px-6">
           <div className="mb-8 space-y-1.5 text-center sm:mb-16 sm:space-y-3">
@@ -209,7 +205,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({
                     <div className="space-y-2 p-3 text-[#222831] sm:space-y-4 sm:p-5">
                       <div className="flex flex-wrap items-center justify-between gap-1.5 text-[10px] sm:gap-3 sm:text-sm">
                         <span className="inline-flex items-center rounded-full border border-[#00ADB5]/20 bg-[#00ADB5]/10 px-2 py-0.5 font-semibold text-[#222831] sm:px-3 sm:py-1">
-                          {prodAny.brand ?? "ZeeF"}
+                          {prodAny.brand ?? "Irhas'Inn"}
                         </span>
                         <span className="hidden text-[10px] text-[#222831] sm:inline-block sm:text-xs">
                           {prodAny.stock > 0 ? `${prodAny.stock} in stock` : "Out of stock"}

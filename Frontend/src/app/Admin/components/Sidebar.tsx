@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BarChart3,
-  Bell,
   ChevronRight,
   LayoutDashboard,
   PackageSearch,
@@ -17,23 +16,15 @@ import {
   X,
 } from "lucide-react";
 
-const superAdminLinks = [
+const sidebarLinks = [
   { name: "Overview", icon: LayoutDashboard, href: "/Admin/Overview" },
   { name: "Products", icon: PackageSearch, href: "/Admin/Products" },
   { name: "Categories", icon: Tags, href: "/Admin/Categories" },
   { name: "Orders", icon: ShoppingBag, href: "/Admin/Orders" },
   { name: "Carts", icon: ShoppingCart, href: "/Admin/Carts" },
   { name: "Users", icon: Users, href: "/Admin/Users" },
-  { name: "Notifications", icon: Bell, href: "/Admin/Notifications" },
   { name: "Analytics", icon: BarChart3, href: "/Admin/Analytics" },
   { name: "Settings", icon: Settings, href: "/Admin/Settings" },
-];
-
-const resellerLinks = [
-  { name: "Overview", icon: LayoutDashboard, href: "/Admin/Overview" },
-  { name: "Products", icon: PackageSearch, href: "/Admin/Products" },
-  { name: "Orders", icon: ShoppingBag, href: "/Admin/Orders" },
-  { name: "Analytics", icon: BarChart3, href: "/Admin/Analytics" },
 ];
 
 const Sidebar = ({ onNavigate }: { onNavigate?: () => void }) => {
@@ -59,8 +50,7 @@ const Sidebar = ({ onNavigate }: { onNavigate?: () => void }) => {
     }
   }, []);
 
-  const sidebarLinks = adminRole === "superadmin" ? superAdminLinks : resellerLinks;
-  const roleLabel = adminRole === "superadmin" ? "Super Admin" : "Reseller Admin";
+  const roleLabel = adminRole === "superadmin" ? "Super Admin" : "Admin";
 
   return (
     <aside className="flex h-full w-72 flex-col border-r border-slate-200 bg-white">
@@ -70,7 +60,7 @@ const Sidebar = ({ onNavigate }: { onNavigate?: () => void }) => {
             <img src={"/Logo.png"} alt="logo" className="h-full w-full object-contain" />
           </div>
           <div>
-            <p className="text-sm font-bold leading-tight text-slate-900">ZeeF Store</p>
+            <p className="text-sm font-bold leading-tight text-slate-900">Irhas'Inn</p>
             <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
               Admin Panel
             </p>

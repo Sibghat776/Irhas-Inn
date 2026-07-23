@@ -1,37 +1,53 @@
-// src/app/page.tsx (ya aapka home path)
+// src/app/page.tsx
 "use client";
 
 import React from "react";
-import About from "./Components/About";
 import Carousel from "./Components/Carousel";
+import TrustBadges from "./Components/TrustBadges";
+import Categories from "./Components/Categories";
+import PromoBanner from "./Components/PromoBanner";
 import Products from "./Components/Products";
-import CategoriesCards from "./Components/Categories"; // Make sure file name matches this or ProductCards
-import Contact from "./Components/Contact";
-import Reviews from "./Components/Reviews";
+import ProductSpotlight from "./Components/ProductSpotlight";
+import CategoryProductRow from "./Components/CategoryProductRow";
+import LookingForSomething from "./Components/LookingForSomething";
 
 export default function Home() {
   return (
-    <main className="w-full min-h-screen bg-[#FFFFFF] text-[#222831] dark:text-white/90 font-body overflow-x-hidden transition-colors duration-500 ease-in-out">
-
-      {/* Hero Visual Segment */}
+    <main className="w-full min-h-screen bg-white text-[#222831] overflow-x-hidden">
+      {/* SECTION 1: Hero Carousel (Asymmetric Grid) */}
       <Carousel />
 
-      {/* Premium Content Body Wrapper */}
+      {/* SECTION 2: Trust Badges Strip */}
+      <TrustBadges />
 
-      {/* Curated Featured Products Slider */}
+      {/* SECTION 3: Category Icon Strip (Circular) */}
+      <Categories />
+
+      {/* SECTION 4: Promo Banner Grid (3 Tiles) */}
+      <PromoBanner />
+
+      {/* SECTION 5: Featured Products Grid */}
       <Products />
 
-      {/* Curated Grid Categories */}
-      <CategoriesCards />
+      {/* SECTION 6: Product Spotlight Banner */}
+      <ProductSpotlight />
 
-      <Reviews />
-      {/* Brand Narrative Section */}
-      <About />
+      {/* SECTION 7: Category-Themed Product Row */}
+      <CategoryProductRow
+        categoryName="Customized Birthday T-Shirts"
+        categorySlug="clothes"
+        categoryImage="/carousel/Clothes.jpg"
+      />
 
+      {/* SECTION 8: Another Category Product Row */}
+      <CategoryProductRow
+        categoryName="Customized Cricket Player T-Shirts"
+        categorySlug="accessories"
+        categoryImage="/carousel/Accessories.jpg"
+      />
 
-      {/* Global Interactive Footer Context */}
-      <Contact />
-
+      {/* SECTION 9: "Looking for Something Else?" Search Section */}
+      <LookingForSomething />
     </main>
   );
 }

@@ -440,7 +440,7 @@ const CartPage = () => {
               >
                 <div className="flex flex-col gap-6 lg:flex-row">
                   <img
-                    src={item.images?.[0]?.url ?? "/carousel/Pens.avif"}
+                    src={item.images?.[0]?.url ?? "/carousel/Clothes.jpg"}
                     alt={item.name}
                     className="h-36 w-full rounded-3xl object-cover lg:h-40 lg:w-48"
                   />
@@ -523,7 +523,7 @@ const CartPage = () => {
                       className="rounded-xl border border-[#EEEEEE] bg-white p-3 flex flex-col items-start"
                     >
                       <img
-                        src={p.images?.[0]?.url ?? "/carousel/Pens.avif"}
+                        src={p.images?.[0]?.url ?? "/carousel/Clothes.jpg"}
                         alt={p.name}
                         className="h-28 w-full object-cover rounded-md mb-3"
                       />

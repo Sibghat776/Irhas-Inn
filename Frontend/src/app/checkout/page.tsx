@@ -260,7 +260,7 @@ const CheckoutPage = () => {
         { withCredentials: true },
       );
       await saveAddressToProfileIfMissing();
-      if (typeof window !== "undefined") localStorage.removeItem("zeef_store_cart");
+      if (typeof window !== "undefined") localStorage.removeItem("irhasinn_cart");
       setCartItems([]);
       setOrderPlaced(true);
       showToast("Order placed successfully!", "success", "light");
@@ -477,7 +477,7 @@ const CheckoutPage = () => {
                     >
                       <div className="flex gap-3">
                         <img
-                          src={item.images?.[0]?.url ?? "/carousel/Pens.avif"}
+                          src={item.images?.[0]?.url ?? "/carousel/Clothes.jpg"}
                           alt={item.name}
                           className="h-16 w-16 rounded-xl object-cover ring-1 ring-[#EEEEEE] shrink-0"
                         />

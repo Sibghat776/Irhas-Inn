@@ -5,12 +5,14 @@ import { usePathname, useRouter } from "next/navigation";
 import Sidebar from "./components/Sidebar";
 import TopNav from "./components/TopNav";
 
+// Admin status comes from the `role` field on the User document,
+// which is auto-assigned based on SUPER_ADMIN_EMAIL / ADMIN_EMAILS
+// env vars at signup / login (see authController.js for details).
 // Routes only superadmin can access
 const SUPERADMIN_ONLY_ROUTES = [
   "/Admin/Users",
   "/Admin/Categories",
   "/Admin/Carts",
-  "/Admin/Notifications",
   "/Admin/Settings",
 ];
 
@@ -73,7 +75,7 @@ export default function AdminLayout({
       orders: "Orders",
       carts: "Carts",
       users: "Users",
-      notifications: "Notifications",
+
       analytics: "Analytics",
       settings: "Settings",
     };

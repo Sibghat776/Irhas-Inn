@@ -15,7 +15,7 @@ export const createCategory = async (req, res, next) => {
     console.log(req.user);
     const file = req.file;
     try {
-      result = await uploadToCloudinary(file.buffer, "zeeF/Category");
+      result = await uploadToCloudinary(file.buffer, "irhasinn/Category");
     } catch (error) {
       return next(createError(500, "Image upload failed"));
     }
@@ -144,7 +144,7 @@ export const updateCategory = async (req, res, next) => {
     if (req.file) {
       let result;
       try {
-        result = await uploadToCloudinary(req.file.buffer, "zeeF/Category");
+        result = await uploadToCloudinary(req.file.buffer, "irhasinn/Category");
       } catch (error) {
         return next(createError(500, "Image upload failed"));
       }

@@ -48,7 +48,7 @@ export default function ClientLayout({
     }
 
     if (pathname !== currentPathRef.current) {
-      dispatch(startLoading("ZeeF Loading"));
+      dispatch(startLoading("Irhas'Inn"));
       currentPathRef.current = pathname;
     }
   }, [pathname, dispatch]);

@@ -10,12 +10,9 @@ import { productRouter } from "./Routes/productRoute.js";
 import { categoryRoute } from "./Routes/categoryRoute.js";
 import { orderRoute } from "./Routes/orderRoute.js";
 import { cartRoute } from "./Routes/cartRoute.js";
-import { notificationRoute } from "./Routes/notificationRoute.js";
-import { pushNotificationRoute } from "./Routes/pushNotificationRoute.js";
 import { analyticsRoute } from "./Routes/analyticsRoute.js";
 import { adminRoute } from "./Routes/adminRoute.js";
 import { migrateRoles } from "./scripts/migrateRoles.js";
-// import { initWhatsAppClient } from "./utils/whatsapp.js";
 
 dotenv.config();
 
@@ -110,9 +107,7 @@ async function initializeServer() {
     Enable only if Railway / VPS
     */
 
-    // if (process.env.ENABLE_WHATSAPP === "true") {
-    //     await initWhatsAppClient();
-    // }
+
 
     initialized = true;
 
@@ -155,10 +150,6 @@ app.use("/api/v1/order", orderRoute);
 
 app.use("/api/v1/cart", cartRoute);
 
-app.use("/api/v1/notifications", notificationRoute);
-
-app.use("/api/v1/push", pushNotificationRoute);
-
 app.use("/api/v1/analytics", analyticsRoute);
 
 app.use("/api/v1/admin", adminRoute);
@@ -195,5 +186,24 @@ app.use((err, req, res, next) => {
         : undefined,
   });
 });
+
+/*
+===========================================================
+LOCAL DEVELOPMENT SERVER
+Only starts when NOT deployed on Vercel
+===========================================================
+*/
+
+if (!process.env.VERCEL) {
+  const PORT = process.env.PORT || 5000;
+
+  app.listen(PORT, () => {
+    console.log(`\n========================================`);
+    console.log(`  🚀  Server running on port ${PORT}`);
+    console.log(`  🌐  http://localhost:${PORT}`);
+    console.log(`  ⚡  Environment: ${process.env.NODE_ENV || "development"}`);
+    console.log(`========================================\n`);
+  });
+}
 
 export default app;

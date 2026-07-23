@@ -214,7 +214,7 @@ const OrderTrackingPage = () => {
                 <div key={idx} className="flex flex-col gap-3 rounded-3xl border border-[#EEEEEE] bg-[#FFFFFF] p-4">
                   <div className="flex items-center gap-4">
                     <img
-                      src={product.images?.[0]?.url || "/carousel/Pens.avif"}
+                      src={product.images?.[0]?.url || "/carousel/Clothes.jpg"}
                       alt={product.name}
                       className="w-20 h-20 rounded-2xl object-cover"
                     />

@@ -2,7 +2,6 @@ import { Product } from "../Models/Product.js";
 import Users from "../Models/Users.js"; // ensures Mongoose registers the User schema for populate()
 import { Category } from "../Models/Category.js";
 import { createError, createSuccess } from "../utils/commonFunctions.js";
-import { queueSocialPost } from "./socialPostController.js";
 import {
   uploadToCloudinary,
   deleteFromCloudinary,
@@ -13,7 +12,7 @@ import slugify from "slugify";
 // Feature 2: Default tags for every product
 // ====================================================
 
-const DEFAULT_TAGS = ["karachi", "pakistan", "onlineshopping", "viral", "zeeftrendystore"];
+const DEFAULT_TAGS = ["karachi", "pakistan", "onlineshopping", "viral", "irhasinn"];
 
 /**
  * Merge default tags into provided tags array.
@@ -113,7 +112,7 @@ export const addProduct = async (req, res, next) => {
     const uploadedImages = [];
     try {
       for (const file of req.files) {
-        const result = await uploadToCloudinary(file.buffer, "zeef/products");
+        const result = await uploadToCloudinary(file.buffer, "irhasinn/products");
         uploadedImages.push({
           url: result.secure_url,
           public_id: result.public_id,
@@ -156,11 +155,6 @@ export const addProduct = async (req, res, next) => {
       .populate("category", "name slug")
       .populate("user", "username email");
 
-    console.log('✅ Product created, ID:', product._id);
-    console.log('🛎️ Enqueuing social media post job');
-    queueSocialPost(product._id).catch(err => {
-      console.error('❌ Failed to enqueue social post job:', err);
-    });
     res
       .status(201)
       .json(
@@ -279,11 +273,7 @@ export const getAdminProducts = async (req, res, next) => {
   try {
     const filter = {};
 
-    // Reseller admins only see their own products
-    if (req.user.role === "admin") {
-      filter.addedBy = req.user.id;
-    }
-    // superadmin sees all (no filter)
+    // All admins see all products (no reseller scoping)
 
     const products = await Product.find(filter)
       .populate("category", "name slug")
@@ -524,10 +514,7 @@ export const updateProduct = async (req, res, next) => {
       return next(createError(404, "Product not found"));
     }
 
-    // Ownership check for reseller admins
-    if (req.user.role === "admin" && product.addedBy?.toString() !== req.user.id?.toString()) {
-      return next(createError(403, "You can only edit your own products"));
-    }
+
 
     // Update basic fields
     if (name?.trim()) {
@@ -571,7 +558,7 @@ export const updateProduct = async (req, res, next) => {
     if (req.files && req.files.length > 0) {
       try {
         for (const file of req.files) {
-          const result = await uploadToCloudinary(file.buffer, "zeef/products");
+          const result = await uploadToCloudinary(file.buffer, "irhasinn/products");
           product.images.push({
             url: result.secure_url,
             public_id: result.public_id,
@@ -608,10 +595,7 @@ export const deleteProduct = async (req, res, next) => {
       return next(createError(404, "Product not found"));
     }
 
-    // Ownership check for reseller admins
-    if (req.user.role === "admin" && product.addedBy?.toString() !== req.user.id?.toString()) {
-      return next(createError(403, "You can only delete your own products"));
-    }
+
 
     // Delete images from Cloudinary
     if (product.images && product.images.length > 0) {

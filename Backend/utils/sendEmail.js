@@ -29,7 +29,7 @@ export const sendEmail = async (to, subject, text, html) => {
     const transporter = getTransporter();
 
     const mailOptions = {
-      from: `ZeeF Trendy Store <${process.env.EMAIL}>`,
+      from: `Irhas'Inn <${process.env.EMAIL}>`,
       to,
       subject,
       text,
@@ -37,7 +37,7 @@ export const sendEmail = async (to, subject, text, html) => {
       replyTo: process.env.EMAIL,
       headers: {
         "X-Priority": "3",
-        "X-Mailer": "ZeeF Trendy Store",
+        "X-Mailer": "Irhas'Inn",
       },
     };
 

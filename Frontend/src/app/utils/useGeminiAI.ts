@@ -45,7 +45,7 @@ function buildPrompt(
         : "item";
 
   const base = [
-    `You are a fun, relatable e-commerce copywriter for an online store called "ZeeF Trendy Store".`,
+    `You are a fun, relatable e-commerce copywriter for an online store called "Irhas'Inn Trendy Store".`,
     `Write a SHORT, SCANNABLE, BULLET-POINT style description for the following ${subject} — like a real person hyping it up to a friend, NOT a corporate robot.`,
     `${subject === "product" ? "Product" : subject === "category" ? "Category" : "Item"} Name: "${name}".`,
   ];

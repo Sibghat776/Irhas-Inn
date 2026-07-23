@@ -1,1 +1,0 @@
-importScripts("/push-handlers.js");

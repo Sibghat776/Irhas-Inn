@@ -1,8 +1,6 @@
 import { Order } from "../Models/Orders.js";
 import { Product } from "../Models/Product.js";
 import Users from "../Models/Users.js";
-import { Notification } from "../Models/Notification.js";
-import { sendPushToUser } from "./pushNotificationController.js";
 import { createError, createSuccess } from "../utils/commonFunctions.js";
 
 const populateOrder = (query) =>
@@ -96,96 +94,6 @@ export const createOrder = async (req, res, next) => {
     }
 
     console.log(`[Order Created]: ${order._id} for user ${req.user.id}`);
-
-    // In-app notification for the customer
-    try {
-      await Notification.create({
-        userId: req.user.id,
-        title: "Order Placed",
-        message: `Your order #${order._id.toString().slice(-8)} has been placed successfully. We'll notify you as it progresses.`,
-        orderId: order._id,
-      });
-    } catch (notifErr) {
-      console.error(`[Notification Failed]: For user ${req.user.id} -`, notifErr.message);
-    }
-
-    // Web Push to the customer's subscribed devices
-    try {
-      const link = `/profile/orders/${order._id}`;
-      const result = await sendPushToUser(req.user.id, {
-        title: "Order Placed 🎉",
-        body: `Your order #${order._id.toString().slice(-8)} has been placed successfully.`,
-        link,
-      });
-      console.log(`[Push Sent]: For user ${req.user.id} - sent ${result.sent}, removed ${result.removed}`);
-    } catch (pushErr) {
-      console.error(`[Push Failed]: For user ${req.user.id} -`, pushErr.message);
-    }
-
-    // ==========================================
-    // [Reseller Notification] Notify each reseller whose product(s) were ordered.
-    // Non-blocking: any failure here must NEVER break order creation.
-    // ==========================================
-    try {
-      console.log(`[Reseller Notification] Checking resellers for order ${order._id}`);
-
-      // Map each reseller to the list of their ordered product names in THIS order.
-      const resellerItems = new Map(); // resellerId -> string[] of product names
-
-      for (const item of orderItems) {
-        const product = await Product.findById(item.product).select("name addedBy").lean();
-        if (!product) {
-          console.log(`[Reseller Notification] Product ${item.product} not found, skipping`);
-          continue;
-        }
-        const addedBy = product.addedBy ? product.addedBy.toString() : null;
-        if (!addedBy) {
-          // null/undefined addedBy => superadmin product, skip
-          console.log(`[Reseller Notification] Product "${product.name}" has no reseller (addedBy), skipping`);
-          continue;
-        }
-        if (!resellerItems.has(addedBy)) resellerItems.set(addedBy, []);
-        for (let i = 0; i < (item.quantity || 1); i++) {
-          resellerItems.get(addedBy).push(product.name);
-        }
-      }
-
-      console.log(`[Reseller Notification] Unique resellers to notify: ${resellerItems.size}`);
-
-      for (const [resellerId, productNames] of resellerItems.entries()) {
-        const uniqueNames = [...new Set(productNames)];
-        const itemCount = productNames.length;
-        const noun = itemCount === 1 ? "item" : "items";
-        const title = "New Order Received! 🛒";
-        const body = `New order! ${itemCount} ${noun} from your store were just ordered${
-          uniqueNames.length <= 3 ? `: ${uniqueNames.join(", ")}` : `.`
-        }`;
-        const link = `/Admin/Orders`;
-
-        try {
-          await Notification.create({
-            userId: resellerId,
-            title,
-            message: body,
-            orderId: order._id,
-          });
-          console.log(`[Reseller Notification] In-app Notification created for reseller ${resellerId}`);
-
-          const pushResult = await sendPushToUser(resellerId, { title, body, link });
-          console.log(
-            `[Reseller Notification] Web push sent for reseller ${resellerId} - sent ${pushResult.sent}, removed ${pushResult.removed}`
-          );
-        } catch (resellerErr) {
-          console.error(
-            `[Reseller Notification] Failed for reseller ${resellerId} -`,
-            resellerErr.message
-          );
-        }
-      }
-      console.log(`[Reseller Notification] Done for order ${order._id}`);
-    } catch (resellerBlockErr) {
-      console.error(`[Reseller Notification] Block-level error (non-fatal) -`, resellerBlockErr.message);
-    }
 
     return res
       .status(201)
@@ -297,16 +205,7 @@ export const getAllOrders = async (req, res, next) => {
   try {
     await assignMissingSerialNumbers();
 
-    let orders;
-    if (req.user.role === "admin") {
-      // Reseller: only orders containing at least one of their products
-      const resellerProductIds = await Product.find({ addedBy: req.user.id }).distinct("_id");
-      orders = await populateOrder(
-        Order.find({ "orderItems.product": { $in: resellerProductIds } }).sort({ createdAt: -1 })
-      );
-    } else {
-      orders = await populateOrder(Order.find({}).sort({ createdAt: -1 }));
-    }
+    const orders = await populateOrder(Order.find({}).sort({ createdAt: -1 }));
 
     return res
       .status(200)
@@ -340,40 +239,11 @@ export const updateOrderStatus = async (req, res, next) => {
       return next(createError(404, "Order not found"));
     }
 
-    // Ownership check for reseller admins
-    if (req.user.role === "admin") {
-      const resellerProductIds = await Product.find({ addedBy: req.user.id }).distinct("_id");
-      const hasOwnership = order.orderItems.some((item) =>
-        resellerProductIds.some((pid) => pid.toString() === item.product?.toString())
-      );
-      if (!hasOwnership) {
-        return next(createError(403, "You can only update orders containing your products"));
-      }
-    }
-
     order.status = status;
     order.trackingHistory.push({ status, timestamp: new Date() });
     await order.save();
 
-    // Create notification for the user
-    const title = `Order ${status}`;
-    const message = `Your order #${order._id.toString().slice(-8)} has been updated to "${status}".`;
-    await Notification.create({
-      userId: order.user,
-      title,
-      message,
-    });
 
-    console.log(`[Notification Created]: For user ${order.user} - ${title}`);
-
-    // Also fire a Web Push notification to the user's subscribed devices
-    try {
-      const link = `/profile/orders/${order._id}`;
-      const result = await sendPushToUser(order.user, { title, body: message, link });
-      console.log(`[Push Sent]: For user ${order.user} - sent ${result.sent}, removed ${result.removed}`);
-    } catch (pushErr) {
-      console.error(`[Push Failed]: For user ${order.user} -`, pushErr.message);
-    }
 
     return res
       .status(200)

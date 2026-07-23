@@ -1,4 +1,4 @@
-# Backend Playbook - ZeeF Trendy Store
+# Backend Playbook - Irhas'Inn
 
 This file configures preferences and guidelines for working on the Node.js/Express.js backend.
 
@@ -15,10 +15,10 @@ This file configures preferences and guidelines for working on the Node.js/Expre
 ## Backend Coding Rules
 - **Imports**: Always include the `.js` extension for local relative imports in the backend (e.g., `import { Order } from "../Models/Orders.js"`).
 - **Controllers & Routes**:
-  - Keep route definitions in [Backend/Routes](file:///E:/Sibghat%20Ullah/ZeeF%20Trendy%20Store/Backend/Routes) and their implementations in [Backend/Controllers](file:///E:/Sibghat%20Ullah/ZeeF%20Trendy%20Store/Backend/Controllers).
+  - Keep route definitions in [Backend/Routes](file:///E:/Sibghat%20Ullah/Irhas'Inn%20Trendy%20Store/Backend/Routes) and their implementations in [Backend/Controllers](file:///E:/Sibghat%20Ullah/Irhas'Inn%20Trendy%20Store/Backend/Controllers).
   - Do not put database logic directly in route definitions.
 - **Database Models**:
-  - Define models in [Backend/Models](file:///E:/Sibghat%20Ullah/ZeeF%20Trendy%20Store/Backend/Models).
+  - Define models in [Backend/Models](file:///E:/Sibghat%20Ullah/Irhas'Inn%20Trendy%20Store/Backend/Models).
   - Use Mongoose schemas with validation and ti0mestamps enabled.
 - **Error Handling**:
   - Use custom middleware or try/catch blocks in controllers.

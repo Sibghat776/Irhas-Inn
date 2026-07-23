@@ -179,7 +179,7 @@ const Signup = () => {
               <Loader2 className="w-12 h-12 text-[#222831] animate-spin relative z-10 stroke-[1.5]" />
             </div>
             <h3 className="text-[#222831] font-semibold tracking-tight text-lg">
-              ZeeF Store Authenticating
+              Irhas'Inn Authenticating
             </h3>
             <p className="text-[#222831] text-xs mt-1 leading-relaxed">
               Loading...
@@ -209,7 +209,7 @@ const Signup = () => {
               Create Account
             </h2>
             <p className="text-xs font-medium text-[#222831] mt-1.5 uppercase tracking-widest">
-              ZF Store Premium Network
+              Irhas'Inn Premium Network
             </p>
           </div>
 
@@ -337,7 +337,7 @@ const Signup = () => {
 
           {/* FORMAL DISCLAIMER FOOTER */}
           <p className="text-center text-[11px] text-[#222831] mt-6 leading-relaxed px-4">
-            By accessing this portal, you align with ZF Store’s formal luxury
+            By accessing this portal, you align with Irhas'Inn's formal luxury
             operations framework & global verification guidelines.
           </p>
         </div>

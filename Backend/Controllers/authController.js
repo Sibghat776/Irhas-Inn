@@ -6,9 +6,7 @@ import { generateOTP, sendEmail } from "../utils/sendEmail.js"; // OTP generator
 import { OAuth2Client } from "google-auth-library";
 import twilio from "twilio";
 import dotenv from "dotenv";
-// import { sendWhatsAppOTP } from "../utils/whatsapp.js";
 import { uploadToCloudinary } from "../utils/cloudinary.js";
-import { sendPushToAdmins } from "./pushNotificationController.js";
 dotenv.config();
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -18,6 +16,10 @@ const adminEmails = process.env.ADMIN_EMAILS
   : [];
 const superAdminEmail = (process.env.SUPER_ADMIN_EMAIL || "").trim().toLowerCase();
 // Both superadmin and reseller admins get isAdmin=true for backward compat
+// Admin status comes from the `role` field on the User document,
+// which is auto-assigned based on SUPER_ADMIN_EMAIL / ADMIN_EMAILS
+// env vars at signup / login. The `isAdmin` boolean is kept for
+// backward compatibility only — always prefer `role` going forward.
 const isAdminEmail = (email) => {
   const e = (email || "").trim().toLowerCase();
   return e === superAdminEmail || adminEmails.includes(e);
@@ -32,7 +34,7 @@ const getRoleFromEmail = (email) => {
 // Reusable OTP email body builder — keeps the nice formatting in one place
 // Plain text version (fallback for email clients that don't render HTML)
 const buildOtpEmailText = (otp) =>
-  `Hello,\n\nYour verification code for ZeeF Trendy Store is: ${otp}\n\nThis code will expire in 10 minutes. If you did not request this, you can safely ignore this email.\n\nNeed help? Contact us at ${process.env.EMAIL}\n\nZeeF Trendy Store`;
+  `Hello,\n\nYour verification code for Irhas'Inn is: ${otp}\n\nThis code will expire in 10 minutes. If you did not request this, you can safely ignore this email.\n\nNeed help? Contact us at ${process.env.EMAIL}\n\nIrhas'Inn`;
 
 // HTML themed version
 const buildOtpEmailHtml = (otp) => `
@@ -41,7 +43,7 @@ const buildOtpEmailHtml = (otp) => `
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ZeeF Trendy Store Verification</title>
+<title>Irhas'Inn Verification</title>
 <style>
   @media only screen and (max-width: 520px) {
     .container { width: 100% !important; border-radius: 0 !important; }
@@ -62,7 +64,7 @@ const buildOtpEmailHtml = (otp) => `
           <!-- Header with teal gradient (matches site theme #00ADB5) -->
           <tr>
             <td class="header-pad" style="background: linear-gradient(135deg, #00ADB5 0%, #007e84 100%); padding: 32px 32px;" align="center">
-              <span style="color:#ffffff; font-size:24px; font-weight:bold; letter-spacing:1.5px; font-family: Arial, Helvetica, sans-serif; text-shadow: 0 1px 3px rgba(0,0,0,0.2);">ZeeF Trendy Store</span>
+              <span style="color:#ffffff; font-size:24px; font-weight:bold; letter-spacing:1.5px; font-family: Arial, Helvetica, sans-serif; text-shadow: 0 1px 3px rgba(0,0,0,0.2);">Irhas'Inn</span>
             </td>
           </tr>
 
@@ -93,7 +95,7 @@ const buildOtpEmailHtml = (otp) => `
                 <tr>
                   <td style="padding:16px 18px;">
                     <p style="margin:0 0 6px 0; color:#888888; font-size:13px; line-height:1.6;">
-                      For your security, never share this code with anyone. ZeeF Trendy Store staff will never ask for it.
+                      For your security, never share this code with anyone. Irhas'Inn staff will never ask for it.
                     </p>
                     <p style="margin:0; color:#999999; font-size:13px; line-height:1.6;">
                       Didn't request this? You can safely ignore this email.
@@ -114,7 +116,7 @@ const buildOtpEmailHtml = (otp) => `
             <td class="footer-pad" style="padding: 22px 36px 30px 36px;" align="center">
               <p style="margin:0 0 6px 0; color:#999999; font-size:12.5px;">Need help? Contact us at <a href="mailto:${process.env.EMAIL}" style="color:#00ADB5; text-decoration:none; font-weight:600;">${process.env.EMAIL}</a></p>
               <p style="margin:0 0 6px 0; color:#c2c2c2; font-size:11.5px;">Karachi, Pakistan</p>
-              <p style="margin:0; color:#c2c2c2; font-size:12px;">© ${new Date().getFullYear()} ZeeF Trendy Store. All rights reserved.</p>
+              <p style="margin:0; color:#c2c2c2; font-size:12px;">© ${new Date().getFullYear()} Irhas'Inn. All rights reserved.</p>
             </td>
           </tr>
 
@@ -168,11 +170,10 @@ export const register = async (req, res, next) => {
       otp,
       otpExpires: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes expiry
       isAdmin: isAdminEmail(email),
+      role: getRoleFromEmail(email),
     });
     await newUser.save();
 
-    // WhatsApp OTP temporarily disabled — email OTP only for now
-    // const whatsappSent = await sendWhatsAppOTP(phoneNo, otp);
     const { password: _, otpExpires, otp: __, ...userDetails } = newUser._doc;
 
     let emailSent = false;
@@ -246,6 +247,7 @@ export const verifyOtp = async (req, res, next) => {
     user.otp = null;
     user.otpExpires = null;
     user.isAdmin = isAdminEmail(user.email);
+    user.role = getRoleFromEmail(user.email);
     await user.save();
 
     const token = jwt.sign(
@@ -295,9 +297,6 @@ export const resendOtp = async (req, res, next) => {
     console.log(identifier, "OTP", otp);
     await user.save();
 
-    // WhatsApp OTP temporarily disabled — email OTP only for now
-    // const isSent = await sendWhatsAppOTP(user.phoneNo, otp);
-
     let emailSent = false;
     if (identifier.includes("@")) {
       try {
@@ -312,8 +311,6 @@ export const resendOtp = async (req, res, next) => {
       } catch (error) {
         console.error("Email Error:", error.message || error);
       }
-    } else {
-      // await sendWhatsAppOTP(user.phoneNo, otp);
     }
 
     if (!emailSent && identifier.includes("@")) {
@@ -357,8 +354,6 @@ export const login = async (req, res, next) => {
       await user.save();
 
       let emailSent = false;
-      let whatsappSent = false;
-
       if (identifier.includes("@")) {
         try {
           await sendEmail(
@@ -372,11 +367,9 @@ export const login = async (req, res, next) => {
         } catch (error) {
           console.error("Email Error:", error.message || error);
         }
-      } else {
-        // whatsappSent = await sendWhatsAppOTP(user.phoneNo, otp);
       }
 
-      const otpSent = identifier.includes("@") ? emailSent : whatsappSent;
+      const otpSent = emailSent;
 
       return res.status(200).json({
         success: false,
@@ -388,6 +381,11 @@ export const login = async (req, res, next) => {
           : "Failed to send OTP. Please try again.",
       });
     }
+    // Sync role from env vars on every login (so admin email changes take effect)
+    user.role = getRoleFromEmail(user.email);
+    user.isAdmin = isAdminEmail(user.email);
+    await user.save();
+
     const { password: _, otp, otpExpires, ...userDetails } = user._doc;
 
     const token = jwt.sign(
@@ -437,6 +435,9 @@ export const googleAuth = async (req, res, next) => {
     // .env se emails fetch karein
     const shouldBeAdmin = isAdminEmail(email);
 
+    // Sync role from env vars on every Google auth (so admin email changes take effect)
+    const computedRole = getRoleFromEmail(email);
+
     // If user does not exist (New Sign up)
     if (!user) {
       user = new Users({
@@ -445,13 +446,15 @@ export const googleAuth = async (req, res, next) => {
         profilePic: picture,
         googleId: sub,
         isVerified: true,
-        isAdmin: shouldBeAdmin, // Yahan set ho jayega
+        isAdmin: shouldBeAdmin,
+        role: computedRole,
       });
       await user.save();
     } else {
       // Agar existing user hai lekin .env mein admin add hua hai, toh update karein
       if (!user.isAdmin && shouldBeAdmin) {
         user.isAdmin = true;
+        user.role = computedRole;
         await user.save();
       }
     }
@@ -532,7 +535,7 @@ export const updateUser = async (req, res, next) => {
     if (address) user.address = address;
 
     if (req.file) {
-      const result = await uploadToCloudinary(req.file.buffer, "zeef/products");
+      const result = await uploadToCloudinary(req.file.buffer, "irhasinn/products");
       user.profilePic = result.secure_url;
     }
 
@@ -583,17 +586,7 @@ export const contactUs = async (req, res, next) => {
       `Name: ${name}\nEmail: ${email}\nMessage:\n${message}`,
     );
 
-    // Web Push to admins' subscribed devices so they get a phone notification
-    try {
-      const result = await sendPushToAdmins({
-        title: "New Contact Message 📩",
-        body: `${name} (${email}): ${message.slice(0, 80)}${message.length > 80 ? "…" : ""}`,
-        link: "/Admin",
-      });
-      console.log(`[Push Sent to Admins]: sent ${result.sent}, removed ${result.removed}`);
-    } catch (pushErr) {
-      console.error("[Push Failed to Admins]:", pushErr.message);
-    }
+
 
     res.status(200).json(createSuccess(200, "Message sent successfully!"));
   } catch (error) {

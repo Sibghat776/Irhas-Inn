@@ -1,264 +1,326 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight, Zap, Shield } from "lucide-react";
 
 interface Slide {
   image: string;
   tag: string;
   title: string;
+  subtitle: string;
 }
 
 const slides: Slide[] = [
   {
     image: "/carousel/Accessories.jpg",
-    tag: "New In",
-    title: "Accessories",
+    tag: "New Collection",
+    title: "Premium Accessories",
+    subtitle: "Elevate your style with our latest curated collection of premium accessories",
   },
   {
     image: "/carousel/Clothes.jpg",
-    tag: "Trending",
-    title: "Fashion",
+    tag: "Trending Now",
+    title: "Fashion Forward",
+    subtitle: "Discover the season's most sought-after fashion pieces for every occasion",
   },
   {
     image: "/carousel/Decors.jpg",
-    tag: "Lifestyle",
-    title: "Décor",
+    tag: "Lifestyle Edit",
+    title: "Home Décor",
+    subtitle: "Transform your space with elegant décor pieces that tell your story",
   },
   {
     image: "/carousel/Electronic Devices.jpg",
-    tag: "Tech",
+    tag: "Tech Zone",
     title: "Electronics",
+    subtitle: "Stay ahead with the latest gadgets and electronic essentials",
   },
   {
     image: "/carousel/Home appliances.jpg",
     tag: "Smart Home",
     title: "Appliances",
+    subtitle: "Make life easier with modern home appliances designed for comfort",
+  },
+];
+
+const promoSlides = [
+  {
+    image: "/carousel/Clothes.jpg",
+    icon: Zap,
+    title: "Free Shipping",
+    subtitle: "On orders over Rs. 2,000",
+    link: "/productsPage",
+    gradient: "from-emerald-600/60 to-teal-800/80",
+  },
+  {
+    image: "/carousel/Decors.jpg",
+    icon: Shield,
+    title: "New Collection",
+    subtitle: "Explore trending styles",
+    link: "/productsPage",
+    gradient: "from-violet-600/60 to-purple-800/80",
   },
 ];
 
 const Carousel = () => {
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [animating, setAnimating] = useState(false);
-
-  const goTo = useCallback(
-    (newIndex: number) => {
-      if (animating || newIndex === currentIndex) return;
-      setAnimating(true);
-      setCurrentIndex(newIndex);
-      window.setTimeout(() => setAnimating(false), 800);
-    },
-    [animating, currentIndex],
-  );
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [prevIndex, setPrevIndex] = useState(0);
+  const progressRef = useRef<HTMLDivElement>(null);
 
   const next = useCallback(() => {
-    goTo(currentIndex === slides.length - 1 ? 0 : currentIndex + 1);
-  }, [currentIndex, goTo]);
+    if (isTransitioning) return;
+    setPrevIndex(currentIndex);
+    setIsTransitioning(true);
+    setCurrentIndex((i) => (i === slides.length - 1 ? 0 : i + 1));
+    setTimeout(() => setIsTransitioning(false), 700);
+  }, [currentIndex, isTransitioning]);
 
   const prev = useCallback(() => {
-    goTo(currentIndex === 0 ? slides.length - 1 : currentIndex - 1);
-  }, [currentIndex, goTo]);
+    if (isTransitioning) return;
+    setPrevIndex(currentIndex);
+    setIsTransitioning(true);
+    setCurrentIndex((i) => (i === 0 ? slides.length - 1 : i - 1));
+    setTimeout(() => setIsTransitioning(false), 700);
+  }, [currentIndex, isTransitioning]);
 
-  /* Auto-play — bypasses animating guard intentionally */
+  const goToSlide = useCallback((index: number) => {
+    if (isTransitioning || index === currentIndex) return;
+    setPrevIndex(currentIndex);
+    setIsTransitioning(true);
+    setCurrentIndex(index);
+    setTimeout(() => setIsTransitioning(false), 700);
+  }, [currentIndex, isTransitioning]);
+
+  // Auto-advance
   useEffect(() => {
-    const timer = window.setInterval(() => {
-      setCurrentIndex((i) => (i === slides.length - 1 ? 0 : i + 1));
-    }, 6000);
+    const interval = 6000;
+    const timer = window.setInterval(next, interval);
     return () => window.clearInterval(timer);
-  }, []);
+  }, [next]);
+
+  // Reset progress bar animation on slide change
+  useEffect(() => {
+    if (progressRef.current) {
+      progressRef.current.style.animation = "none";
+      void progressRef.current.offsetWidth;
+      progressRef.current.style.animation = "progressBar 6s linear forwards";
+    }
+  }, [currentIndex]);
 
   const slide = slides[currentIndex];
-  const num = String(currentIndex + 1).padStart(2, "0");
-  const total = String(slides.length).padStart(2, "0");
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") prev();
+      if (e.key === "ArrowRight") next();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [next, prev]);
 
   return (
-    <section className="relative h-screen min-h-[640px] w-full overflow-hidden bg-black">
+    <section className="w-full bg-white relative overflow-hidden">
+      {/* Subtle background texture */}
+      <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:20px_20px] opacity-30 pointer-events-none" />
 
-      {/* =====================================================
-          IMAGES — fade + subtle scale
-      ===================================================== */}
-      {slides.map((s, i) => (
-        <div
-          key={s.image}
-          className={`absolute inset-0 transition-all duration-1000 ease-in-out ${currentIndex === i
-              ? "scale-100 opacity-100"
-              : "scale-[1.04] opacity-0"
-            }`}
-        >
-          <Image
-            src={s.image}
-            alt={s.title}
-            fill
-            priority={i === 0}
-            sizes="100vw"
-            className="object-cover object-center"
-          />
-        </div>
-      ))}
+      <div className="relative max-w-7xl mx-auto px-3 sm:px-4 py-4 md:py-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-3 md:gap-5">
+          {/* ─── HERO SLIDE ─── */}
+          <div
+            className="relative md:col-span-3 h-[300px] sm:h-[400px] md:h-[500px] rounded-2xl overflow-hidden bg-[#222831] shadow-xl group cursor-pointer"
+            onClick={() => router.push("/productsPage")}
+          >
+            {slides.map((s, i) => (
+              <div key={s.image} className="absolute inset-0">
+                <div
+                  className={`absolute inset-0 transition-all duration-[800ms] ease-in-out ${
+                    i === currentIndex
+                      ? "opacity-100 scale-100 animate-ken-burns"
+                      : "opacity-0 scale-105"
+                  }`}
+                >
+                  <Image
+                    src={s.image}
+                    alt={s.title}
+                    fill
+                    priority={i === 0 || i === 1}
+                    sizes="(max-width: 768px) 100vw, 60vw"
+                    className="object-cover"
+                  />
+                </div>
+              </div>
+            ))}
 
-      {/* =====================================================
-          OVERLAYS — cinematic darkness
-      ===================================================== */}
-      {/* Bottom-up (primary dark mass) */}
-      <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-black/40 via-black/25 to-transparent" />
-      {/* Left vignette */}
-      <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-r from-black/40 via-black/10 to-transparent" />
-      {/* Top edge softener */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-28 bg-gradient-to-b from-black/30 to-transparent" />
+            {/* Gradient overlays */}
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent z-10" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent z-10" />
 
-      {/* =====================================================
-          GHOST SLIDE NUMBER — signature editorial element
-      ===================================================== */}
-      <div
-        key={`ghost-${currentIndex}`}
-        aria-hidden="true"
-        className="animate-ghost-fade pointer-events-none absolute right-4 top-3 z-20 select-none font-black leading-none tracking-tighter text-white/[0.05] sm:right-8 sm:top-5"
-        style={{ fontSize: "clamp(110px, 17vw, 250px)" }}
-      >
-        {num}
-      </div>
+            {/* Content */}
+            <div className="absolute bottom-0 left-0 right-0 z-20 p-6 sm:p-8 md:p-10">
+              <div key={slide.title} className="space-y-1">
+                {/* Tag */}
+                <div className="flex items-center gap-2.5 mb-2 opacity-0 animate-content-in" style={{ animationDelay: "0ms" }}>
+                  <span className="h-0.5 w-5 bg-[#00ADB5] rounded-full" />
+                  <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.3em] text-[#00ADB5]">
+                    {slide.tag}
+                  </span>
+                </div>
 
-      {/* =====================================================
-          VERTICAL PROGRESS BARS — desktop only
-      ===================================================== */}
-      <div className="absolute right-6 top-1/2 z-30 hidden -translate-y-1/2 flex-col items-center gap-3 lg:flex xl:right-10">
-        {slides.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => goTo(i)}
-            aria-label={`Go to slide ${i + 1}`}
-            className={`rounded-full transition-all duration-500 ease-in-out ${i === currentIndex
-                ? "h-11 w-[2px] bg-[#00ADB5]"
-                : "h-4 w-[2px] bg-white/25 hover:bg-white/55"
-              }`}
-          />
-        ))}
-      </div>
+                {/* Title */}
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-[1.05] tracking-tight opacity-0 animate-content-in" style={{ animationDelay: "100ms" }}>
+                  {slide.title.split(" ").map((word, i, arr) => (
+                    <span key={i}>
+                      {i === arr.length - 1 ? (
+                        <span className="text-[#00ADB5]">{word}</span>
+                      ) : (
+                        word
+                      )}
+                      {i < arr.length - 1 && " "}
+                    </span>
+                  ))}
+                </h1>
 
-      {/* =====================================================
-          BOTTOM CONTENT — tag · title · CTA  +  counter · nav
-      ===================================================== */}
-      <div className="absolute inset-x-0 bottom-0 z-20 mx-auto max-w-7xl px-6 pb-10 sm:px-10 md:px-14 lg:px-16 xl:px-20">
-        <div className="flex items-end justify-between gap-6">
+                {/* Subtitle */}
+                <p className="text-xs sm:text-sm text-white/70 max-w-md leading-relaxed mt-2 opacity-0 animate-content-in" style={{ animationDelay: "200ms" }}>
+                  {slide.subtitle}
+                </p>
 
-          {/* ── Left: text ── */}
-          <div key={slide.title} className="animate-content-rise">
-
-            {/* Tag */}
-            <div className="mb-3 flex items-center gap-3">
-              <span className="h-px w-8 bg-[#00ADB5]" />
-              <span className="text-[10px] font-bold uppercase tracking-[0.32em] text-[#00ADB5]">
-                {slide.tag}
-              </span>
+                {/* CTA */}
+                <div className="mt-4 flex items-center gap-3 opacity-0 animate-content-in" style={{ animationDelay: "300ms" }}>
+                  <span className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00ADB5] hover:bg-[#0099a1] text-white text-[10px] font-bold uppercase tracking-[0.15em] rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-[#00ADB5]/30 hover:scale-105 active:scale-95">
+                    Shop Now
+                    <ArrowRight size={13} strokeWidth={2.5} className="group-hover:translate-x-1 transition-transform" />
+                  </span>
+                  <span className="text-white/40 text-[9px] font-medium hidden sm:inline">
+                    Browse collection
+                  </span>
+                </div>
+              </div>
             </div>
 
-            {/* Title */}
-            <h1
-              className="font-black leading-[0.88] tracking-[-0.03em] text-white"
-              style={{ fontSize: "clamp(50px, 8.5vw, 108px)" }}
-            >
-              {slide.title}
-            </h1>
-
-            {/* CTA */}
-            <button
-              type="button"
-              onClick={() => router.push("/productsPage")}
-              className="group mt-7 flex items-center gap-3"
-            >
-              <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-white transition-colors duration-300 group-hover:text-[#00ADB5]">
-                Shop Now
-              </span>
-              <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-white/25 text-white transition-all duration-300 group-hover:border-[#00ADB5] group-hover:bg-[#00ADB5]">
-                <ArrowRight size={15} strokeWidth={2.5} />
-              </span>
-            </button>
-          </div>
-
-          {/* ── Right: counter + arrows (desktop) ── */}
-          <div className="hidden flex-shrink-0 flex-col items-end gap-5 md:flex">
-
-            {/* Slide counter */}
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-2xl font-black tabular-nums leading-none text-white">
-                {num}
-              </span>
-              <span className="text-xs text-white/30">/ {total}</span>
-            </div>
-
-            {/* Prev / Next arrows */}
-            <div className="flex gap-2">
+            {/* Top-right nav arrows */}
+            <div className="absolute top-4 right-4 z-20 hidden md:flex items-center gap-1.5">
               <button
-                onClick={prev}
-                disabled={animating}
-                aria-label="Previous slide"
-                className="flex h-10 w-10 items-center justify-center border border-white/15 text-white/50 transition-all duration-300 hover:border-[#00ADB5]/60 hover:text-[#00ADB5] disabled:opacity-30"
+                onClick={(e) => { e.stopPropagation(); prev(); }}
+                aria-label="Previous"
+                className="flex h-8 w-8 items-center justify-center bg-white/10 backdrop-blur-md text-white/70 rounded-xl hover:bg-white/25 hover:text-white transition-all border border-white/10 hover:border-white/30 active:scale-90"
               >
-                <ChevronLeft size={18} strokeWidth={2} />
+                <ChevronLeft size={14} />
               </button>
               <button
-                onClick={next}
-                disabled={animating}
-                aria-label="Next slide"
-                className="flex h-10 w-10 items-center justify-center bg-[#00ADB5] text-white transition-all duration-300 hover:bg-[#009aa2] disabled:opacity-30"
+                onClick={(e) => { e.stopPropagation(); next(); }}
+                aria-label="Next"
+                className="flex h-8 w-8 items-center justify-center bg-[#00ADB5] text-white rounded-xl hover:bg-[#0099a1] transition-all shadow-lg shadow-[#00ADB5]/20 hover:shadow-[#00ADB5]/40 active:scale-90"
               >
-                <ChevronRight size={18} strokeWidth={2} />
+                <ChevronRight size={14} />
               </button>
             </div>
-          </div>
-        </div>
 
-        {/* ── Mobile dot indicators ── */}
-        <div className="mt-5 flex items-center gap-2 md:hidden">
-          {slides.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => goTo(i)}
-              aria-label={`Slide ${i + 1}`}
-              className={`h-[2px] rounded-full transition-all duration-500 ${i === currentIndex
-                  ? "w-8 bg-[#00ADB5]"
-                  : "w-2 bg-white/30 hover:bg-white/60"
-                }`}
-            />
-          ))}
+            {/* Progress bar */}
+            <div className="absolute bottom-0 left-0 right-0 z-20 h-0.5 bg-white/10">
+              <div
+                ref={progressRef}
+                className="h-full bg-[#00ADB5] rounded-r-full origin-left"
+                style={{ animation: "progressBar 6s linear forwards" }}
+              />
+            </div>
+
+            {/* Dot indicators */}
+            <div className="absolute top-4 left-4 z-20 flex items-center gap-2 md:hidden">
+              {slides.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={(e) => { e.stopPropagation(); goToSlide(i); }}
+                  aria-label={`Slide ${i + 1}`}
+                  className={`rounded-full transition-all duration-500 ${
+                    i === currentIndex
+                      ? "w-5 h-1.5 bg-[#00ADB5] shadow-sm"
+                      : "w-1.5 h-1.5 bg-white/40 hover:bg-white/60"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* ─── STACKED PROMO BANNERS ─── */}
+          <div className="hidden md:flex md:col-span-2 flex-col gap-4">
+            {promoSlides.map((promo, i) => {
+              const Icon = promo.icon;
+              return (
+                <button
+                  key={i}
+                  onClick={() => router.push(promo.link)}
+                  className="relative flex-1 min-h-[calc(50%-8px)] rounded-2xl overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-500"
+                >
+                  {/* Background image */}
+                  <img
+                    src={promo.image}
+                    alt={promo.title}
+                    className="absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
+                  />
+
+                  {/* Gradient overlay */}
+                  <div className={`absolute inset-0 bg-gradient-to-t ${promo.gradient} opacity-90`} />
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent" />
+
+                  {/* Content */}
+                  <div className="absolute bottom-0 left-0 right-0 p-5 md:p-7 text-left z-10">
+                    <div className="flex items-center gap-2.5 mb-2">
+                      <div className="w-7 h-7 rounded-lg bg-white/15 backdrop-blur-sm flex items-center justify-center">
+                        <Icon size={13} className="text-[#00ADB5]" />
+                      </div>
+                      <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-white">
+                        {promo.title}
+                      </span>
+                    </div>
+                    <p className="text-white text-base md:text-lg font-bold leading-tight">
+                      {promo.subtitle}
+                    </p>
+                    <div className="mt-2.5 inline-flex items-center gap-1 text-white/60 text-[9px] font-bold uppercase tracking-wider group-hover:text-white transition-all group-hover:gap-2 duration-300">
+                      Learn More
+                      <ArrowRight size={11} />
+                    </div>
+                  </div>
+
+                  {/* Hover border */}
+                  <div className="absolute inset-0 border-[1.5px] border-transparent group-hover:border-white/20 rounded-2xl transition-all duration-500 pointer-events-none z-10" />
+
+                  {/* Corner accent */}
+                  <div className="absolute top-4 right-4 w-12 h-12 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <svg viewBox="0 0 48 48" fill="none" className="w-full h-full">
+                      <path d="M0 48L48 48L48 0" stroke="white" strokeWidth="1.5" strokeOpacity="0.3" />
+                    </svg>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      {/* =====================================================
-          ANIMATIONS
-      ===================================================== */}
       <style jsx global>{`
-        @keyframes contentRise {
-          from {
-            opacity: 0;
-            transform: translateY(22px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+        @keyframes contentIn {
+          from { opacity: 0; transform: translateY(18px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-
-        @keyframes ghostFade {
-          from {
-            opacity: 0;
-            transform: translateX(12px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
+        @keyframes kenBurns {
+          from { transform: scale(1.1); }
+          to { transform: scale(1); }
         }
-
-        .animate-content-rise {
-          animation: contentRise 0.72s cubic-bezier(0.16, 1, 0.3, 1) both;
+        @keyframes progressBar {
+          from { transform: scaleX(0); }
+          to { transform: scaleX(1); }
         }
-
-        .animate-ghost-fade {
-          animation: ghostFade 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+        .animate-content-in {
+          animation: contentIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        .animate-ken-burns {
+          animation: kenBurns 6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
         }
       `}</style>
     </section>

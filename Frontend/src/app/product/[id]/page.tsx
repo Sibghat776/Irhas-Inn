@@ -88,7 +88,7 @@ const ProductDetailPage: React.FC = () => {
     () =>
       product?.images && product.images.length > 0
         ? product.images
-        : [{ url: "/carousel/Pens.avif" }],
+        : [{ url: "/carousel/Clothes.jpg" }],
     [product],
   );
 
@@ -264,7 +264,7 @@ const ProductDetailPage: React.FC = () => {
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FFFFFF] px-2.5 py-0.5 text-xs text-[#222831] sm:gap-2 sm:px-3 sm:py-1 sm:text-sm">
                       <Tag size={12} className="sm:hidden" />
                       <Tag size={14} className="hidden sm:block" />
-                      {product.brand ?? "ZeeF"}
+                      {product.brand ?? "Irhas'Inn"}
                     </span>
                     <span className="inline-flex items-center gap-1 rounded-full border border-[#EEEEEE] bg-[#FFFFFF] px-1.5 py-0.5 text-[9px] font-semibold text-[#222831] sm:px-2 sm:text-xs">
                       <Truck size={11} className="sm:hidden" />

@@ -22,7 +22,7 @@ const RoleBadge = ({ role }: { role?: string }) => {
   if (role === "superadmin")
     return <span className="inline-flex items-center rounded-full bg-purple-100 px-2.5 py-1 text-xs font-semibold text-purple-700">Super Admin</span>;
   if (role === "admin")
-    return <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-700">Reseller Admin</span>;
+    return <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-700">Admin</span>;
   return <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-500">User</span>;
 };
 
@@ -76,7 +76,7 @@ const UsersPage = () => {
         { withCredentials: true }
       );
       setData((prev) => prev.map((u) => u._id === user._id ? { ...u, role: newRole } : u));
-      showToast(`${user.username} is now ${newRole === "admin" ? "a Reseller Admin" : "a regular User"}`, "success");
+      showToast(`${user.username} is now ${newRole === "admin" ? "an Admin" : "a regular User"}`, "success");
     } catch (err: any) {
       showToast(err?.response?.data?.message || "Failed to update role", "error");
     } finally {
@@ -168,7 +168,7 @@ const UsersPage = () => {
         >
           <option value="all">All</option>
           <option value="user">User</option>
-          <option value="admin">Reseller Admin</option>
+          <option value="admin">Admin</option>
           <option value="superadmin">Super Admin</option>
         </select>
       </div>
@@ -226,7 +226,7 @@ const UsersPage = () => {
                         className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0856DF]/30 disabled:opacity-50"
                       >
                         <option value="user">User</option>
-                        <option value="admin">Reseller Admin</option>
+                        <option value="admin">Admin</option>
                       </select>
                     ) : (
                       <RoleBadge role={user.role} />
@@ -257,7 +257,7 @@ const UsersPage = () => {
             <h3 className="mb-2 text-lg font-bold text-slate-900">Confirm Role Change</h3>
             <p className="mb-6 text-sm text-slate-500">
               {roleConfirm.newRole === "admin"
-                ? `Make ${roleConfirm.user.username} a Reseller Admin? They will be able to add and manage their own products.`
+                ? `Make ${roleConfirm.user.username} an Admin? They will be able to access the admin panel.`
                 : `Remove admin access from ${roleConfirm.user.username}? They will lose access to the Admin panel.`}
             </p>
             <div className="flex gap-3">

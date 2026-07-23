@@ -20,9 +20,18 @@ export const createSuccess = (status, message, data = {}) => {
   return successObj;
 };
 // ==================== ROLE RESOLVER ====================
+// Admin status comes from the `role` field on the User document,
+// which is auto-assigned based on SUPER_ADMIN_EMAIL / ADMIN_EMAILS
+// env vars at signup / login.
 export const resolveRole = (email, dbRole) => {
   const superAdminEmail = (process.env.SUPER_ADMIN_EMAIL || "").trim().toLowerCase();
-  if ((email || "").trim().toLowerCase() === superAdminEmail) return "superadmin";
+  const adminEmails = (process.env.ADMIN_EMAILS || "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+  const e = (email || "").trim().toLowerCase();
+  if (e === superAdminEmail) return "superadmin";
+  if (adminEmails.includes(e)) return "admin";
   return dbRole || "user";
 };
 

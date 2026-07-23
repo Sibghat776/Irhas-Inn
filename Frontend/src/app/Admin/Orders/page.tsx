@@ -59,7 +59,7 @@ const OrdersPage = () => {
   const FRONTEND_URL =
     process.env.NEXT_PUBLIC_FRONTEND_URL ||
     process.env.NEXT_PUBLIC_API_URL?.replace("/api/v1", "") ||
-    "https://zeeftrendystore.vercel.app";
+    "https://irhasinn.vercel.app";
 
   const generateQr = async (orderId: string) => {
     const url = `${FRONTEND_URL}/track-order/${orderId}`;
@@ -529,7 +529,7 @@ const OrdersPage = () => {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/Logo.png"
-                  alt="ZeeF Trendy Store"
+                  alt="Irhas'Inn"
                   style={{ width: 30, height: 30, objectFit: "contain" }}
                 />
                 <div>
@@ -541,7 +541,7 @@ const OrdersPage = () => {
                       lineHeight: 1.1,
                     }}
                   >
-                    ZeeF Trendy Store
+                    Irhas'Inn
                   </div>
                   <div
                     style={{

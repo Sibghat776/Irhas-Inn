@@ -5,7 +5,6 @@ import AIProductChat from "./Components/AIProductChat";
 
 import ClientLayout from "./ClientLayout";
 import GoogleProvider from "./GoogleProvider";
-import NotificationPrompt from "./Components/NotificationPrompt";
 import RouteProgressBar from "./Components/RouteProgressBar";
 import Providers from "./Redux/Providers/provider";
 const geistSans = Geist({
@@ -17,28 +16,28 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-const siteUrl = "https://zeeftrendystore.vercel.app";
+const siteUrl = "https://irhasinn.vercel.app";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "ZeeF Trendy Store | Premium Online Shopping in Pakistan",
-    template: "%s | ZeeF Trendy Store",
+    default: "Irhas'Inn | Premium Online Shopping in Pakistan",
+    template: "%s | Irhas'Inn",
   },
   description:
-    "Shop the latest trendy fashion, accessories, and lifestyle products at ZeeF Trendy Store. Premium quality, affordable prices, fast delivery across Pakistan.",
+    "Shop the latest trendy fashion, accessories, and lifestyle products at Irhas'Inn. Premium quality, affordable prices, fast delivery across Pakistan.",
   keywords: [
-    "ZeeF Trendy Store",
+    "Irhas'Inn",
     "online shopping Pakistan",
     "trendy fashion store",
     "premium e-commerce",
     "buy clothes online Pakistan",
     "accessories online store",
-    "ZeeF Store",
+    "Irhas'Inn",
   ],
-  authors: [{ name: "ZeeF Trendy Store" }],
-  creator: "ZeeF Trendy Store",
-  publisher: "ZeeF Trendy Store",
-  applicationName: "ZeeF Trendy Store",
+  authors: [{ name: "Irhas'Inn" }],
+  creator: "Irhas'Inn",
+  publisher: "Irhas'Inn",
+  applicationName: "Irhas'Inn",
   manifest: "/manifest.json",
   icons: {
     icon: [
@@ -50,7 +49,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "ZeeF Store",
+    title: "Irhas'Inn",
   },
   formatDetection: {
     email: false,
@@ -64,24 +63,24 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: siteUrl,
-    siteName: "ZeeF Trendy Store",
-    title: "ZeeF Trendy Store | Premium Online Shopping in Pakistan",
+    siteName: "Irhas'Inn",
+    title: "Irhas'Inn | Premium Online Shopping in Pakistan",
     description:
-      "Shop the latest trendy fashion, accessories, and lifestyle products at ZeeF Trendy Store. Premium quality, affordable prices, fast delivery across Pakistan.",
+      "Shop the latest trendy fashion, accessories, and lifestyle products at Irhas'Inn. Premium quality, affordable prices, fast delivery across Pakistan.",
     images: [
       {
         url: "/Logo.png",
         width: 800,
         height: 800,
-        alt: "ZeeF Trendy Store",
+        alt: "Irhas'Inn",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "ZeeF Trendy Store | Premium Online Shopping in Pakistan",
+    title: "Irhas'Inn | Premium Online Shopping in Pakistan",
     description:
-      "Shop the latest trendy fashion, accessories, and lifestyle products at ZeeF Trendy Store.",
+      "Shop the latest trendy fashion, accessories, and lifestyle products at Irhas'Inn.",
     images: ["/Logo.png"],
   },
   robots: {
@@ -125,7 +124,7 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Organization",
-              name: "ZeeF Trendy Store",
+              name: "Irhas'Inn",
               url: siteUrl,
               logo: `${siteUrl}/Logo.png`,
               sameAs: [
@@ -140,7 +139,7 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebSite",
-              name: "ZeeF Trendy Store",
+              name: "Irhas'Inn",
               url: siteUrl,
               potentialAction: {
                 "@type": "SearchAction",
@@ -153,7 +152,6 @@ export default function RootLayout({
         <Providers>
           <GoogleProvider>
             <ClientLayout>{children}</ClientLayout>
-            <NotificationPrompt />
             <RouteProgressBar />
             <AIProductChat />
           </GoogleProvider>

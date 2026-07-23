@@ -1,10 +1,6 @@
 "use client";
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { useEffect } from "react";
-import { baseUrl } from "./utils/commonFunctions";
-import { useDispatch } from "react-redux";
-import { logout } from "./Redux/Features/authSlice";
 
 export default function GoogleProvider({
   children,
@@ -19,3 +15,15 @@ export default function GoogleProvider({
     </GoogleOAuthProvider>
   );
 }
+
+/*
+ * NOTE: The app name shown on the Google Sign-In consent screen
+ * is controlled by the Google Cloud Console OAuth consent screen
+ * configuration — it CANNOT be changed from the codebase.
+ *
+ * To update it:
+ * 1. Go to https://console.cloud.google.com/apis/credentials/consent
+ * 2. Under "App information" → "App name", change it to "Irhas'Inn"
+ * 3. Optionally upload /Logo.png as the app logo
+ * 4. Save and re-verify the consent screen if needed
+ */
