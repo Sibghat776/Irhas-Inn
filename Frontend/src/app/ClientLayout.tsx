@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
+import AppLoader from "./Components/AppLoader";
 import Navbar from "./Components/Navbar";
 import Footer from "./Components/Footer";
 import Signup from "./Components/signup";
@@ -69,6 +70,9 @@ export default function ClientLayout({
 
   return (
     <>
+      {/* Branded App Loader (first-load splash screen) */}
+      <AppLoader />
+
       {/* Global Loading Overlay */}
       <LoadingOverlay />
 

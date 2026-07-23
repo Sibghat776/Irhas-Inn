@@ -86,6 +86,8 @@ const Navbar: React.FC = () => {
 
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isAppInstalled, setIsAppInstalled] = useState(false);
+  const [isiOS, setIsiOS] = useState(false);
+  const [showIOSInstructions, setShowIOSInstructions] = useState(false);
 
   const isAdmin = role === "admin" || role === "superadmin";
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -186,8 +188,20 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener("cart-updated", handleCartUpdate);
   }, [authData.username]);
 
-  // PWA install
+  // PWA install — with localStorage persistence & iOS detection
   useEffect(() => {
+    // Detect iOS Safari
+    const iOS =
+      (/iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream) ||
+      (navigator.maxTouchPoints > 0 && navigator.platform === 'MacIntel'); // iPadOS 13+
+    setIsiOS(iOS);
+
+    // Check localStorage for already installed
+    let installed = false;
+    try {
+      installed = localStorage.getItem("irhasinn_app_installed") === "true";
+    } catch {}
+
     const handleBeforeInstallPrompt = (event: any) => {
       event.preventDefault();
       setDeferredPrompt(event);
@@ -195,9 +209,19 @@ const Navbar: React.FC = () => {
     const handleAppInstalled = () => {
       setIsAppInstalled(true);
       setDeferredPrompt(null);
+      // Persist to localStorage
+      try {
+        localStorage.setItem("irhasinn_app_installed", "true");
+      } catch {}
     };
-    setIsAppInstalled(isStandaloneMode());
-    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+
+    // Check standalone mode OR localStorage flag
+    const standalone = isStandaloneMode();
+    setIsAppInstalled(standalone || installed);
+
+    if (!standalone && !installed) {
+      window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    }
     window.addEventListener("appinstalled", handleAppInstalled);
     return () => {
       window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
@@ -293,11 +317,21 @@ const Navbar: React.FC = () => {
 
   // PWA install click
   const handleInstallClick = async () => {
+    // iOS fallback — show instructions instead of native prompt
+    if (isiOS) {
+      setShowIOSInstructions(true);
+      return;
+    }
     if (!deferredPrompt) return;
     try {
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === "accepted") setDeferredPrompt(null);
+      if (outcome === "accepted") {
+        setDeferredPrompt(null);
+        try {
+          localStorage.setItem("irhasinn_app_installed", "true");
+        } catch {}
+      }
     } catch {
       /* user cancelled */
     }
@@ -558,16 +592,18 @@ const Navbar: React.FC = () => {
               </Link>
 
               {/* Install App */}
-              {deferredPrompt && !isAppInstalled && (
-                <button
-                  onClick={handleInstallClick}
-                  className="rounded-xl bg-gradient-to-r from-[#C8A84E] to-[#B8943F] px-3 py-1.5 text-[9px] font-bold text-white transition-all duration-300 hover:shadow-lg hover:shadow-[#C8A84E]/25 hover:scale-105 active:scale-95"
-                >
-                  <span className="flex items-center gap-1">
-                    <Sparkles size={10} />
-                    Download
-                  </span>
-                </button>
+              {!isAppInstalled && (deferredPrompt || isiOS) && (
+                <>
+                  <button
+                    onClick={handleInstallClick}
+                    className="rounded-xl bg-gradient-to-r from-[#C8A84E] to-[#B8943F] px-3 py-1.5 text-[9px] font-bold text-white transition-all duration-300 hover:shadow-lg hover:shadow-[#C8A84E]/25 hover:scale-105 active:scale-95"
+                  >
+                    <span className="flex items-center gap-1">
+                      <Sparkles size={10} />
+                      {isiOS ? "Install" : "Download"}
+                    </span>
+                  </button>
+                </>
               )}
 
               {/* Auth */}
@@ -909,14 +945,14 @@ const Navbar: React.FC = () => {
                     </Link>
                   </div>
 
-                  {deferredPrompt && !isAppInstalled && (
+                  {!isAppInstalled && (deferredPrompt || isiOS) && (
                     <button
                       onClick={handleInstallClick}
                       className="w-full rounded-xl bg-gradient-to-r from-[#C8A84E] to-[#B8943F] py-3 text-xs font-bold text-white hover:shadow-lg hover:shadow-[#C8A84E]/20 transition-all active:scale-[0.98]"
                     >
                       <span className="flex items-center justify-center gap-1.5">
                         <Sparkles size={14} />
-                        Download App
+                        {isiOS ? "Install on iOS" : "Download App"}
                       </span>
                     </button>
                   )}
@@ -987,6 +1023,57 @@ const Navbar: React.FC = () => {
         </div>
       )}
 
+      {/* ──────── iOS Install Instructions Modal ──────── */}
+      {showIOSInstructions && (
+        <div className="fixed inset-0 z-[200] flex items-end justify-center bg-black/50 backdrop-blur-sm p-0 sm:items-center sm:p-6">
+          <div className="w-full max-w-sm rounded-t-3xl bg-white p-6 shadow-2xl sm:rounded-2xl animate-slide-up">
+            <div className="text-center mb-5">
+              <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#222831]">
+                <img
+                  src="/Irha Studio-12.jpg"
+                  alt="Irhas'Inn"
+                  className="h-10 w-10 rounded-xl object-cover"
+                />
+              </div>
+              <h3 className="text-lg font-bold text-[#222831]">
+                Install Irhas'Inn
+              </h3>
+              <p className="mt-1 text-xs text-gray-500">
+                Add to your home screen for the best experience
+              </p>
+            </div>
+
+            <ol className="space-y-3 mb-5">
+              <li className="flex items-center gap-3 rounded-xl bg-gray-50 p-3">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#C8A84E] text-[10px] font-bold text-white">1</span>
+                <span className="text-xs font-medium text-gray-700">
+                  Tap the <strong>Share</strong> button <span className="text-base">📤</span> in Safari
+                </span>
+              </li>
+              <li className="flex items-center gap-3 rounded-xl bg-gray-50 p-3">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#C8A84E] text-[10px] font-bold text-white">2</span>
+                <span className="text-xs font-medium text-gray-700">
+                  Scroll down and tap <strong>"Add to Home Screen"</strong>
+                </span>
+              </li>
+              <li className="flex items-center gap-3 rounded-xl bg-gray-50 p-3">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#C8A84E] text-[10px] font-bold text-white">3</span>
+                <span className="text-xs font-medium text-gray-700">
+                  Tap <strong>"Add"</strong> in the top-right corner
+                </span>
+              </li>
+            </ol>
+
+            <button
+              onClick={() => setShowIOSInstructions(false)}
+              className="w-full rounded-xl bg-[#C8A84E] py-3 text-sm font-bold text-white hover:bg-[#B8943F] transition-colors active:scale-[0.98]"
+            >
+              Got it
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ──────── ANIMATION KEYFRAMES ──────── */}
       <style jsx global>{`
         @keyframes dropdownFade {
@@ -1000,6 +1087,10 @@ const Navbar: React.FC = () => {
         @keyframes fadeIn {
           from { opacity: 0; }
           to { opacity: 1; }
+        }
+        @keyframes slideUp {
+          from { transform: translateY(32px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
         }
         @keyframes cartBounce {
           0%, 100% { transform: scale(1); }
@@ -1020,6 +1111,9 @@ const Navbar: React.FC = () => {
         }
         .animate-fade-in {
           animation: fadeIn 0.2s ease-out both;
+        }
+        .animate-slide-up {
+          animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
         .animate-cart-bounce {
           animation: cartBounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
