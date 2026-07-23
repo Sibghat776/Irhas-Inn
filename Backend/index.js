@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
+import rawBody from "raw-body";
 
 import { connectDB } from "./utils/commonFunctions.js";
 import { authRoute } from "./Routes/authRoute.js";
@@ -50,6 +51,12 @@ app.use(cookieParser());
 app.use(
   express.json({
     limit: "50mb",
+    verify: (req, res, next) => {
+      if (req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data')) {
+        return next();
+      }
+      return next();
+    },
   }),
 );
 
@@ -57,6 +64,12 @@ app.use(
   express.urlencoded({
     limit: "50mb",
     extended: true,
+    verify: (req, res, next) => {
+      if (req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data')) {
+        return next();
+      }
+      return next();
+    },
   }),
 );
 
