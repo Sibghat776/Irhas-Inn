@@ -194,172 +194,201 @@ const Signup = () => {
         <div className="relative w-full max-w-[800px] bg-white rounded-[28px] shadow-[0_24px_60px_-15px_rgba(0,0,0,0.3)] border border-white/10 overflow-hidden flex">
           {/* LEFT: Banner Image (hidden on mobile) */}
           <div className="hidden md:block w-[45%] relative overflow-hidden bg-[#222831]">
-            <img
-              src="/Login Screen-01.jpg"
-              alt="Welcome"
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
-            <div className="absolute bottom-0 left-0 right-0 p-6">
-              <h3 className="text-white text-lg font-black leading-tight">Join</h3>
-              <p className="text-[#C8A84E] text-xl font-black mt-1">Irhas'Inn</p>
-              <p className="text-white/70 text-xs mt-2 leading-relaxed">Customize Product All In One — Create Your Account</p>
+            {/* Blurred Zoomed Background */}
+            <div className="absolute inset-0 overflow-hidden">
+              <img
+                src="/Login Screen-01.jpg"
+                alt=""
+                className="absolute inset-0 w-full h-full object-cover scale-125 blur-2xl"
+              />
+
+              {/* Background Dark Overlay */}
+              <div className="absolute inset-0 bg-black/25" />
+
+              {/* Soft Vignette */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10" />
+            </div>
+
+            {/* Main Clear Image */}
+            <div className="absolute inset-0 z-10 flex items-center justify-center">
+              <img
+                src="/Login Screen-01.jpg"
+                alt="Welcome"
+                className="absolute inset-0 w-full h-full object-contain"
+              />
+            </div>
+
+            {/* Content Overlay */}
+            <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
+
+            <div className="absolute bottom-0 left-0 right-0 z-30 p-6">
+              <h3 className="text-white text-lg font-black leading-tight">
+                Welcome to
+              </h3>
+
+              <p className="text-[#C8A84E] text-xl font-black mt-1">
+                Irhas'Inn
+              </p>
+
+              <p className="text-white/70 text-xs mt-2 leading-relaxed">
+                Customize Product All In One — Enjoy Shopping
+              </p>
             </div>
           </div>
 
           {/* RIGHT: Form */}
           <div className="w-full md:w-[55%] p-8 sm:p-9 max-h-[92vh] overflow-y-auto no-scrollbar">
-          {/* CLOSE MODAL BUTTON */}
-          <button
-            onClick={() => dispatch(closeSignup())}
-            className="absolute right-5 top-5 p-2 text-[#222831] hover:text-[#C8A84E] bg-[#FFFFFF] hover:bg-[#EEEEEE] rounded-full transition-all duration-300"
-          >
-            <X className="w-4 h-4 stroke-[2.5]" />
-          </button>
+            {/* CLOSE MODAL BUTTON */}
+            <button
+              onClick={() => dispatch(closeSignup())}
+              className="absolute right-5 top-5 p-2 text-[#222831] hover:text-[#C8A84E] bg-[#FFFFFF] hover:bg-[#EEEEEE] rounded-full transition-all duration-300"
+            >
+              <X className="w-4 h-4 stroke-[2.5]" />
+            </button>
 
-          {/* BRAND TITLE / HEADER */}
-          <div className="text-center mb-8 mt-2">
-            <div className="inline-flex items-center justify-center bg-[#C8A84E] text-white w-10 h-10 rounded-xl mb-3 shadow-md shadow-[#C8A84E]/10">
-              <Sparkles className="w-5 h-5 fill-white/10" />
+            {/* BRAND TITLE / HEADER */}
+            <div className="text-center mb-8 mt-2">
+              <div className="inline-flex items-center justify-center bg-[#C8A84E] text-white w-10 h-10 rounded-xl mb-3 shadow-md shadow-[#C8A84E]/10">
+                <Sparkles className="w-5 h-5 fill-white/10" />
+              </div>
+              <h2 className="text-2xl font-bold tracking-tight text-[#222831] sm:text-3xl">
+                Create Account
+              </h2>
+              <p className="text-xs font-medium text-[#222831] mt-1.5 uppercase tracking-widest">
+                Irhas'Inn Premium Network
+              </p>
             </div>
-            <h2 className="text-2xl font-bold tracking-tight text-[#222831] sm:text-3xl">
-              Create Account
-            </h2>
-            <p className="text-xs font-medium text-[#222831] mt-1.5 uppercase tracking-widest">
-              Irhas'Inn Premium Network
-            </p>
-          </div>
 
-          {/* OAUTH INTEGRATION */}
-          <div className="w-full flex justify-center mb-5 transform transition-all duration-300 hover:scale-[1.01]">
-            <GoogleLogin onSuccess={handleGoogleSignup} />
-          </div>
+            {/* OAUTH INTEGRATION */}
+            <div className="w-full flex justify-center mb-5 transform transition-all duration-300 hover:scale-[1.01]">
+              <GoogleLogin onSuccess={handleGoogleSignup} />
+            </div>
 
-          {/* STYLISH ACCENT DIVIDER */}
-          <div className="flex items-center gap-4 my-6">
-            <div className="h-[1px] bg-[#FFFFFF] flex-1"></div>
-            <span className="text-[#222831] text-[10px] font-bold uppercase tracking-[0.2em] select-none">
-              Or Register Electronically
-            </span>
-            <div className="h-[1px] bg-[#FFFFFF] flex-1"></div>
-          </div>
+            {/* STYLISH ACCENT DIVIDER */}
+            <div className="flex items-center gap-4 my-6">
+              <div className="h-[1px] bg-[#FFFFFF] flex-1"></div>
+              <span className="text-[#222831] text-[10px] font-bold uppercase tracking-[0.2em] select-none">
+                Or Register Electronically
+              </span>
+              <div className="h-[1px] bg-[#FFFFFF] flex-1"></div>
+            </div>
 
-          {/* REGISTRATION FORM */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* AVATAR SELECTION COMPONENT */}
-            <div className="flex flex-col items-center justify-center mb-6">
-              <label className="relative cursor-pointer group select-none">
-                <input
-                  type="file"
-                  hidden
-                  onChange={handleImageChange}
-                  accept="image/*"
-                />
+            {/* REGISTRATION FORM */}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* AVATAR SELECTION COMPONENT */}
+              <div className="flex flex-col items-center justify-center mb-6">
+                <label className="relative cursor-pointer group select-none">
+                  <input
+                    type="file"
+                    hidden
+                    onChange={handleImageChange}
+                    accept="image/*"
+                  />
 
-                <div className="w-24 h-24 rounded-full border border-[#EEEEEE] p-1 bg-white shadow-sm transition-all duration-300 group-hover:border-[#EEEEEE] group-hover:shadow-md overflow-hidden relative">
-                  <div className="w-full h-full rounded-full overflow-hidden bg-[#FFFFFF] flex items-center justify-center relative">
-                    {preview ? (
-                      <img
-                        src={preview}
-                        alt="Profile snapshot"
-                        className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
-                      />
-                    ) : (
-                      <ImagePlus className="w-6 h-6 text-[#222831] stroke-[1.5]" />
-                    )}
+                  <div className="w-24 h-24 rounded-full border border-[#EEEEEE] p-1 bg-white shadow-sm transition-all duration-300 group-hover:border-[#EEEEEE] group-hover:shadow-md overflow-hidden relative">
+                    <div className="w-full h-full rounded-full overflow-hidden bg-[#FFFFFF] flex items-center justify-center relative">
+                      {preview ? (
+                        <img
+                          src={preview}
+                          alt="Profile snapshot"
+                          className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <ImagePlus className="w-6 h-6 text-[#222831] stroke-[1.5]" />
+                      )}
+                    </div>
                   </div>
-                </div>
 
-                {/* Micro Camera Badge Overlay */}
-                <div className="absolute bottom-0 right-0 bg-[#C8A84E] text-white p-1.5 rounded-full shadow-md border border-white transition-all duration-300 group-hover:bg-[#FFFFFF]">
-                  <Camera className="w-3.5 h-3.5 stroke-[2]" />
-                </div>
-              </label>
-            </div>
-
-            {/* FORM INPUT STACKS */}
-            <div className="space-y-3.5">
-              {/* USERNAME ARCHITECTURE */}
-              <div className="space-y-1.5">
-                <Input
-                  icon={<User className="w-4 h-4" />}
-                  id="username"
-                  type="text"
-                  value={credentials.username}
-                  onChange={handleChange}
-                  placeholder="Choose unique username"
-                />
+                  {/* Micro Camera Badge Overlay */}
+                  <div className="absolute bottom-0 right-0 bg-[#C8A84E] text-white p-1.5 rounded-full shadow-md border border-white transition-all duration-300 group-hover:bg-[#FFFFFF]">
+                    <Camera className="w-3.5 h-3.5 stroke-[2]" />
+                  </div>
+                </label>
               </div>
 
-              {/* EMAIL ARCHITECTURE */}
-              <Input
-                icon={<Mail className="w-4 h-4" />}
-                id="email"
-                type="email"
-                value={credentials.email}
-                onChange={handleChange}
-                placeholder="Secure email address"
-              />
+              {/* FORM INPUT STACKS */}
+              <div className="space-y-3.5">
+                {/* USERNAME ARCHITECTURE */}
+                <div className="space-y-1.5">
+                  <Input
+                    icon={<User className="w-4 h-4" />}
+                    id="username"
+                    type="text"
+                    value={credentials.username}
+                    onChange={handleChange}
+                    placeholder="Choose unique username"
+                  />
+                </div>
 
-              {/* PHONE ARCHITECTURE */}
-              <Input
-                icon={<Phone className="w-4 h-4" />}
-                id="phoneNo"
-                type="tel"
-                value={credentials.phoneNo}
-                onChange={handleChange}
-                placeholder="Contact number (03xx-xxxxxxx)"
-              />
-
-              {/* PASSWORD ARCHITECTURE */}
-              <div className="relative group/pass">
-                <span className="absolute left-4 top-[15px] text-[#222831] group-focus-within/pass:text-[#222831] transition-colors duration-300">
-                  <Lock className="w-4 h-4 stroke-[1.8]" />
-                </span>
-
-                <input
-                  type={showPassword ? "text" : "password"}
-                  id="password"
-                  value={credentials.password}
+                {/* EMAIL ARCHITECTURE */}
+                <Input
+                  icon={<Mail className="w-4 h-4" />}
+                  id="email"
+                  type="email"
+                  value={credentials.email}
                   onChange={handleChange}
-                  className="w-full bg-[#FFFFFF] hover:bg-[#EEEEEE] focus:bg-white border border-[#EEEEEE] focus:border-[#C8A84E] transition-all duration-300 p-3.5 pl-11 pr-11 rounded-xl outline-none font-medium text-sm text-[#222831] placeholder-[#EEEEEE]/90 tracking-wide"
-                  placeholder="Password"
+                  placeholder="Secure email address"
                 />
 
+                {/* PHONE ARCHITECTURE */}
+                <Input
+                  icon={<Phone className="w-4 h-4" />}
+                  id="phoneNo"
+                  type="tel"
+                  value={credentials.phoneNo}
+                  onChange={handleChange}
+                  placeholder="Contact number (03xx-xxxxxxx)"
+                />
+
+                {/* PASSWORD ARCHITECTURE */}
+                <div className="relative group/pass">
+                  <span className="absolute left-4 top-[15px] text-[#222831] group-focus-within/pass:text-[#222831] transition-colors duration-300">
+                    <Lock className="w-4 h-4 stroke-[1.8]" />
+                  </span>
+
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    value={credentials.password}
+                    onChange={handleChange}
+                    className="w-full bg-[#FFFFFF] hover:bg-[#EEEEEE] focus:bg-white border border-[#EEEEEE] focus:border-[#C8A84E] transition-all duration-300 p-3.5 pl-11 pr-11 rounded-xl outline-none font-medium text-sm text-[#222831] placeholder-[#EEEEEE]/90 tracking-wide"
+                    placeholder="Password"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-[15px] text-[#222831] hover:text-[#C8A84E] transition-colors duration-200"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-4 h-4 stroke-[1.8]" />
+                    ) : (
+                      <Eye className="w-4 h-4 stroke-[1.8]" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* COMPREHENSIVE FORM CONSOLE BUTTON */}
+              <div className="pt-3">
                 <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-[15px] text-[#222831] hover:text-[#C8A84E] transition-colors duration-200"
+                  type="submit"
+                  disabled={data.loading}
+                  className="w-full bg-[#C8A84E] hover:bg-[#B8943F] text-white font-medium text-sm py-3.5 rounded-xl shadow-lg shadow-[#C8A84E]/10 hover:shadow-xl transition-all duration-300 transform active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none tracking-wide"
                 >
-                  {showPassword ? (
-                    <EyeOff className="w-4 h-4 stroke-[1.8]" />
-                  ) : (
-                    <Eye className="w-4 h-4 stroke-[1.8]" />
-                  )}
+                  Create Account
                 </button>
               </div>
-            </div>
+            </form>
 
-            {/* COMPREHENSIVE FORM CONSOLE BUTTON */}
-            <div className="pt-3">
-              <button
-                type="submit"
-                disabled={data.loading}
-                className="w-full bg-[#C8A84E] hover:bg-[#B8943F] text-white font-medium text-sm py-3.5 rounded-xl shadow-lg shadow-[#C8A84E]/10 hover:shadow-xl transition-all duration-300 transform active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none tracking-wide"
-              >
-                Create Account
-              </button>
-            </div>
-          </form>
-
-          {/* FORMAL DISCLAIMER FOOTER */}
-          <p className="text-center text-[11px] text-[#222831] mt-6 leading-relaxed px-4">
-            By accessing this portal, you align with Irhas'Inn's formal luxury
-            operations framework & global verification guidelines.
-          </p>
+            {/* FORMAL DISCLAIMER FOOTER */}
+            <p className="text-center text-[11px] text-[#222831] mt-6 leading-relaxed px-4">
+              By accessing this portal, you align with Irhas'Inn's formal luxury
+              operations framework & global verification guidelines.
+            </p>
+          </div>
+        </div>
       </div>
-    </div>
-    </div>
     </>
   );
 };

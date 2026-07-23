@@ -200,16 +200,45 @@ const Login = () => {
         <div className="relative w-full max-w-[800px] bg-white rounded-[28px] shadow-[0_24px_60px_-15px_rgba(0,0,0,0.3)] border border-white/10 overflow-hidden flex">
           {/* LEFT: Banner Image (hidden on mobile) */}
           <div className="hidden md:block w-[45%] relative overflow-hidden bg-[#222831]">
-            <img
-              src="/Login Screen-01.jpg"
-              alt="Welcome"
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
-            <div className="absolute bottom-0 left-0 right-0 p-6">
-              <h3 className="text-white text-lg font-black leading-tight">Welcome to</h3>
-              <p className="text-[#C8A84E] text-xl font-black mt-1">Irhas'Inn</p>
-              <p className="text-white/70 text-xs mt-2 leading-relaxed">Customize Product All In One — Enjoy Shopping</p>
+            {/* Blurred Zoomed Background */}
+            <div className="absolute inset-0 overflow-hidden">
+              <img
+                src="/Login Screen-01.jpg"
+                alt=""
+                className="absolute inset-0 w-full h-full object-cover scale-125 blur-2xl"
+              />
+
+              {/* Background Dark Overlay */}
+              <div className="absolute inset-0 bg-black/25" />
+
+              {/* Soft Vignette */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10" />
+            </div>
+
+            {/* Main Clear Image */}
+            <div className="absolute inset-0 z-10 flex items-center justify-center">
+              <img
+                src="/Login Screen-01.jpg"
+                alt="Welcome"
+                className="absolute inset-0 w-full h-full object-contain"
+              />
+            </div>
+
+            {/* Content Overlay */}
+            <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
+
+            <div className="absolute bottom-0 left-0 right-0 z-30 p-6">
+              <h3 className="text-white text-lg font-black leading-tight">
+                Welcome to
+              </h3>
+
+              <p className="text-[#C8A84E] text-xl font-black mt-1">
+                Irhas'Inn
+              </p>
+
+              <p className="text-white/70 text-xs mt-2 leading-relaxed">
+                Customize Product All In One — Enjoy Shopping
+              </p>
             </div>
           </div>
 
