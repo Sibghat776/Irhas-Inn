@@ -73,9 +73,9 @@ const StepBar: React.FC<{ current: number }> = ({ current }) => (
           <div className="flex flex-col items-center gap-1.5">
             <div
               className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-black transition-all duration-300 ${done
-                ? "bg-[#00ADB5] text-white"
+                ? "bg-[#C8A84E] text-white"
                 : active
-                  ? "bg-[#00ADB5] text-white scale-110"
+                  ? "bg-[#C8A84E] text-white scale-110"
                   : "bg-[#FFFFFF] text-[#222831]"
                 }`}
             >
@@ -90,7 +90,7 @@ const StepBar: React.FC<{ current: number }> = ({ current }) => (
               <div className="h-0.5 w-full rounded-full overflow-hidden bg-[#FFFFFF]">
                 <div
                   className="h-full rounded-full transition-all duration-500"
-                  style={{ width: done ? "100%" : "0%", background: "#00ADB5" }}
+                  style={{ width: done ? "100%" : "0%", background: "#C8A84E" }}
                 />
               </div>
             </div>
@@ -287,7 +287,7 @@ const CheckoutPage = () => {
           <button
             type="button"
             onClick={() => router.push("/")}
-            className="inline-flex items-center gap-2 rounded-2xl border border-[#EEEEEE] bg-white px-4 py-2.5 text-sm font-semibold text-[#222831] shadow-sm transition hover:border-[#00ADB5]/30 hover:bg-[#EEEEEE]"
+            className="inline-flex items-center gap-2 rounded-2xl border border-[#EEEEEE] bg-white px-4 py-2.5 text-sm font-semibold text-[#222831] shadow-sm transition hover:border-[#C8A84E]/30 hover:bg-[#EEEEEE]"
           >
             <ArrowLeft size={16} /> Back
           </button>
@@ -297,9 +297,9 @@ const CheckoutPage = () => {
 
         {/* Order confirmed */}
         {orderPlaced ? (
-          <div className="rounded-3xl overflow-hidden" style={{ background: "linear-gradient(135deg, #FFFFFF 0%, #EEEEEE 100%)", border: "1px solid #00ADB5" }}>
+          <div className="rounded-3xl overflow-hidden" style={{ background: "linear-gradient(135deg, #FFFFFF 0%, #EEEEEE 100%)", border: "1px solid #C8A84E" }}>
             <div className="p-10 sm:p-16 text-center">
-              <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-[#FFFFFF] mb-6 shadow-lg shadow-[#00ADB5]/20">
+              <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-[#FFFFFF] mb-6 shadow-lg shadow-[#C8A84E]/20">
                 <CheckCircle className="h-10 w-10 text-white" />
               </div>
               <h2 className="text-3xl sm:text-4xl font-black text-[#222831]">Order Confirmed!</h2>
@@ -323,7 +323,7 @@ const CheckoutPage = () => {
             <button
               type="button"
               onClick={() => router.push("/")}
-              className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-[#00ADB5] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#00ADB5]"
+              className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-[#C8A84E] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#B8943F]"
             >
               <ShoppingCart size={16} /> Browse products
             </button>
@@ -346,7 +346,7 @@ const CheckoutPage = () => {
                       if (!auth.username) { dispatch(openLogin()); showToast("Login required.", "info"); return; }
                       setUseSavedAddress((p) => !p);
                     }}
-                    className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all ${useSavedAddress ? "bg-[#00ADB5] text-white" : "bg-[#FFFFFF] text-[#222831] hover:bg-[#EEEEEE]"
+                    className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all ${useSavedAddress ? "bg-[#C8A84E] text-white" : "bg-[#FFFFFF] text-[#222831] hover:bg-[#EEEEEE]"
                       }`}
                   >
                     <MapPin size={14} />
@@ -363,7 +363,7 @@ const CheckoutPage = () => {
                         value={form.fullName}
                         onChange={handleInputChange}
                         placeholder="Recipient name"
-                        className="w-full rounded-2xl border border-[#EEEEEE] bg-[#FFFFFF] px-4 py-3 text-sm text-[#222831] placeholder:text-[#222831] outline-none transition focus:border-[#00ADB5] focus:bg-white focus:ring-3 focus:ring-[#00ADB5]/10"
+                        className="w-full rounded-2xl border border-[#EEEEEE] bg-[#FFFFFF] px-4 py-3 text-sm text-[#222831] placeholder:text-[#222831] outline-none transition focus:border-[#C8A84E] focus:bg-white focus:ring-3 focus:ring-[#C8A84E]/10"
                       />
                     </label>
                     <label className="block space-y-1.5">
@@ -373,7 +373,7 @@ const CheckoutPage = () => {
                         value={form.phoneNo}
                         onChange={handleInputChange}
                         placeholder="03XX-XXXXXXX"
-                        className="w-full rounded-2xl border border-[#EEEEEE] bg-[#FFFFFF] px-4 py-3 text-sm text-[#222831] placeholder:text-[#222831] outline-none transition focus:border-[#00ADB5] focus:bg-white focus:ring-3 focus:ring-[#00ADB5]/10"
+                        className="w-full rounded-2xl border border-[#EEEEEE] bg-[#FFFFFF] px-4 py-3 text-sm text-[#222831] placeholder:text-[#222831] outline-none transition focus:border-[#C8A84E] focus:bg-white focus:ring-3 focus:ring-[#C8A84E]/10"
                       />
                     </label>
                   </div>
@@ -386,7 +386,7 @@ const CheckoutPage = () => {
                       onChange={handleInputChange}
                       placeholder="Street, building, area"
                       rows={3}
-                      className="w-full rounded-2xl border border-[#EEEEEE] bg-[#FFFFFF] px-4 py-3 text-sm text-[#222831] placeholder:text-[#222831] outline-none transition focus:border-[#00ADB5] focus:bg-white focus:ring-3 focus:ring-[#00ADB5]/10 resize-none"
+                      className="w-full rounded-2xl border border-[#EEEEEE] bg-[#FFFFFF] px-4 py-3 text-sm text-[#222831] placeholder:text-[#222831] outline-none transition focus:border-[#C8A84E] focus:bg-white focus:ring-3 focus:ring-[#C8A84E]/10 resize-none"
                     />
                     {auth.username && !userResponse?.data?.address?.trim() && (
                       <span className="text-[11px] text-[#222831]">
@@ -399,18 +399,18 @@ const CheckoutPage = () => {
                     <label className="block space-y-1.5">
                       <span className="text-[11px] font-bold uppercase tracking-wider text-[#222831]">City</span>
                       <input name="city" value={form.city} onChange={handleInputChange}
-                        className="w-full rounded-2xl border border-[#EEEEEE] bg-[#FFFFFF] px-4 py-3 text-sm text-[#222831] outline-none transition focus:border-[#00ADB5] focus:bg-white focus:ring-3 focus:ring-[#00ADB5]/10" />
+                        className="w-full rounded-2xl border border-[#EEEEEE] bg-[#FFFFFF] px-4 py-3 text-sm text-[#222831] outline-none transition focus:border-[#C8A84E] focus:bg-white focus:ring-3 focus:ring-[#C8A84E]/10" />
                     </label>
                     <label className="block space-y-1.5">
                       <span className="text-[11px] font-bold uppercase tracking-wider text-[#222831]">Country</span>
                       <input name="country" value={form.country} onChange={handleInputChange}
-                        className="w-full rounded-2xl border border-[#EEEEEE] bg-[#FFFFFF] px-4 py-3 text-sm text-[#222831] outline-none transition focus:border-[#00ADB5] focus:bg-white focus:ring-3 focus:ring-[#00ADB5]/10" />
+                        className="w-full rounded-2xl border border-[#EEEEEE] bg-[#FFFFFF] px-4 py-3 text-sm text-[#222831] outline-none transition focus:border-[#C8A84E] focus:bg-white focus:ring-3 focus:ring-[#C8A84E]/10" />
                     </label>
                   </div>
 
                   {/* COD badge */}
                   <div className="flex items-center gap-4 rounded-2xl p-4" style={{ background: "rgba(84,107,65,0.05)", border: "1px solid rgba(84,107,65,0.12)" }}>
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#00ADB5]">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#C8A84E]">
                       <CreditCard size={18} className="text-white" />
                     </div>
                     <div>
@@ -425,7 +425,7 @@ const CheckoutPage = () => {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="relative w-full overflow-hidden rounded-2xl bg-[#00ADB5] py-4 text-sm font-black uppercase tracking-[0.2em] text-white shadow-lg shadow-[#00ADB5]/25 transition-all hover:bg-[#00ADB5] hover:shadow-xl hover:shadow-[#00ADB5]/30 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:translate-y-0"
+                    className="relative w-full overflow-hidden rounded-2xl bg-[#C8A84E] py-4 text-sm font-black uppercase tracking-[0.2em] text-white shadow-lg shadow-[#C8A84E]/25 transition-all hover:bg-[#B8943F] hover:shadow-xl hover:shadow-[#C8A84E]/30 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:translate-y-0"
                   >
                     {loading ? (
                       <span className="flex items-center justify-center gap-2">
@@ -494,7 +494,7 @@ const CheckoutPage = () => {
                                   <select
                                     value={item.selectedColor || ""}
                                     onChange={(e) => handleVariantChange(item._id, "selectedColor", e.target.value)}
-                                    className="min-h-9 rounded-lg border border-[#EEEEEE] bg-white px-2.5 text-[11px] font-semibold normal-case tracking-normal text-[#222831] outline-none transition focus:border-[#00ADB5]"
+                                    className="min-h-9 rounded-lg border border-[#EEEEEE] bg-white px-2.5 text-[11px] font-semibold normal-case tracking-normal text-[#222831] outline-none transition focus:border-[#C8A84E]"
                                   >
                                     <option value="" disabled>Select color</option>
                                     {getVariantOptions(item.colors).map((color) => <option key={color} value={color}>{color}</option>)}
@@ -507,7 +507,7 @@ const CheckoutPage = () => {
                                   <select
                                     value={item.selectedSize || ""}
                                     onChange={(e) => handleVariantChange(item._id, "selectedSize", e.target.value)}
-                                    className="min-h-9 rounded-lg border border-[#EEEEEE] bg-white px-2.5 text-[11px] font-semibold normal-case tracking-normal text-[#222831] outline-none transition focus:border-[#00ADB5]"
+                                    className="min-h-9 rounded-lg border border-[#EEEEEE] bg-white px-2.5 text-[11px] font-semibold normal-case tracking-normal text-[#222831] outline-none transition focus:border-[#C8A84E]"
                                   >
                                     <option value="" disabled>Select size</option>
                                     {getVariantOptions(item.sizes).map((size) => <option key={size} value={size}>{size}</option>)}

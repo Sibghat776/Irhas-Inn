@@ -14,7 +14,7 @@ const Footer: React.FC = () => {
   return (
     <footer className="relative bg-[#222831] text-white">
       {/* Top accent line */}
-      <div className="relative h-[2px] bg-gradient-to-r from-transparent via-[#00ADB5] to-transparent"></div>
+      <div className="relative h-[2px] bg-gradient-to-r from-transparent via-[#C8A84E] to-transparent"></div>
 
       <div className="max-w-7xl mx-auto px-4 pt-14 pb-0">
         {/* Main 4-Column Grid */}
@@ -33,16 +33,16 @@ const Footer: React.FC = () => {
             </p>
             <div className="space-y-2 text-sm text-gray-400">
               <div className="flex items-start gap-2">
-                <MapPin size={15} className="text-[#00ADB5] mt-0.5 shrink-0" />
+                <MapPin size={15} className="text-[#C8A84E] mt-0.5 shrink-0" />
                 <span>Karachi, Pakistan</span>
               </div>
               <div className="flex items-center gap-2">
-                <Phone size={15} className="text-[#00ADB5] shrink-0" />
+                <Phone size={15} className="text-[#C8A84E] shrink-0" />
                 <span>+92 334 3688913</span>
               </div>
               <div className="flex items-center gap-2">
-                <Mail size={15} className="text-[#00ADB5] shrink-0" />
-                <a href="mailto:ullahsibghat786@gmail.com" className="hover:text-[#00ADB5] transition-colors">
+                <Mail size={15} className="text-[#C8A84E] shrink-0" />
+                <a href="mailto:ullahsibghat786@gmail.com" className="hover:text-[#C8A84E] transition-colors">
                   ullahsibghat786@gmail.com
                 </a>
               </div>
@@ -65,7 +65,7 @@ const Footer: React.FC = () => {
                 <li key={item.name}>
                   <Link
                     href={item.href}
-                    className="text-gray-400 hover:text-[#00ADB5] transition-colors duration-200"
+                    className="text-gray-400 hover:text-[#C8A84E] transition-colors duration-200"
                   >
                     {item.name}
                   </Link>
@@ -81,8 +81,8 @@ const Footer: React.FC = () => {
             </h3>
             <ul className="space-y-2.5 text-sm">
               {[
-                { name: "About Us", href: "/productsPage" },
-                { name: "Contact Us", href: "/productsPage" },
+                { name: "About Us", href: "/#about" },
+                { name: "Contact Us", href: "/#contact" },
                 { name: "FAQ", href: "#" },
                 { name: "Privacy Policy", href: "#" },
                 { name: "Terms & Conditions", href: "#" },
@@ -90,7 +90,7 @@ const Footer: React.FC = () => {
                 <li key={item.name}>
                   <Link
                     href={item.href}
-                    className="text-gray-400 hover:text-[#00ADB5] transition-colors duration-200"
+                    className="text-gray-400 hover:text-[#C8A84E] transition-colors duration-200"
                   >
                     {item.name}
                   </Link>
@@ -111,9 +111,9 @@ const Footer: React.FC = () => {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder-gray-500 outline-none focus:border-[#00ADB5] transition-all"
+                className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder-gray-500 outline-none focus:border-[#C8A84E] transition-all"
               />
-              <button className="w-full px-4 py-2.5 bg-[#00ADB5] hover:bg-[#0099a1] text-white text-sm font-bold rounded-lg transition-all uppercase tracking-wider">
+              <button className="w-full px-4 py-2.5 bg-[#C8A84E] hover:bg-[#B8943F] text-white text-sm font-bold rounded-lg transition-all uppercase tracking-wider">
                 Subscribe
               </button>
             </div>
@@ -121,7 +121,7 @@ const Footer: React.FC = () => {
               <Link
                 href="https://facebook.com/zeeftrendystore"
                 target="_blank"
-                className="w-9 h-9 rounded-lg bg-white/10 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-[#1877F2] hover:border-[#1877F2] transition-all"
+                className="w-9 h-9 rounded-lg bg-white/10 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-[#C8A84E] hover:border-[#C8A84E] transition-all"
                 aria-label="Facebook"
               >
                 <Facebook size={14} />
@@ -129,7 +129,7 @@ const Footer: React.FC = () => {
               <Link
                 href="https://instagram.com/zeeftrendystore"
                 target="_blank"
-                className="w-9 h-9 rounded-lg bg-white/10 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-[#E4405F] hover:border-[#E4405F] transition-all"
+                className="w-9 h-9 rounded-lg bg-white/10 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-[#C8A84E] hover:border-[#C8A84E] transition-all"
                 aria-label="Instagram"
               >
                 <Instagram size={14} />
@@ -137,7 +137,7 @@ const Footer: React.FC = () => {
               <Link
                 href="https://tiktok.com/@zeeftrendystore"
                 target="_blank"
-                className="w-9 h-9 rounded-lg bg-white/10 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-black hover:border-black transition-all"
+                className="w-9 h-9 rounded-lg bg-white/10 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-[#C8A84E] hover:border-[#C8A84E] transition-all"
                 aria-label="TikTok"
               >
                 <TikTokIcon />

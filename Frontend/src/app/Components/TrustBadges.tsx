@@ -22,9 +22,9 @@ const TrustBadges: React.FC = () => {
                 key={badge.label}
                 className="flex items-center gap-3 py-5 px-4 group cursor-default transition-all duration-300 hover:bg-gray-50/80"
               >
-                <div className="relative w-11 h-11 rounded-full bg-[#00ADB5]/10 flex items-center justify-center shrink-0 group-hover:bg-[#00ADB5]/20 transition-all duration-300">
-                  <Icon size={19} className="text-[#00ADB5] group-hover:scale-110 transition-transform duration-300" />
-                  <div className="absolute inset-0 rounded-full bg-[#00ADB5]/5 scale-0 group-hover:scale-150 transition-transform duration-500" />
+                <div className="relative w-11 h-11 rounded-full bg-[#C8A84E]/10 flex items-center justify-center shrink-0 group-hover:bg-[#C8A84E]/20 transition-all duration-300">
+                  <Icon size={19} className="text-[#C8A84E] group-hover:scale-110 transition-transform duration-300" />
+                  <div className="absolute inset-0 rounded-full bg-[#C8A84E]/5 scale-0 group-hover:scale-150 transition-transform duration-500" />
                 </div>
                 <div>
                   <p className="text-xs font-bold text-[#222831] leading-tight">{badge.label}</p>

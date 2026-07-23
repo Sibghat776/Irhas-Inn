@@ -162,7 +162,7 @@ const ProfilePage = () => {
       <div className="max-w-2xl mx-auto">
         {/* Back + Header */}
         <div className="mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-[#222831] hover:text-[#00ADB5] transition-colors mb-4">
+          <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-[#222831] hover:text-[#C8A84E] transition-colors mb-4">
             <ArrowLeft size={16} /> Back to Home
           </Link>
           <h1 className="text-4xl md:text-5xl font-black text-[#222831] tracking-tight">My Profile</h1>
@@ -170,7 +170,7 @@ const ProfilePage = () => {
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl border border-[#EEEEEE] overflow-hidden">
-          <div className="h-1 bg-gradient-to-r from-[#00ADB5] to-[#FFFFFF]" />
+          <div className="h-1 bg-gradient-to-r from-[#C8A84E] to-[#FFFFFF]" />
           <div className="p-8 md:p-12">
             {/* Avatar */}
             <div className="flex flex-col items-center mb-12">
@@ -197,8 +197,8 @@ const ProfilePage = () => {
                   <input type="text" name="username" value={form.username} onChange={handleChange}
                     placeholder="Enter your username"
                     className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl text-[#222831] outline-none transition-all font-semibold ${
-                      errors.username ? "border-[#EEEEEE] bg-[#FFFFFF] focus:border-[#00ADB5] focus:ring-2 focus:ring-[#00ADB5]"
-                        : "border-[#EEEEEE] bg-[#FFFFFF] hover:border-[#EEEEEE] focus:border-[#00ADB5] focus:ring-2 focus:ring-[#00ADB5]"
+                      errors.username ? "border-[#EEEEEE] bg-[#FFFFFF] focus:border-[#C8A84E] focus:ring-2 focus:ring-[#C8A84E]"
+                        : "border-[#EEEEEE] bg-[#FFFFFF] hover:border-[#EEEEEE] focus:border-[#C8A84E] focus:ring-2 focus:ring-[#C8A84E]"
                     }`} />
                 </div>
                 {errors.username && (
@@ -215,8 +215,8 @@ const ProfilePage = () => {
                   <input type="tel" name="phoneNo" value={form.phoneNo} onChange={handleChange}
                     placeholder="Enter phone number (10-15 digits)"
                     className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl text-[#222831] outline-none transition-all font-semibold ${
-                      errors.phoneNo ? "border-[#EEEEEE] bg-[#FFFFFF] focus:border-[#00ADB5] focus:ring-2 focus:ring-[#00ADB5]"
-                        : "border-[#EEEEEE] bg-[#FFFFFF] hover:border-[#EEEEEE] focus:border-[#00ADB5] focus:ring-2 focus:ring-[#00ADB5]"
+                      errors.phoneNo ? "border-[#EEEEEE] bg-[#FFFFFF] focus:border-[#C8A84E] focus:ring-2 focus:ring-[#C8A84E]"
+                        : "border-[#EEEEEE] bg-[#FFFFFF] hover:border-[#EEEEEE] focus:border-[#C8A84E] focus:ring-2 focus:ring-[#C8A84E]"
                     }`} />
                 </div>
                 {errors.phoneNo && (
@@ -233,8 +233,8 @@ const ProfilePage = () => {
                   <textarea name="address" value={form.address} onChange={handleChange}
                     placeholder="Enter your full address (street, city, country)" rows={4} maxLength={500}
                     className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl text-[#222831] outline-none transition-all font-semibold resize-none ${
-                      errors.address ? "border-[#EEEEEE] bg-[#FFFFFF] focus:border-[#00ADB5] focus:ring-2 focus:ring-[#00ADB5]"
-                        : "border-[#EEEEEE] bg-[#FFFFFF] hover:border-[#EEEEEE] focus:border-[#00ADB5] focus:ring-2 focus:ring-[#00ADB5]"
+                      errors.address ? "border-[#EEEEEE] bg-[#FFFFFF] focus:border-[#C8A84E] focus:ring-2 focus:ring-[#C8A84E]"
+                        : "border-[#EEEEEE] bg-[#FFFFFF] hover:border-[#EEEEEE] focus:border-[#C8A84E] focus:ring-2 focus:ring-[#C8A84E]"
                     }`} />
                   <p className="text-xs text-[#222831] mt-1 text-right font-medium">{form.address.length}/500</p>
                 </div>
@@ -247,7 +247,7 @@ const ProfilePage = () => {
 
               <div className="flex flex-col sm:flex-row gap-4 pt-6">
                 <button type="submit" disabled={auth.loading || !hasChanges}
-                  className="flex-1 py-3 rounded-xl bg-gradient-to-r from-[#00ADB5] to-[#00ADB5] hover:from-[#00ADB5] hover:to-[#00ADB5] text-white font-black uppercase tracking-wider transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed border border-[#EEEEEE]">
+                  className="flex-1 py-3 rounded-xl bg-gradient-to-r from-[#C8A84E] to-[#C8A84E] hover:from-[#C8A84E] hover:to-[#C8A84E] text-white font-black uppercase tracking-wider transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed border border-[#EEEEEE]">
                   {auth.loading ? <><Loader2 className="animate-spin" size={20} /> Updating...</>
                     : <><Save size={20} /> Save Changes</>}
                 </button>

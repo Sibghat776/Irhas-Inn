@@ -47,7 +47,7 @@ const RatingForm = ({ productId, productName }: { productId: string; productName
             onMouseEnter={() => setHover(s)}
             onMouseLeave={() => setHover(0)}
           >
-            <Star size={22} className={`transition-colors ${s <= (hover || star) ? "fill-[#00ADB5] text-[#222831]" : "text-[#222831]"}`} />
+            <Star size={22} className={`transition-colors ${s <= (hover || star) ? "fill-[#C8A84E] text-[#222831]" : "text-[#222831]"}`} />
           </button>
         ))}
       </div>
@@ -56,12 +56,12 @@ const RatingForm = ({ productId, productName }: { productId: string; productName
         onChange={(e) => setComment(e.target.value)}
         placeholder="Write a comment (optional)"
         rows={2}
-        className="w-full text-sm border border-[#EEEEEE] rounded-xl px-3 py-2 resize-none focus:outline-none focus:border-[#00ADB5] mb-2"
+        className="w-full text-sm border border-[#EEEEEE] rounded-xl px-3 py-2 resize-none focus:outline-none focus:border-[#C8A84E] mb-2"
       />
       <button
         onClick={handleSubmit}
         disabled={loading}
-        className="px-4 py-2 bg-[#00ADB5] text-white text-sm font-semibold rounded-xl hover:bg-[#00ADB5] disabled:opacity-60 transition"
+        className="px-4 py-2 bg-[#C8A84E] text-white text-sm font-semibold rounded-xl hover:bg-[#C8A84E] disabled:opacity-60 transition"
       >
         {loading ? "Submitting..." : "Submit Rating"}
       </button>
@@ -134,7 +134,7 @@ const OrderTrackingPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#FFFFFF] via-white to-[#FFFFFF] px-4 pt-24 pb-6">
       <div className="max-w-3xl mx-auto">
-        <Link href="/profile/orders" className="inline-flex items-center gap-2 text-sm font-semibold text-[#222831] hover:text-[#00ADB5] transition-colors mb-4">
+        <Link href="/profile/orders" className="inline-flex items-center gap-2 text-sm font-semibold text-[#222831] hover:text-[#C8A84E] transition-colors mb-4">
           <ArrowLeft size={16} /> Back to Orders
         </Link>
 
@@ -176,13 +176,13 @@ const OrderTrackingPage = () => {
                       <div className="flex flex-col items-center mr-4">
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all ${
                           isCompleted
-                            ? "bg-[#00ADB5] border-[#00ADB5] text-white"
+                            ? "bg-[#C8A84E] border-[#C8A84E] text-white"
                             : "bg-white border-[#EEEEEE] text-[#222831]"
                         }`}>
                           {isCompleted ? <CheckCircle size={16} /> : idx + 1}
                         </div>
                         {idx < STEPS.length - 1 && (
-                          <div className={`w-0.5 h-10 ${isCompleted ? "bg-[#00ADB5]" : "bg-[#FFFFFF]"}`} />
+                          <div className={`w-0.5 h-10 ${isCompleted ? "bg-[#C8A84E]" : "bg-[#FFFFFF]"}`} />
                         )}
                       </div>
                       <div className={`pb-8 ${isCurrent ? "font-bold text-[#222831]" : isCompleted ? "text-[#222831]" : "text-[#222831]"}`}>
@@ -295,7 +295,7 @@ const OrderTrackingPage = () => {
               <div className="space-y-3">
                 {[...order.trackingHistory].reverse().map((entry: any, idx: number) => (
                   <div key={idx} className="flex items-center gap-3 text-sm">
-                    <div className={`w-2 h-2 rounded-full ${entry.status === order.status ? "bg-[#00ADB5]" : "bg-[#FFFFFF]"}`} />
+                    <div className={`w-2 h-2 rounded-full ${entry.status === order.status ? "bg-[#C8A84E]" : "bg-[#FFFFFF]"}`} />
                     <span className="font-semibold text-[#222831]">{entry.status}</span>
                     <span className="text-[#222831] ml-auto">{new Date(entry.timestamp).toLocaleString()}</span>
                   </div>

@@ -204,7 +204,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({
 
                     <div className="space-y-2 p-3 text-[#222831] sm:space-y-4 sm:p-5">
                       <div className="flex flex-wrap items-center justify-between gap-1.5 text-[10px] sm:gap-3 sm:text-sm">
-                        <span className="inline-flex items-center rounded-full border border-[#00ADB5]/20 bg-[#00ADB5]/10 px-2 py-0.5 font-semibold text-[#222831] sm:px-3 sm:py-1">
+                        <span className="inline-flex items-center rounded-full border border-[#C8A84E]/20 bg-[#C8A84E]/10 px-2 py-0.5 font-semibold text-[#222831] sm:px-3 sm:py-1">
                           {prodAny.brand ?? "Irhas'Inn"}
                         </span>
                         <span className="hidden text-[10px] text-[#222831] sm:inline-block sm:text-xs">
@@ -237,14 +237,14 @@ const ProductsPage: React.FC<ProductsPageProps> = ({
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); buyNow(prod); }}
-                        className="inline-flex min-h-[36px] items-center justify-center rounded-xl bg-[#00ADB5] px-3 text-xs font-semibold text-white transition hover:bg-[#00ADB5] sm:min-h-[48px] sm:rounded-2xl sm:px-4 sm:text-sm"
+                        className="inline-flex min-h-[36px] items-center justify-center rounded-xl bg-[#C8A84E] px-3 text-xs font-semibold text-white transition hover:bg-[#C8A84E] sm:min-h-[48px] sm:rounded-2xl sm:px-4 sm:text-sm"
                       >
                         Buy Now
                       </button>
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); addToCart(prod); }}
-                        className="inline-flex min-h-[36px] items-center justify-center rounded-xl border border-[#EEEEEE] bg-white px-3 text-xs font-semibold text-[#222831] transition hover:border-[#00ADB5] hover:bg-[#FFFFFF] sm:min-h-[48px] sm:rounded-2xl sm:px-4 sm:text-sm"
+                        className="inline-flex min-h-[36px] items-center justify-center rounded-xl border border-[#EEEEEE] bg-white px-3 text-xs font-semibold text-[#222831] transition hover:border-[#C8A84E] hover:bg-[#FFFFFF] sm:min-h-[48px] sm:rounded-2xl sm:px-4 sm:text-sm"
                       >
                         Add to Cart
                       </button>

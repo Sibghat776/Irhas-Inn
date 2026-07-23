@@ -4,8 +4,12 @@
 :root {
   --background: #ffffff;
   --foreground: #222831;
-  --brand-primary: #00ADB5;
-  --brand-secondary: #00ADB5;
+  --brand-primary: #C8A84E;
+  --brand-secondary: #B8943F;
+  --brand-gold: #C8A84E;
+  --brand-gold-hover: #B8943F;
+  --brand-gold-light: rgba(200, 168, 78, 0.1);
+  --brand-gold-glow: rgba(200, 168, 78, 0.2);
   --brand-beige: #EEEEEE;
   --brand-cream: #FFFFFF;
   --brand-white: #FFFFFF;
@@ -99,7 +103,7 @@
   pointer-events: none;
 }
 #nprogress .bar {
-  background: #00ADB5;
+  background: #C8A84E;
   position: fixed;
   z-index: 1031;
   top: 0;
@@ -107,7 +111,7 @@
   width: 100%;
   height: 3px;
   border-radius: 0 3px 3px 0;
-  box-shadow: 0 0 8px rgba(84, 107, 65, 0.6);
+  box-shadow: 0 0 8px rgba(200, 168, 78, 0.6);
 }
 #nprogress .peg {
   display: block;
@@ -115,7 +119,7 @@
   right: 0;
   width: 100px;
   height: 100%;
-  box-shadow: 0 0 10px #00ADB5, 0 0 5px #00ADB5;
+  box-shadow: 0 0 10px #C8A84E, 0 0 5px #C8A84E;
   opacity: 1;
   transform: rotate(3deg) translate(0px, -4px);
 }

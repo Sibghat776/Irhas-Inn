@@ -111,7 +111,7 @@ const CategoryProductRow: React.FC<CategoryRowProps> = ({
         {/* Section Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-1 h-6 bg-[#00ADB5] rounded-full"></div>
+            <div className="w-1 h-6 bg-[#C8A84E] rounded-full"></div>
             <h2 className="text-lg md:text-2xl font-black text-[#222831]">
               {categoryName}
             </h2>
@@ -119,19 +119,19 @@ const CategoryProductRow: React.FC<CategoryRowProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={() => scroll("left")}
-              className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:border-[#00ADB5] hover:text-[#00ADB5] transition-all"
+              className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:border-[#C8A84E] hover:text-[#C8A84E] transition-all"
             >
               <ChevronLeft size={16} />
             </button>
             <button
               onClick={() => scroll("right")}
-              className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:border-[#00ADB5] hover:text-[#00ADB5] transition-all"
+              className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:border-[#C8A84E] hover:text-[#C8A84E] transition-all"
             >
               <ChevronRight size={16} />
             </button>
             <Link
               href={viewAllLink}
-              className="ml-2 text-xs font-bold text-[#00ADB5] hover:underline"
+              className="ml-2 text-xs font-bold text-[#C8A84E] hover:underline"
             >
               View All →
             </Link>
@@ -217,7 +217,7 @@ const CategoryProductRow: React.FC<CategoryRowProps> = ({
                           e.stopPropagation();
                           doAddToCart(product);
                         }}
-                        className="flex items-center justify-center gap-1 bg-[#00ADB5] text-white text-[9px] font-bold py-1.5 rounded-md hover:bg-[#0099a1] transition-colors"
+                        className="flex items-center justify-center gap-1 bg-[#C8A84E] text-white text-[9px] font-bold py-1.5 rounded-md hover:bg-[#B8943F] transition-colors"
                       >
                         <ShoppingCart size={10} />
                         Cart
@@ -227,7 +227,7 @@ const CategoryProductRow: React.FC<CategoryRowProps> = ({
                           e.stopPropagation();
                           doAddToCart(product).then(() => router.push("/checkout"));
                         }}
-                        className="flex items-center justify-center gap-1 border border-gray-200 text-[#222831] text-[9px] font-bold py-1.5 rounded-md hover:border-[#00ADB5] hover:text-[#00ADB5] transition-colors"
+                        className="flex items-center justify-center gap-1 border border-gray-200 text-[#222831] text-[9px] font-bold py-1.5 rounded-md hover:border-[#C8A84E] hover:text-[#C8A84E] transition-colors"
                       >
                         <ShoppingBag size={10} />
                         Buy

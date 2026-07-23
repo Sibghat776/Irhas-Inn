@@ -195,114 +195,131 @@ const Login = () => {
       )}
 
       {/* MODAL WRAPPER */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#FFFFFF] backdrop-blur-sm p-4">
-        {/* MAIN CONTAINER */}
-        <div className="relative w-full max-w-[460px] bg-white rounded-[28px] shadow-[0_24px_60px_-15px_rgba(0,0,0,0.08)] border border-[#EEEEEE] p-8 sm:p-9 overflow-hidden">
-          {/* CLOSE BUTTON */}
-          <button
-            onClick={handleClose}
-            className="absolute right-5 top-5 p-2 text-[#222831] hover:text-[#00ADB5] bg-[#FFFFFF] hover:bg-[#EEEEEE] rounded-full transition-all duration-300"
-          >
-            <X className="w-4 h-4 stroke-[2.5]" />
-          </button>
-
-          {/* BRAND TITLE ARCHITECTURE */}
-          <div className="text-center mb-8 mt-2">
-            <div className="inline-flex items-center justify-center gap-2 bg-[#00ADB5] text-white w-auto py-5 px-5 h-10 rounded-xl mb-3 shadow-md shadow-[#00ADB5]/10">
-              <Sparkles className="w-5 h-5 fill-white/10" />
-              <h2 className="text-xl font-bold tracking-tight text-white">
-                Login
-              </h2>
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        {/* MAIN CONTAINER - Two column layout */}
+        <div className="relative w-full max-w-[800px] bg-white rounded-[28px] shadow-[0_24px_60px_-15px_rgba(0,0,0,0.3)] border border-white/10 overflow-hidden flex">
+          {/* LEFT: Banner Image (hidden on mobile) */}
+          <div className="hidden md:block w-[45%] relative overflow-hidden bg-[#222831]">
+            <img
+              src="/Login Screen-01.jpg"
+              alt="Welcome"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
+            <div className="absolute bottom-0 left-0 right-0 p-6">
+              <h3 className="text-white text-lg font-black leading-tight">Welcome to</h3>
+              <p className="text-[#C8A84E] text-xl font-black mt-1">Irhas'Inn</p>
+              <p className="text-white/70 text-xs mt-2 leading-relaxed">Customize Product All In One — Enjoy Shopping</p>
             </div>
-            <h2 className="text-2xl font-bold tracking-tight text-[#222831] sm:text-3xl">
-              Welcome Back
-            </h2>
-            <p className="text-xs font-medium text-[#222831] mt-1.5 uppercase tracking-widest">
-              Access Irhas'Inn
-            </p>
           </div>
 
-          {/* OAUTH INTEGRATION */}
-          <div className="w-full flex justify-center mb-5 transform transition-all duration-300 hover:scale-[1.01]">
-            <GoogleLogin onSuccess={handleGoogleSignup} />
-          </div>
+          {/* RIGHT: Form */}
+          <div className="w-full md:w-[55%] p-8 sm:p-9 overflow-y-auto">
+            {/* CLOSE BUTTON */}
+            <button
+              onClick={handleClose}
+              className="absolute right-5 top-5 p-2 text-[#222831] hover:text-[#C8A84E] bg-[#FFFFFF] hover:bg-[#EEEEEE] rounded-full transition-all duration-300"
+            >
+              <X className="w-4 h-4 stroke-[2.5]" />
+            </button>
 
-          {/* LUXURY ACCENT DIVIDER */}
-          <div className="flex items-center gap-4 my-6">
-            <div className="h-[1px] bg-[#FFFFFF] flex-1"></div>
-            <span className="text-[#222831] text-[10px] font-bold uppercase tracking-[0.2em] select-none">
-              Or Secure Credentials
-            </span>
-            <div className="h-[1px] bg-[#FFFFFF] flex-1"></div>
-          </div>
+            {/* BRAND TITLE ARCHITECTURE */}
+            <div className="text-center mb-8 mt-2">
+              <div className="inline-flex items-center justify-center gap-2 bg-[#C8A84E] text-white w-auto py-5 px-5 h-10 rounded-xl mb-3 shadow-md shadow-[#C8A84E]/10">
+                <Sparkles className="w-5 h-5 fill-white/10" />
+                <h2 className="text-xl font-bold tracking-tight text-white">
+                  Login
+                </h2>
+              </div>
+              <h2 className="text-2xl font-bold tracking-tight text-[#222831] sm:text-3xl">
+                Welcome Back
+              </h2>
+              <p className="text-xs font-medium text-[#222831] mt-1.5 uppercase tracking-widest">
+                Access Irhas'Inn
+              </p>
+            </div>
 
-          {/* LOGIN FORM */}
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            <div className="space-y-3.5">
-              {/* EMAIL FIELD */}
-              <Input
-                icon={<Mail className="w-4 h-4" />}
-                type="text"
-                id="identifier"
-                placeholder="Registered Email OR Phone Number"
-                value={credentials.identifier}
-                onChange={handleChange}
-              />
+            {/* OAUTH INTEGRATION */}
+            <div className="w-full flex justify-center mb-5 transform transition-all duration-300 hover:scale-[1.01]">
+              <GoogleLogin onSuccess={handleGoogleSignup} />
+            </div>
 
-              {/* PASSWORD FIELD */}
-              <div className="relative group/pass">
-                <span className="absolute left-4 top-[15px] text-[#222831] group-focus-within/pass:text-[#222831] transition-colors duration-300">
-                  <Lock className="w-4 h-4 stroke-[1.8]" />
-                </span>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  id="password"
-                  placeholder="Enter your Password"
-                  value={credentials.password}
+            {/* LUXURY ACCENT DIVIDER */}
+            <div className="flex items-center gap-4 my-6">
+              <div className="h-[1px] bg-[#FFFFFF] flex-1"></div>
+              <span className="text-[#222831] text-[10px] font-bold uppercase tracking-[0.2em] select-none">
+                Or Secure Credentials
+              </span>
+              <div className="h-[1px] bg-[#FFFFFF] flex-1"></div>
+            </div>
+
+            {/* LOGIN FORM */}
+            <form className="space-y-4" onSubmit={handleSubmit}>
+              <div className="space-y-3.5">
+                {/* EMAIL FIELD */}
+                <Input
+                  icon={<Mail className="w-4 h-4" />}
+                  type="text"
+                  id="identifier"
+                  placeholder="Registered Email OR Phone Number"
+                  value={credentials.identifier}
                   onChange={handleChange}
-                  className="w-full bg-[#FFFFFF] hover:bg-[#EEEEEE] focus:bg-white border border-[#EEEEEE] focus:border-[#00ADB5] transition-all duration-300 p-3.5 pl-11 pr-11 rounded-xl outline-none font-medium text-sm text-[#222831] placeholder-[#EEEEEE]/90 tracking-wide"
                 />
+
+                {/* PASSWORD FIELD */}
+                <div className="relative group/pass">
+                  <span className="absolute left-4 top-[15px] text-[#222831] group-focus-within/pass:text-[#222831] transition-colors duration-300">
+                    <Lock className="w-4 h-4 stroke-[1.8]" />
+                  </span>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    placeholder="Enter your Password"
+                    value={credentials.password}
+                    onChange={handleChange}
+                    className="w-full bg-[#FFFFFF] hover:bg-[#EEEEEE] focus:bg-white border border-[#EEEEEE] focus:border-[#00ADB5] transition-all duration-300 p-3.5 pl-11 pr-11 rounded-xl outline-none font-medium text-sm text-[#222831] placeholder-[#EEEEEE]/90 tracking-wide"
+                  />
+                  <button
+                    type="button"
+                    onClick={togglePassword}
+                    className="absolute right-4 top-[15px] text-[#222831] hover:text-[#00ADB5] transition-colors duration-200"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-4 h-4 stroke-[1.8]" />
+                    ) : (
+                      <Eye className="w-4 h-4 stroke-[1.8]" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* ACTION CONSOLES */}
+              <div className="flex items-center gap-3 pt-4">
                 <button
                   type="button"
-                  onClick={togglePassword}
-                  className="absolute right-4 top-[15px] text-[#222831] hover:text-[#00ADB5] transition-colors duration-200"
+                  onClick={handleClose}
+                  className="w-1/3 bg-[#FFFFFF] hover:bg-[#EEEEEE] text-[#222831] font-medium text-sm py-3.5 rounded-xl border border-[#EEEEEE] transition-all duration-300 transform active:scale-[0.99]"
                 >
-                  {showPassword ? (
-                    <EyeOff className="w-4 h-4 stroke-[1.8]" />
-                  ) : (
-                    <Eye className="w-4 h-4 stroke-[1.8]" />
-                  )}
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-2/3 bg-[#C8A84E] hover:bg-[#B8943F] text-white font-medium text-sm py-3.5 rounded-xl shadow-lg shadow-[#C8A84E]/10 hover:shadow-xl transition-all duration-300 transform active:scale-[0.99] disabled:opacity-50 tracking-wide"
+                >
+                  Identity Verification
                 </button>
               </div>
-            </div>
+            </form>
 
-            {/* ACTION CONSOLES */}
-            <div className="flex items-center gap-3 pt-4">
-              <button
-                type="button"
-                onClick={handleClose}
-                className="w-1/3 bg-[#FFFFFF] hover:bg-[#EEEEEE] text-[#222831] font-medium text-sm py-3.5 rounded-xl border border-[#EEEEEE] transition-all duration-300 transform active:scale-[0.99]"
-              >
-                Cancel
-              </button>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-2/3 bg-[#00ADB5] hover:bg-[#00ADB5] text-white font-medium text-sm py-3.5 rounded-xl shadow-lg shadow-[#00ADB5]/10 hover:shadow-xl transition-all duration-300 transform active:scale-[0.99] disabled:opacity-50 tracking-wide"
-              >
-                Identity Verification
-              </button>
-            </div>
-          </form>
-
-          {/* FORMAL FOOTER NOTE */}
-          <p className="text-center text-[11px] text-[#222831] mt-6 leading-relaxed px-4">
-            Secured interface environment. System access subject to formal
-            verification audit logs.
-          </p>
-        </div>
-      </div>
+            {/* FORMAL FOOTER NOTE */}
+            <p className="text-center text-[11px] text-[#222831] mt-6 leading-relaxed px-4">
+              Secured interface environment. System access subject to formal
+              verification audit logs.
+            </p>
+          </div>
+        </div>    </div>
     </>
   );
 };
@@ -323,7 +340,7 @@ const Input = ({ icon, ...props }: InputProps) => (
     </span>
     <input
       {...props}
-      className="w-full bg-[#FFFFFF] hover:bg-[#EEEEEE] focus:bg-white border border-[#EEEEEE] focus:border-[#00ADB5] transition-all duration-300 p-3.5 pl-11 rounded-xl outline-none font-medium text-sm text-[#222831] placeholder-[#EEEEEE]/90 tracking-wide"
+      className="w-full bg-[#FFFFFF] hover:bg-[#EEEEEE] focus:bg-white border border-[#EEEEEE] focus:border-[#C8A84E] transition-all duration-300 p-3.5 pl-11 rounded-xl outline-none font-medium text-sm text-[#222831] placeholder-[#EEEEEE]/90 tracking-wide"
     />
   </div>
 );

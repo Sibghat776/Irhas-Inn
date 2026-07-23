@@ -52,19 +52,19 @@ const Products: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4">
         {/* Section Header */}
         <div className="flex items-center gap-3 mb-2">
-          <span className="h-px w-6 bg-[#00ADB5]" />
-          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#00ADB5]">
+          <span className="h-px w-6 bg-[#C8A84E]" />
+          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#C8A84E]">
             Featured Product
           </span>
           <span className="h-px flex-1 bg-gray-100" />
         </div>
         <div className="flex items-end justify-between mb-6">
           <h2 className="text-2xl md:text-3xl font-black text-[#222831]">
-            Our Featured <span className="text-[#00ADB5]">Products</span>
+            Our Featured <span className="text-[#C8A84E]">Products</span>
           </h2>
           <button
             onClick={() => router.push("/productsPage")}
-            className="hidden md:flex items-center gap-1 text-xs font-bold text-[#00ADB5] hover:underline"
+            className="hidden md:flex items-center gap-1 text-xs font-bold text-[#C8A84E] hover:underline"
           >
             View All →
           </button>
@@ -104,7 +104,7 @@ const Products: React.FC = () => {
         <div className="mt-6 text-center md:hidden">
           <button
             onClick={() => router.push("/productsPage")}
-            className="inline-flex items-center gap-1 text-xs font-bold text-[#00ADB5] hover:underline"
+            className="inline-flex items-center gap-1 text-xs font-bold text-[#C8A84E] hover:underline"
           >
             View All Products →
           </button>

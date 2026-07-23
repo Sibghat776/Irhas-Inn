@@ -35,20 +35,20 @@ const LookingForSomething: React.FC = () => {
       <div className="max-w-3xl mx-auto px-4 text-center">
         {/* Decorative top line */}
         <div className="flex items-center justify-center gap-3 mb-4">
-          <span className="h-px w-8 bg-[#00ADB5]" />
-          <TrendingUp size={14} className="text-[#00ADB5]" />
-          <span className="h-px w-8 bg-[#00ADB5]" />
+          <span className="h-px w-8 bg-[#C8A84E]" />
+          <TrendingUp size={14} className="text-[#C8A84E]" />
+          <span className="h-px w-8 bg-[#C8A84E]" />
         </div>
 
         {/* Heading */}
-        <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#00ADB5] mb-3 inline-block">
+        <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#C8A84E] mb-3 inline-block">
           Need Help Finding Something?
         </span>
         <h2 className="text-2xl md:text-4xl font-black text-[#222831] leading-tight mb-3">
           Looking for Something{" "}
           <span className="relative">
-            <span className="text-[#00ADB5]">Else?</span>
-            <span className="absolute -bottom-1 left-0 right-0 h-1 bg-[#00ADB5]/20 rounded-full" />
+            <span className="text-[#C8A84E]">Else?</span>
+            <span className="absolute -bottom-1 left-0 right-0 h-1 bg-[#C8A84E]/20 rounded-full" />
           </span>
         </h2>
         <p className="text-sm text-gray-500 mb-8 max-w-lg mx-auto leading-relaxed">
@@ -57,7 +57,7 @@ const LookingForSomething: React.FC = () => {
 
         {/* Search Bar */}
         <form onSubmit={handleSearch} className="relative mb-10 max-w-xl mx-auto">
-          <div className="flex items-center bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md hover:border-[#00ADB5]/30 focus-within:border-[#00ADB5] focus-within:ring-2 focus-within:ring-[#00ADB5]/15 focus-within:shadow-lg transition-all duration-300 overflow-hidden">
+          <div className="flex items-center bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md hover:border-[#C8A84E]/30 focus-within:border-[#C8A84E] focus-within:ring-2 focus-within:ring-[#C8A84E]/15 focus-within:shadow-lg transition-all duration-300 overflow-hidden">
             <div className="pl-4 pr-2 text-gray-400">
               <Search size={18} />
             </div>
@@ -70,7 +70,7 @@ const LookingForSomething: React.FC = () => {
             />
             <button
               type="submit"
-              className="flex items-center gap-1.5 bg-[#00ADB5] hover:bg-[#0099a1] active:bg-[#008a92] text-white font-bold px-5 py-3.5 text-sm transition-all active:scale-[0.98]"
+              className="flex items-center gap-1.5 bg-[#C8A84E] hover:bg-[#B8943F] active:bg-[#A8882E] text-white font-bold px-5 py-3.5 text-sm transition-all active:scale-[0.98]"
             >
               <span>Search</span>
               <ArrowRight size={16} />
@@ -85,7 +85,7 @@ const LookingForSomething: React.FC = () => {
               key={tag}
               onClick={() => handleTagClick(tag)}
               style={{ animationDelay: `${i * 50}ms` }}
-              className="px-4 py-2 rounded-full border border-gray-200 bg-white text-xs font-semibold text-gray-600 hover:border-[#00ADB5] hover:text-[#00ADB5] hover:bg-[#00ADB5]/5 hover:shadow-sm active:scale-95 transition-all duration-200 animate-fade-in"
+              className="px-4 py-2 rounded-full border border-gray-200 bg-white text-xs font-semibold text-gray-600 hover:border-[#C8A84E] hover:text-[#C8A84E] hover:bg-[#C8A84E]/5 hover:shadow-sm active:scale-95 transition-all duration-200 animate-fade-in"
             >
               {tag}
             </button>

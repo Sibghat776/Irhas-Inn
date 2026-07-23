@@ -88,8 +88,8 @@ const ProductSpotlight: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4">
         {/* Section Label */}
         <div className="flex items-center gap-3 mb-8">
-          <span className="h-px w-8 bg-[#00ADB5]" />
-          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#00ADB5]">
+          <span className="h-px w-8 bg-[#C8A84E]" />
+          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#C8A84E]">
             Featured Spotlight
           </span>
           <span className="h-px flex-1 bg-gray-100" />
@@ -101,14 +101,14 @@ const ProductSpotlight: React.FC = () => {
             <>
               <button
                 onClick={goPrev}
-                className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 shadow-md flex items-center justify-center text-[#222831] hover:bg-[#00ADB5] hover:text-white transition-all"
+                className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 shadow-md flex items-center justify-center text-[#222831] hover:bg-[#C8A84E] hover:text-white transition-all"
                 aria-label="Previous"
               >
                 <ChevronLeft size={20} />
               </button>
               <button
                 onClick={goNext}
-                className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 shadow-md flex items-center justify-center text-[#222831] hover:bg-[#00ADB5] hover:text-white transition-all"
+                className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white/90 shadow-md flex items-center justify-center text-[#222831] hover:bg-[#C8A84E] hover:text-white transition-all"
                 aria-label="Next"
               >
                 <ChevronRight size={20} />
@@ -137,7 +137,7 @@ const ProductSpotlight: React.FC = () => {
                       key={i}
                       onClick={() => setCurrentIndex(i)}
                       className={`w-2 h-2 rounded-full transition-all ${
-                        i === currentIndex ? "bg-[#00ADB5] w-5" : "bg-gray-300"
+                        i === currentIndex ? "bg-[#C8A84E] w-5" : "bg-gray-300"
                       }`}
                     />
                   ))}
@@ -147,7 +147,7 @@ const ProductSpotlight: React.FC = () => {
 
             {/* Right - Details */}
             <div className="p-6 md:p-10 flex flex-col justify-center">
-              <p className="text-xs font-bold uppercase tracking-wider text-[#00ADB5] mb-2">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#C8A84E] mb-2">
                 {product.category?.name || "Featured Product"}
               </p>
               <h2 className="text-2xl md:text-3xl font-black text-[#222831] leading-tight mb-3">
@@ -174,7 +174,7 @@ const ProductSpotlight: React.FC = () => {
               <ul className="space-y-2 mb-5">
                 {features.map((f, i) => (
                   <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00ADB5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 shrink-0">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C8A84E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 shrink-0">
                       <polyline points="20 6 9 17 4 12" />
                     </svg>
                     {f}
@@ -201,7 +201,7 @@ const ProductSpotlight: React.FC = () => {
 
               <Link
                 href={`/product/${product._id}`}
-                className="inline-flex items-center justify-center gap-2 bg-[#00ADB5] hover:bg-[#0099a1] text-white font-bold px-8 py-3.5 rounded-xl transition-all active:scale-[0.98] w-full md:w-auto"
+                className="inline-flex items-center justify-center gap-2 bg-[#C8A84E] hover:bg-[#B8943F] text-white font-bold px-8 py-3.5 rounded-xl transition-all active:scale-[0.98] w-full md:w-auto"
               >
                 <ShoppingBag size={18} />
                 Buy Now

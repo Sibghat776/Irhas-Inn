@@ -96,7 +96,7 @@ export default function AIProductChat() {
     <>
       {/* Floating Trigger Button — clean, no pulse/funky animation */}
       <button
-        className="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-[#00ADB5] text-white shadow-md hover:shadow-lg hover:bg-[#00ADB5] transition-all duration-200"
+        className="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-[#C8A84E] text-white shadow-md hover:shadow-lg hover:bg-[#C8A84E] transition-all duration-200"
         onClick={() => setIsOpen((v) => !v)}
         aria-label="Open AI chat"
       >
@@ -111,7 +111,7 @@ export default function AIProductChat() {
           >
             <div className="flex flex-col w-full h-[70vh] max-h-[560px] bg-white rounded-2xl border border-[#EEEEEE] shadow-xl overflow-hidden">
               {/* Header — clean, single brand color, no gradient */}
-              <div className="flex items-center gap-2 px-4 py-3 bg-[#00ADB5] text-white">
+              <div className="flex items-center gap-2 px-4 py-3 bg-[#C8A84E] text-white">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
                   <Bot size={16} />
                 </div>
@@ -132,7 +132,7 @@ export default function AIProductChat() {
               <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#FFFFFF]">
                 {messages.length === 0 && (
                   <div className="text-center text-[#222831] mt-6">
-                    <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#00ADB5]/10">
+                    <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#C8A84E]/10">
                       <Bot size={22} className="text-[#222831]" />
                     </div>
                     <p className="text-sm font-medium text-[#222831]">
@@ -143,7 +143,7 @@ export default function AIProductChat() {
                         <button
                           key={i}
                           onClick={() => sendQuery(txt)}
-                          className="px-3 py-1.5 bg-white border border-[#EEEEEE] text-[#222831] rounded-full text-xs font-medium hover:border-[#00ADB5] hover:text-[#00ADB5] transition-colors"
+                          className="px-3 py-1.5 bg-white border border-[#EEEEEE] text-[#222831] rounded-full text-xs font-medium hover:border-[#C8A84E] hover:text-[#C8A84E] transition-colors"
                         >
                           {txt}
                         </button>
@@ -156,7 +156,7 @@ export default function AIProductChat() {
                   <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                     <div
                       className={`max-w-[78%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${msg.role === "user"
-                          ? "bg-[#00ADB5] text-white rounded-br-sm"
+                          ? "bg-[#C8A84E] text-white rounded-br-sm"
                           : "bg-white text-[#222831] border border-[#EEEEEE] rounded-bl-sm"
                         }`}
                     >
@@ -206,7 +206,7 @@ export default function AIProductChat() {
               {/* Input */}
               <div className="border-t border-[#EEEEEE] p-3 flex items-center gap-2 bg-white">
                 <input
-                  className="flex-1 rounded-full border border-[#EEEEEE] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00ADB5]/40 focus:border-[#00ADB5]"
+                  className="flex-1 rounded-full border border-[#EEEEEE] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#C8A84E]/40 focus:border-[#C8A84E]"
                   placeholder="Ask about products..."
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
@@ -216,7 +216,7 @@ export default function AIProductChat() {
                 <button
                   onClick={handleSend}
                   disabled={loading || !input.trim()}
-                  className="flex h-9 w-9 items-center justify-center bg-[#00ADB5] hover:bg-[#00ADB5] text-white rounded-full disabled:opacity-40 transition-colors"
+                  className="flex h-9 w-9 items-center justify-center bg-[#C8A84E] hover:bg-[#C8A84E] text-white rounded-full disabled:opacity-40 transition-colors"
                   aria-label="Send message"
                 >
                   <Send size={16} />

@@ -135,7 +135,7 @@ export default function ProductCard({ product }: { product: ApiProduct }) {
 
       {/* Info Section */}
       <div className="p-3.5 flex flex-col gap-1.5 flex-1">
-        <h3 className="text-sm font-bold text-[#222831] line-clamp-1 leading-tight group-hover:text-[#00ADB5] transition-colors">
+        <h3 className="text-sm font-bold text-[#222831] line-clamp-1 leading-tight group-hover:text-[#C8A84E] transition-colors">
           {product.name}
         </h3>
 
@@ -175,7 +175,7 @@ export default function ProductCard({ product }: { product: ApiProduct }) {
             type="button"
             onClick={handleBuyNow}
             disabled={!inStock}
-            className="flex items-center justify-center gap-1 bg-[#00ADB5] hover:bg-[#0099a1] active:bg-[#008a92] text-white text-[10px] font-bold py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.97]"
+            className="flex items-center justify-center gap-1 bg-[#C8A84E] hover:bg-[#B8943F] active:bg-[#A8882E] text-white text-[10px] font-bold py-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.97]"
           >
             <ShoppingBag size={12} />
             Buy
@@ -184,7 +184,7 @@ export default function ProductCard({ product }: { product: ApiProduct }) {
             type="button"
             onClick={handleAddToCart}
             disabled={!inStock}
-            className="flex items-center justify-center gap-1 border border-gray-200 text-[#222831] text-[10px] font-bold py-2 rounded-lg hover:border-[#00ADB5] hover:text-[#00ADB5] hover:bg-[#00ADB5]/5 transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.97]"
+            className="flex items-center justify-center gap-1 border border-gray-200 text-[#222831] text-[10px] font-bold py-2 rounded-lg hover:border-[#C8A84E] hover:text-[#C8A84E] hover:bg-[#C8A84E]/5 transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.97]"
           >
             <ShoppingCart size={12} />
             Cart

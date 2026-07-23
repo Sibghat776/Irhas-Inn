@@ -13,6 +13,7 @@ interface Slide {
 }
 
 const slides: Slide[] = [
+  // ── Images from /carousel/ folder ──
   {
     image: "/carousel/Accessories.jpg",
     tag: "New Collection",
@@ -43,9 +44,55 @@ const slides: Slide[] = [
     title: "Appliances",
     subtitle: "Make life easier with modern home appliances designed for comfort",
   },
+  // ── Loose banner images from /public/ ──
+  {
+    image: "/Azadi Collection.jpg",
+    tag: "Limited Edition",
+    title: "Azadi Collection",
+    subtitle: "Celebrate freedom with our exclusive Azadi Collection — limited stock available",
+  },
+  {
+    image: "/Eid Collection Banner.jpg",
+    tag: "Festival Special",
+    title: "Eid Collection",
+    subtitle: "Shop our curated Eid collection for the whole family — festive styles await",
+  },
+  {
+    image: "/Hajj Bannaer.jpg",
+    tag: "Sacred Journey",
+    title: "Hajj Essentials",
+    subtitle: "Find everything you need for your blessed journey with our Hajj essentials",
+  },
+  {
+    image: "/mug banner.jpg",
+    tag: "Customized",
+    title: "Premium Mugs",
+    subtitle: "Personalized mugs that make every sip special — perfect gifts for loved ones",
+  },
+  {
+    image: "/Pop Socket Banner.jpg",
+    tag: "Accessories",
+    title: "Pop Sockets",
+    subtitle: "Customize your grip with trendy pop sockets — style meets function",
+  },
+  {
+    image: "/Irha Studio-12.jpg",
+    tag: "Brand Story",
+    title: "Irha's Inn Studio",
+    subtitle: "Discover our signature collection at Irha's Inn — where style meets comfort",
+  },
 ];
 
-const promoSlides = [
+interface PromoSlide {
+  image: string;
+  icon: any;
+  title: string;
+  subtitle: string;
+  link: string;
+  gradient: string;
+}
+
+const promoBanners: PromoSlide[] = [
   {
     image: "/carousel/Clothes.jpg",
     icon: Zap,
@@ -62,38 +109,87 @@ const promoSlides = [
     link: "/productsPage",
     gradient: "from-violet-600/60 to-purple-800/80",
   },
+  {
+    image: "/Azadi Collection.jpg",
+    icon: Zap,
+    title: "Azadi Sale",
+    subtitle: "Limited time offers",
+    link: "/productsPage",
+    gradient: "from-orange-600/60 to-red-800/80",
+  },
+  {
+    image: "/Eid Collection Banner.jpg",
+    icon: Shield,
+    title: "Eid Special",
+    subtitle: "Shop festive favourites",
+    link: "/productsPage",
+    gradient: "from-amber-600/60 to-yellow-800/80",
+  },
+  {
+    image: "/mug banner.jpg",
+    icon: Zap,
+    title: "Custom Mugs",
+    subtitle: "Personalize your drinkware",
+    link: "/productsPage",
+    gradient: "from-sky-600/60 to-blue-800/80",
+  },
+  {
+    image: "/Pop Socket Banner.jpg",
+    icon: Shield,
+    title: "Pop Sockets",
+    subtitle: "Custom grips & stands",
+    link: "/productsPage",
+    gradient: "from-pink-600/60 to-rose-800/80",
+  },
 ];
 
 const Carousel = () => {
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [promoOffset, setPromoOffset] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [prevIndex, setPrevIndex] = useState(0);
   const progressRef = useRef<HTMLDivElement>(null);
+
+  const updatePromo = useCallback((newIndex: number) => {
+    // Advance promo offset every other slide so promo banners rotate through
+    if (newIndex % 2 === 0) {
+      setPromoOffset((prev) => (prev + 1) % promoBanners.length);
+    }
+  }, []);
 
   const next = useCallback(() => {
     if (isTransitioning) return;
     setPrevIndex(currentIndex);
     setIsTransitioning(true);
-    setCurrentIndex((i) => (i === slides.length - 1 ? 0 : i + 1));
+    const nextIdx = currentIndex === slides.length - 1 ? 0 : currentIndex + 1;
+    setCurrentIndex(nextIdx);
+    updatePromo(nextIdx);
     setTimeout(() => setIsTransitioning(false), 700);
-  }, [currentIndex, isTransitioning]);
+  }, [currentIndex, isTransitioning, updatePromo]);
 
   const prev = useCallback(() => {
     if (isTransitioning) return;
     setPrevIndex(currentIndex);
     setIsTransitioning(true);
-    setCurrentIndex((i) => (i === 0 ? slides.length - 1 : i - 1));
+    const prevIdx = currentIndex === 0 ? slides.length - 1 : currentIndex - 1;
+    setCurrentIndex(prevIdx);
+    updatePromo(prevIdx);
     setTimeout(() => setIsTransitioning(false), 700);
-  }, [currentIndex, isTransitioning]);
+  }, [currentIndex, isTransitioning, updatePromo]);
 
   const goToSlide = useCallback((index: number) => {
     if (isTransitioning || index === currentIndex) return;
     setPrevIndex(currentIndex);
     setIsTransitioning(true);
     setCurrentIndex(index);
+    updatePromo(index);
     setTimeout(() => setIsTransitioning(false), 700);
-  }, [currentIndex, isTransitioning]);
+  }, [currentIndex, isTransitioning, updatePromo]);
+
+  // Derive which two promo banners to show (cycling through the pool)
+  const promoA = promoBanners[promoOffset % promoBanners.length];
+  const promoB = promoBanners[(promoOffset + 1) % promoBanners.length];
 
   // Auto-advance
   useEffect(() => {
@@ -165,8 +261,8 @@ const Carousel = () => {
               <div key={slide.title} className="space-y-1">
                 {/* Tag */}
                 <div className="flex items-center gap-2.5 mb-2 opacity-0 animate-content-in" style={{ animationDelay: "0ms" }}>
-                  <span className="h-0.5 w-5 bg-[#00ADB5] rounded-full" />
-                  <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.3em] text-[#00ADB5]">
+                  <span className="h-0.5 w-5 bg-[#C8A84E] rounded-full" />
+                  <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.3em] text-[#C8A84E]">
                     {slide.tag}
                   </span>
                 </div>
@@ -176,7 +272,7 @@ const Carousel = () => {
                   {slide.title.split(" ").map((word, i, arr) => (
                     <span key={i}>
                       {i === arr.length - 1 ? (
-                        <span className="text-[#00ADB5]">{word}</span>
+                        <span className="text-[#C8A84E]">{word}</span>
                       ) : (
                         word
                       )}
@@ -192,7 +288,7 @@ const Carousel = () => {
 
                 {/* CTA */}
                 <div className="mt-4 flex items-center gap-3 opacity-0 animate-content-in" style={{ animationDelay: "300ms" }}>
-                  <span className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00ADB5] hover:bg-[#0099a1] text-white text-[10px] font-bold uppercase tracking-[0.15em] rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-[#00ADB5]/30 hover:scale-105 active:scale-95">
+                  <span className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#C8A84E] hover:bg-[#B8943F] text-white text-[10px] font-bold uppercase tracking-[0.15em] rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-[#C8A84E]/30 hover:scale-105 active:scale-95">
                     Shop Now
                     <ArrowRight size={13} strokeWidth={2.5} className="group-hover:translate-x-1 transition-transform" />
                   </span>
@@ -215,7 +311,7 @@ const Carousel = () => {
               <button
                 onClick={(e) => { e.stopPropagation(); next(); }}
                 aria-label="Next"
-                className="flex h-8 w-8 items-center justify-center bg-[#00ADB5] text-white rounded-xl hover:bg-[#0099a1] transition-all shadow-lg shadow-[#00ADB5]/20 hover:shadow-[#00ADB5]/40 active:scale-90"
+                className="flex h-8 w-8 items-center justify-center bg-[#C8A84E] text-white rounded-xl hover:bg-[#B8943F] transition-all shadow-lg shadow-[#C8A84E]/20 hover:shadow-[#C8A84E]/40 active:scale-90"
               >
                 <ChevronRight size={14} />
               </button>
@@ -225,7 +321,7 @@ const Carousel = () => {
             <div className="absolute bottom-0 left-0 right-0 z-20 h-0.5 bg-white/10">
               <div
                 ref={progressRef}
-                className="h-full bg-[#00ADB5] rounded-r-full origin-left"
+                className="h-full bg-[#C8A84E] rounded-r-full origin-left"
                 style={{ animation: "progressBar 6s linear forwards" }}
               />
             </div>
@@ -239,7 +335,7 @@ const Carousel = () => {
                   aria-label={`Slide ${i + 1}`}
                   className={`rounded-full transition-all duration-500 ${
                     i === currentIndex
-                      ? "w-5 h-1.5 bg-[#00ADB5] shadow-sm"
+                      ? "w-5 h-1.5 bg-[#C8A84E] shadow-sm"
                       : "w-1.5 h-1.5 bg-white/40 hover:bg-white/60"
                   }`}
                 />
@@ -249,11 +345,11 @@ const Carousel = () => {
 
           {/* ─── STACKED PROMO BANNERS ─── */}
           <div className="hidden md:flex md:col-span-2 flex-col gap-4">
-            {promoSlides.map((promo, i) => {
+            {[promoA, promoB].map((promo, i) => {
               const Icon = promo.icon;
               return (
                 <button
-                  key={i}
+                  key={`${promo.title}-${i}-${promoOffset}`}
                   onClick={() => router.push(promo.link)}
                   className="relative flex-1 min-h-[calc(50%-8px)] rounded-2xl overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-500"
                 >
@@ -272,7 +368,7 @@ const Carousel = () => {
                   <div className="absolute bottom-0 left-0 right-0 p-5 md:p-7 text-left z-10">
                     <div className="flex items-center gap-2.5 mb-2">
                       <div className="w-7 h-7 rounded-lg bg-white/15 backdrop-blur-sm flex items-center justify-center">
-                        <Icon size={13} className="text-[#00ADB5]" />
+                        <Icon size={13} className="text-[#C8A84E]" />
                       </div>
                       <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-white">
                         {promo.title}

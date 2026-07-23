@@ -56,14 +56,8 @@ const Sidebar = ({ onNavigate }: { onNavigate?: () => void }) => {
     <aside className="flex h-full w-72 flex-col border-r border-slate-200 bg-white">
       <div className="flex h-16 items-center justify-between border-b border-slate-200 px-5">
         <Link href="/" className="flex items-center gap-3" onClick={onNavigate}>
-          <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-[#0856DF]">
-            <img src={"/Logo.png"} alt="logo" className="h-full w-full object-contain" />
-          </div>
-          <div>
-            <p className="text-sm font-bold leading-tight text-slate-900">Irhas'Inn</p>
-            <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
-              Admin Panel
-            </p>
+          <div className="flex h-10 w-full items-center justify-center overflow-hidden rounded-xl bg-[#0856DF]">
+            <img src={"/Irha Studio-12.jpg"} alt="logo" className="h-full w-full object-contain" />
           </div>
         </Link>
         {onNavigate && (

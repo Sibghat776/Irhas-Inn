@@ -203,7 +203,7 @@ const otpContent = () => {
                 maxLength={1}
                 onChange={(e) => handleChange(e.target.value, i)}
                 onKeyDown={(e) => handleKeyDown(e, i)}
-                className="w-14 h-16 text-center text-xl font-bold text-white bg-white/10 border border-white/20 rounded-2xl focus:ring-4 focus:ring-[#00ADB5] outline-none transition"
+                className="w-14 h-16 text-center text-xl font-bold text-white bg-white/10 border border-white/20 rounded-2xl focus:ring-4 focus:ring-[#C8A84E] outline-none transition"
               />
             ))}
           </div>
@@ -211,7 +211,7 @@ const otpContent = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 rounded-2xl font-bold text-white bg-gradient-to-r from-[#00ADB5] to-[#00ADB5] hover:scale-[1.02] transition-all shadow-lg"
+            className="w-full py-3 rounded-2xl font-bold text-white bg-gradient-to-r from-[#C8A84E] to-[#C8A84E] hover:scale-[1.02] transition-all shadow-lg"
           >
             {isLoading ? "Verifying..." : "Verify OTP"}
           </button>

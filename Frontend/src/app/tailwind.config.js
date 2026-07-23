@@ -1,14 +1,14 @@
 const theme = {
   colors: {
-    primary: "#00ADB5",
-    secondary: "#00ADB5",
+    primary: "#C8A84E",
+    secondary: "#C8A84E",
     beige: "#EEEEEE",
     cream: "#FFFFFF",
     textLight: "#ffffff",
     textDark: "#222831",
-    bgDark: "#00ADB5",
+    bgDark: "#C8A84E",
     bgLight: "#FFFFFF",
-    hover: "#00ADB5",
+    hover: "#C8A84E",
   },
   fonts: {
     brand: "Dancing Script, cursive",

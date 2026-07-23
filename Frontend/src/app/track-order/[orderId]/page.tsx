@@ -71,7 +71,7 @@ const TrackOrderPage = () => {
                 Order #{order.serialNumber || order._id.slice(-8)}
               </p>
             </div>
-            <span className="rounded-full bg-[#00ADB5]/10 px-3 py-1 text-sm font-semibold text-[#222831]">
+            <span className="rounded-full bg-[#C8A84E]/10 px-3 py-1 text-sm font-semibold text-[#222831]">
               {order.status}
             </span>
           </div>
@@ -84,7 +84,7 @@ const TrackOrderPage = () => {
                   <div
                     className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${
                       idx <= currentStep
-                        ? "bg-[#00ADB5] text-white"
+                        ? "bg-[#C8A84E] text-white"
                         : "bg-[#FFFFFF] text-[#222831]"
                     }`}
                   >
@@ -95,7 +95,7 @@ const TrackOrderPage = () => {
                 {idx < statusSteps.length - 1 && (
                   <div
                     className={`h-1 flex-1 ${
-                      idx < currentStep ? "bg-[#00ADB5]" : "bg-[#FFFFFF]"
+                      idx < currentStep ? "bg-[#C8A84E]" : "bg-[#FFFFFF]"
                     }`}
                   />
                 )}

@@ -189,20 +189,37 @@ const Signup = () => {
       )}
 
       {/* MODAL WRAPPER */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#FFFFFF] backdrop-blur-sm p-4 animate-fade-in">
-        {/* MAIN CONTAINER */}
-        <div className="relative w-full max-w-[480px] bg-white rounded-[28px] shadow-[0_24px_60px_-15px_rgba(0,0,0,0.08)] border border-[#EEEEEE] p-8 sm:p-9 max-h-[92vh] overflow-y-auto no-scrollbar">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+        {/* MAIN CONTAINER - Two column layout */}
+        <div className="relative w-full max-w-[800px] bg-white rounded-[28px] shadow-[0_24px_60px_-15px_rgba(0,0,0,0.3)] border border-white/10 overflow-hidden flex">
+          {/* LEFT: Banner Image (hidden on mobile) */}
+          <div className="hidden md:block w-[45%] relative overflow-hidden bg-[#222831]">
+            <img
+              src="/Login Screen-01.jpg"
+              alt="Welcome"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
+            <div className="absolute bottom-0 left-0 right-0 p-6">
+              <h3 className="text-white text-lg font-black leading-tight">Join</h3>
+              <p className="text-[#C8A84E] text-xl font-black mt-1">Irhas'Inn</p>
+              <p className="text-white/70 text-xs mt-2 leading-relaxed">Customize Product All In One — Create Your Account</p>
+            </div>
+          </div>
+
+          {/* RIGHT: Form */}
+          <div className="w-full md:w-[55%] p-8 sm:p-9 max-h-[92vh] overflow-y-auto no-scrollbar">
           {/* CLOSE MODAL BUTTON */}
           <button
             onClick={() => dispatch(closeSignup())}
-            className="absolute right-5 top-5 p-2 text-[#222831] hover:text-[#00ADB5] bg-[#FFFFFF] hover:bg-[#EEEEEE] rounded-full transition-all duration-300"
+            className="absolute right-5 top-5 p-2 text-[#222831] hover:text-[#C8A84E] bg-[#FFFFFF] hover:bg-[#EEEEEE] rounded-full transition-all duration-300"
           >
             <X className="w-4 h-4 stroke-[2.5]" />
           </button>
 
           {/* BRAND TITLE / HEADER */}
           <div className="text-center mb-8 mt-2">
-            <div className="inline-flex items-center justify-center bg-[#00ADB5] text-white w-10 h-10 rounded-xl mb-3 shadow-md shadow-[#00ADB5]/10">
+            <div className="inline-flex items-center justify-center bg-[#C8A84E] text-white w-10 h-10 rounded-xl mb-3 shadow-md shadow-[#C8A84E]/10">
               <Sparkles className="w-5 h-5 fill-white/10" />
             </div>
             <h2 className="text-2xl font-bold tracking-tight text-[#222831] sm:text-3xl">
@@ -254,7 +271,7 @@ const Signup = () => {
                 </div>
 
                 {/* Micro Camera Badge Overlay */}
-                <div className="absolute bottom-0 right-0 bg-[#00ADB5] text-white p-1.5 rounded-full shadow-md border border-white transition-all duration-300 group-hover:bg-[#FFFFFF]">
+                <div className="absolute bottom-0 right-0 bg-[#C8A84E] text-white p-1.5 rounded-full shadow-md border border-white transition-all duration-300 group-hover:bg-[#FFFFFF]">
                   <Camera className="w-3.5 h-3.5 stroke-[2]" />
                 </div>
               </label>
@@ -305,14 +322,14 @@ const Signup = () => {
                   id="password"
                   value={credentials.password}
                   onChange={handleChange}
-                  className="w-full bg-[#FFFFFF] hover:bg-[#EEEEEE] focus:bg-white border border-[#EEEEEE] focus:border-[#00ADB5] transition-all duration-300 p-3.5 pl-11 pr-11 rounded-xl outline-none font-medium text-sm text-[#222831] placeholder-[#EEEEEE]/90 tracking-wide"
+                  className="w-full bg-[#FFFFFF] hover:bg-[#EEEEEE] focus:bg-white border border-[#EEEEEE] focus:border-[#C8A84E] transition-all duration-300 p-3.5 pl-11 pr-11 rounded-xl outline-none font-medium text-sm text-[#222831] placeholder-[#EEEEEE]/90 tracking-wide"
                   placeholder="Password"
                 />
 
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-[15px] text-[#222831] hover:text-[#00ADB5] transition-colors duration-200"
+                  className="absolute right-4 top-[15px] text-[#222831] hover:text-[#C8A84E] transition-colors duration-200"
                 >
                   {showPassword ? (
                     <EyeOff className="w-4 h-4 stroke-[1.8]" />
@@ -328,7 +345,7 @@ const Signup = () => {
               <button
                 type="submit"
                 disabled={data.loading}
-                className="w-full bg-[#00ADB5] hover:bg-[#00ADB5] text-white font-medium text-sm py-3.5 rounded-xl shadow-lg shadow-[#00ADB5]/10 hover:shadow-xl transition-all duration-300 transform active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none tracking-wide"
+                className="w-full bg-[#C8A84E] hover:bg-[#B8943F] text-white font-medium text-sm py-3.5 rounded-xl shadow-lg shadow-[#C8A84E]/10 hover:shadow-xl transition-all duration-300 transform active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none tracking-wide"
               >
                 Create Account
               </button>
@@ -340,8 +357,9 @@ const Signup = () => {
             By accessing this portal, you align with Irhas'Inn's formal luxury
             operations framework & global verification guidelines.
           </p>
-        </div>
       </div>
+    </div>
+    </div>
     </>
   );
 };
@@ -362,7 +380,7 @@ const Input = ({ icon, ...props }: InputProps) => (
     </span>
     <input
       {...props}
-      className="w-full bg-[#FFFFFF] hover:bg-[#EEEEEE] focus:bg-white border border-[#EEEEEE] focus:border-[#00ADB5] transition-all duration-300 p-3.5 pl-11 rounded-xl outline-none font-medium text-sm text-[#222831] placeholder-[#EEEEEE]/90 tracking-wide"
+      className="w-full bg-[#FFFFFF] hover:bg-[#EEEEEE] focus:bg-white border border-[#EEEEEE] focus:border-[#C8A84E] transition-all duration-300 p-3.5 pl-11 rounded-xl outline-none font-medium text-sm text-[#222831] placeholder-[#EEEEEE]/90 tracking-wide"
     />
   </div>
 );

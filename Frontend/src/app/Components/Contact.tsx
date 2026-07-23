@@ -37,7 +37,7 @@ const Contact: React.FC = () => {
             <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
                 {/* Left Section */}
                 <div className="rounded-2xl bg-[#222831] p-8 text-[#EEEEEE] shadow-lg md:p-10">
-                    <span className="inline-flex rounded-full bg-[#00ADB5]/15 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[#00ADB5]">Support</span>
+                    <span className="inline-flex rounded-full bg-[#C8A84E]/15 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[#C8A84E]">Support</span>
                     <h2 className="mt-4 text-3xl font-bold text-white md:text-4xl">
                         Get in Touch
                     </h2>
@@ -48,7 +48,7 @@ const Contact: React.FC = () => {
 
                     <div className="space-y-4 text-[#EEEEEE]">
                         <div className="flex items-center gap-3">
-                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/5"><Mail className="text-[#00ADB5]" size={18} /></span>
+                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/5"><Mail className="text-[#C8A84E]" size={18} /></span>
                             <a
                                 href="mailto:ullahsibghat786@gmail.com"
                                 className="hover:underline"
@@ -57,11 +57,11 @@ const Contact: React.FC = () => {
                             </a>
                         </div>
                         <div className="flex items-center gap-3">
-                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/5"><Phone className="text-[#00ADB5]" size={18} /></span>
+                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/5"><Phone className="text-[#C8A84E]" size={18} /></span>
                             <span>+92 334 3688913</span>
                         </div>
                         <div className="flex items-center gap-3">
-                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/5"><MapPin className="text-[#00ADB5]" size={18} /></span>
+                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/5"><MapPin className="text-[#C8A84E]" size={18} /></span>
                             <span>Karachi, Pakistan</span>
                         </div>
                     </div>
@@ -97,7 +97,7 @@ const Contact: React.FC = () => {
                 {/* Right Section: Contact Form */}
                 <div className="rounded-2xl border border-[#EEEEEE] bg-white p-8 shadow-lg md:p-10">
                     <div className="mb-7 border-b border-[#EEEEEE] pb-5">
-                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#00ADB5]">Message Us</p>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#C8A84E]">Message Us</p>
                         <h3 className="mt-2 text-2xl font-bold text-[#222831]">How can we help?</h3>
                     </div>
                     <form onSubmit={handleSubmit} className="space-y-5">
@@ -115,7 +115,7 @@ const Contact: React.FC = () => {
                                 value={form.name}
                                 onChange={handleChange}
                                 placeholder="Enter your name"
-                                className="w-full px-4 py-2 border text-[#222831] border-[#EEEEEE] rounded-lg outline-none focus:ring-2 focus:ring-[#00ADB5] transition"
+                                className="w-full px-4 py-2 border text-[#222831] border-[#EEEEEE] rounded-lg outline-none focus:ring-2 focus:ring-[#C8A84E] transition"
                             />
                         </div>
 
@@ -133,7 +133,7 @@ const Contact: React.FC = () => {
                                 value={form.email}
                                 onChange={handleChange}
                                 placeholder="Enter your email"
-                                className="w-full px-4 py-2 border text-[#222831] border-[#EEEEEE] rounded-lg outline-none focus:ring-2 focus:ring-[#00ADB5] transition"
+                                className="w-full px-4 py-2 border text-[#222831] border-[#EEEEEE] rounded-lg outline-none focus:ring-2 focus:ring-[#C8A84E] transition"
                             />
                         </div>
 
@@ -151,13 +151,13 @@ const Contact: React.FC = () => {
                                 value={form.message}
                                 onChange={handleChange}
                                 placeholder="Write your message..."
-                                className="w-full px-4 py-2 border border-[#EEEEEE] text-[#222831] rounded-lg outline-none focus:ring-2 focus:ring-[#00ADB5] transition resize-none"
+                                className="w-full px-4 py-2 border border-[#EEEEEE] text-[#222831] rounded-lg outline-none focus:ring-2 focus:ring-[#C8A84E] transition resize-none"
                             ></textarea>
                         </div>
 
                         <button
                             type="submit"
-                            className="w-full rounded-lg bg-[#00ADB5] py-2.5 font-semibold text-white shadow-md transition hover:bg-[#0099a1]"
+                            className="w-full rounded-lg bg-[#C8A84E] py-2.5 font-semibold text-white shadow-md transition hover:bg-[#B8943F]"
                         >
                             Send Message
                         </button>

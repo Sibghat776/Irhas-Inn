@@ -199,7 +199,7 @@ const EditProfile = () => {
         {/* Main Card */}
         <div className="bg-white rounded-2xl shadow-xl border border-[#EEEEEE] overflow-hidden">
           {/* Top Accent Bar */}
-          <div className="h-1 bg-gradient-to-r from-[#00ADB5] to-[#FFFFFF]" />
+          <div className="h-1 bg-gradient-to-r from-[#C8A84E] to-[#FFFFFF]" />
 
           <div className="p-8 md:p-12">
             {/* Avatar Section */}
@@ -252,8 +252,8 @@ const EditProfile = () => {
                     placeholder="Enter your username"
                     className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl text-[#222831] outline-none transition-all font-semibold ${
                       errors.username
-                        ? "border-[#EEEEEE] bg-[#FFFFFF] focus:border-[#00ADB5] focus:ring-2 focus:ring-[#00ADB5]"
-                        : "border-[#EEEEEE] bg-[#FFFFFF] hover:border-[#EEEEEE] focus:border-[#00ADB5] focus:ring-2 focus:ring-[#00ADB5]"
+                        ? "border-[#EEEEEE] bg-[#FFFFFF] focus:border-[#C8A84E] focus:ring-2 focus:ring-[#C8A84E]"
+                        : "border-[#EEEEEE] bg-[#FFFFFF] hover:border-[#EEEEEE] focus:border-[#C8A84E] focus:ring-2 focus:ring-[#C8A84E]"
                     }`}
                   />
                 </div>
@@ -285,8 +285,8 @@ const EditProfile = () => {
                     placeholder="Enter phone number (10-15 digits)"
                     className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl text-[#222831] outline-none transition-all font-semibold ${
                       errors.phoneNo
-                        ? "border-[#EEEEEE] bg-[#FFFFFF] focus:border-[#00ADB5] focus:ring-2 focus:ring-[#00ADB5]"
-                        : "border-[#EEEEEE] bg-[#FFFFFF] hover:border-[#EEEEEE] focus:border-[#00ADB5] focus:ring-2 focus:ring-[#00ADB5]"
+                        ? "border-[#EEEEEE] bg-[#FFFFFF] focus:border-[#C8A84E] focus:ring-2 focus:ring-[#C8A84E]"
+                        : "border-[#EEEEEE] bg-[#FFFFFF] hover:border-[#EEEEEE] focus:border-[#C8A84E] focus:ring-2 focus:ring-[#C8A84E]"
                     }`}
                   />
                 </div>
@@ -316,8 +316,8 @@ const EditProfile = () => {
                     maxLength={500}
                     className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl text-[#222831] outline-none transition-all font-semibold resize-none ${
                       errors.address
-                        ? "border-[#EEEEEE] bg-[#FFFFFF] focus:border-[#00ADB5] focus:ring-2 focus:ring-[#00ADB5]"
-                        : "border-[#EEEEEE] bg-[#FFFFFF] hover:border-[#EEEEEE] focus:border-[#00ADB5] focus:ring-2 focus:ring-[#00ADB5]"
+                        ? "border-[#EEEEEE] bg-[#FFFFFF] focus:border-[#C8A84E] focus:ring-2 focus:ring-[#C8A84E]"
+                        : "border-[#EEEEEE] bg-[#FFFFFF] hover:border-[#EEEEEE] focus:border-[#C8A84E] focus:ring-2 focus:ring-[#C8A84E]"
                     }`}
                   />
                   <p className="text-xs text-[#222831] mt-1 text-right font-medium">
@@ -337,7 +337,7 @@ const EditProfile = () => {
                 <button
                   type="submit"
                   disabled={auth.loading || !hasChanges}
-                  className="flex-1 py-3 rounded-xl bg-gradient-to-r from-[#00ADB5] to-[#00ADB5] hover:from-[#00ADB5] hover:to-[#00ADB5] text-white font-black uppercase tracking-wider transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed border border-[#EEEEEE] disabled:border-[#EEEEEE]"
+                  className="flex-1 py-3 rounded-xl bg-gradient-to-r from-[#C8A84E] to-[#C8A84E] hover:from-[#C8A84E] hover:to-[#C8A84E] text-white font-black uppercase tracking-wider transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed border border-[#EEEEEE] disabled:border-[#EEEEEE]"
                 >
                   {auth.loading ? (
                     <>
@@ -388,7 +388,7 @@ const EditProfile = () => {
           Need help?{" "}
           <a
             href="#"
-            className="text-[#222831] hover:text-[#00ADB5] font-bold underline"
+            className="text-[#222831] hover:text-[#C8A84E] font-bold underline"
           >
             Contact Support
           </a>

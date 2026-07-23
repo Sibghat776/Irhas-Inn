@@ -388,7 +388,7 @@ const CartPage = () => {
           </p>
           <button
             onClick={() => router.push("/productsPage")}
-            className="mt-8 inline-flex items-center gap-2 rounded-3xl bg-[#00ADB5] px-6 py-3 text-white transition hover:bg-[#00ADB5]"
+            className="mt-8 inline-flex items-center gap-2 rounded-3xl bg-[#C8A84E] px-6 py-3 text-white transition hover:bg-[#B8943F]"
           >
             <ShoppingCart size={18} /> Shop now
           </button>
@@ -418,7 +418,7 @@ const CartPage = () => {
             </button>
             <button
               onClick={proceedToCheckout}
-              className="rounded-3xl bg-[#00ADB5] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#00ADB5]"
+              className="rounded-3xl bg-[#C8A84E] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#B8943F]"
             >
               Proceed to Checkout
             </button>
@@ -546,7 +546,7 @@ const CartPage = () => {
                         </button>
                         <button
                           onClick={() => buyNowSuggested(p)}
-                          className="flex-1 rounded-lg bg-[#00ADB5] px-3 py-2 text-sm font-semibold text-white hover:bg-[#00ADB5]"
+                          className="flex-1 rounded-lg bg-[#C8A84E] px-3 py-2 text-sm font-semibold text-white hover:bg-[#B8943F]"
                         >
                           Buy Now
                         </button>
@@ -596,7 +596,7 @@ const CartPage = () => {
 
               <button
                 onClick={proceedToCheckout}
-                className="w-full rounded-3xl bg-[#00ADB5] px-6 py-4 text-sm font-bold uppercase tracking-[0.2em] text-white transition hover:bg-[#00ADB5]"
+                className="w-full rounded-3xl bg-[#C8A84E] px-6 py-4 text-sm font-bold uppercase tracking-[0.2em] text-white transition hover:bg-[#B8943F]"
               >
                 Checkout now
               </button>

@@ -187,8 +187,8 @@ const ProductDetailPage: React.FC = () => {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#FFFFFF] pt-12 via-white to-[#FFFFFF] text-[#222831]">
-      <div className="mx-auto max-w-7xl px-3 py-8 sm:px-6 sm:py-20">
+    <main className="min-h-screen bg-gradient-to-b from-[#FFFFFF] via-white to-[#FFFFFF] text-[#222831]">
+      <div className="mx-auto max-w-7xl px-3 py-2 sm:px-6 sm:py-16">
         <button
           type="button"
           onClick={() => router.back()}
@@ -212,53 +212,69 @@ const ProductDetailPage: React.FC = () => {
             <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr] lg:gap-10">
               <div className="space-y-4 rounded-2xl bg-white p-3 shadow-[0_10px_40px_rgba(0,0,0,0.06)] sm:space-y-6 sm:rounded-[32px] sm:p-6 sm:shadow-[0_20px_70px_rgba(0,0,0,0.08)]">
                 <div className="relative overflow-hidden rounded-xl bg-[#FFFFFF] shadow-inner sm:rounded-[32px]">
+
+                  {/* ─── BLUR BACKGROUND EFFECT BLOCK ─── */}
+                  <div className="absolute inset-0 overflow-hidden pointer-events-none select-none opacity-30">
+                    {imageList.map((image, imgIndex) => (
+                      <img
+                        key={`bg-${image.url}-${imgIndex}`}
+                        src={image.url}
+                        alt=""
+                        className={`absolute inset-0 h-full w-full object-cover scale-110 blur-2xl transition-opacity duration-500 ease-out ${imgIndex === currentImageIndex ? "opacity-100" : "opacity-0"
+                          }`}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Main Image Viewport */}
                   <div className="relative h-64 overflow-hidden sm:h-96 md:h-[460px]">
                     {imageList.map((image, imgIndex) => (
                       <img
                         key={`${image.url}-${imgIndex}`}
                         src={image.url}
                         alt={`${product.name} ${imgIndex + 1}`}
-                        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ease-out ${imgIndex === currentImageIndex
-                          ? "opacity-100"
-                          : "opacity-0"
+                        className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-500 ease-out ${imgIndex === currentImageIndex ? "opacity-100" : "opacity-0"
                           }`}
                       />
                     ))}
                   </div>
 
+                  {/* Left Arrow Button */}
                   <button
                     type="button"
                     onClick={prevImage}
-                    className="absolute left-2 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/90 text-[#222831] shadow-lg transition hover:bg-white sm:left-4 sm:h-12 sm:w-12"
+                    className="absolute left-2 top-1/2 z-10 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/90 text-[#222831] shadow-lg transition hover:bg-white sm:left-4 sm:h-12 sm:w-12"
                   >
                     <ArrowLeft size={16} className="sm:hidden" />
                     <ArrowLeft size={20} className="hidden sm:block" />
                   </button>
+
+                  {/* Right Arrow Button */}
                   <button
                     type="button"
                     onClick={nextImage}
-                    className="absolute right-2 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/90 text-[#222831] shadow-lg transition hover:bg-white sm:right-4 sm:h-12 sm:w-12"
+                    className="absolute right-2 top-1/2 z-10 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/90 text-[#222831] shadow-lg transition hover:bg-white sm:right-4 sm:h-12 sm:w-12"
                   >
                     <ArrowRight size={16} className="sm:hidden" />
                     <ArrowRight size={20} className="hidden sm:block" />
                   </button>
 
-                  <div className="absolute inset-x-0 bottom-2 flex justify-center gap-1.5 sm:bottom-4 sm:gap-2">
+                  {/* Dots Indicator */}
+                  <div className="absolute inset-x-0 bottom-2 z-10 flex justify-center gap-1.5 sm:bottom-4 sm:gap-2">
                     {imageList.map((_, dotIndex) => (
                       <span
                         key={dotIndex}
-                        className={`h-1.5 w-1.5 rounded-full transition-all duration-300 sm:h-2.5 sm:w-2.5 ${dotIndex === currentImageIndex
-                          ? "bg-white"
-                          : "bg-white/50"
+                        className={`h-1.5 w-1.5 rounded-full transition-all duration-300 sm:h-2.5 sm:w-2.5 ${dotIndex === currentImageIndex ? "bg-white" : "bg-white/50"
                           }`}
                       />
                     ))}
                   </div>
                 </div>
 
+                {/* Product Badges, Title & Meta */}
                 <div className="space-y-2.5 sm:space-y-4">
                   <div className="flex flex-wrap items-center gap-1.5 sm:gap-3">
-                    <span className="rounded-full bg-[#00ADB5] px-2.5 py-0.5 text-[9px] font-black uppercase tracking-[0.2em] text-white sm:px-3 sm:py-1 sm:text-xs sm:tracking-[0.3em]">
+                    <span className="rounded-full bg-[#C8A84E] px-2.5 py-0.5 text-[9px] font-black uppercase tracking-[0.2em] text-white sm:px-3 sm:py-1 sm:text-xs sm:tracking-[0.3em]">
                       {product.category?.name ?? "General"}
                     </span>
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FFFFFF] px-2.5 py-0.5 text-xs text-[#222831] sm:gap-2 sm:px-3 sm:py-1 sm:text-sm">
@@ -290,6 +306,7 @@ const ProductDetailPage: React.FC = () => {
                 </div>
               </div>
 
+              {/* Right Sidebar - Checkout & Details */}
               <div className="space-y-4 rounded-2xl border border-[#EEEEEE] bg-white p-3 shadow-[0_10px_40px_rgba(0,0,0,0.06)] sm:space-y-6 sm:rounded-[32px] sm:p-6 sm:shadow-[0_20px_70px_rgba(0,0,0,0.08)]">
                 <div className="space-y-1 sm:space-y-2">
                   <p className="text-xs uppercase tracking-[0.2em] text-[#222831] sm:text-sm sm:tracking-[0.3em]">
@@ -313,7 +330,7 @@ const ProductDetailPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleAddToCart}
-                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-2xl bg-[#00ADB5] px-4 text-sm font-semibold text-white transition hover:bg-[#00ADB5] sm:min-h-[56px] sm:gap-3 sm:rounded-3xl sm:px-5 sm:text-base"
+                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-2xl bg-[#C8A84E] px-4 text-sm font-semibold text-white transition hover:bg-[#C8A84E] sm:min-h-[56px] sm:gap-3 sm:rounded-3xl sm:px-5 sm:text-base"
                   >
                     <ShoppingCart size={16} className="sm:hidden" />
                     <ShoppingCart size={20} className="hidden sm:block" />
@@ -334,6 +351,7 @@ const ProductDetailPage: React.FC = () => {
                 </div>
               </div>
             </div>
+
 
             {/* Reviews Section */}
             <div className="mt-6 rounded-2xl border border-[#EEEEEE] bg-white p-4 shadow-[0_10px_40px_rgba(0,0,0,0.06)] sm:mt-12 sm:rounded-[32px] sm:p-8 sm:shadow-[0_20px_70px_rgba(0,0,0,0.08)]">
@@ -365,7 +383,7 @@ const ProductDetailPage: React.FC = () => {
                         <Star
                           size={22}
                           className={`transition-colors sm:h-7 sm:w-7 ${s <= (hover || star)
-                            ? "fill-[#00ADB5] text-[#222831]"
+                            ? "fill-[#C8A84E] text-[#222831]"
                             : "text-[#222831]"
                             }`}
                         />
@@ -382,7 +400,7 @@ const ProductDetailPage: React.FC = () => {
                     onChange={(e) => setComment(e.target.value)}
                     placeholder="Write your review (optional)"
                     rows={3}
-                    className="mb-2.5 w-full resize-none rounded-xl border border-[#EEEEEE] bg-white px-3 py-2.5 text-xs focus:border-[#00ADB5] focus:outline-none sm:mb-3 sm:px-4 sm:py-3 sm:text-sm"
+                    className="mb-2.5 w-full resize-none rounded-xl border border-[#EEEEEE] bg-white px-3 py-2.5 text-xs focus:border-[#C8A84E] focus:outline-none sm:mb-3 sm:px-4 sm:py-3 sm:text-sm"
                   />
                   {submitted ? (
                     <div className="flex items-center gap-1 text-xs font-semibold text-[#222831] sm:text-sm">
@@ -392,7 +410,7 @@ const ProductDetailPage: React.FC = () => {
                     <button
                       onClick={handleSubmitRating}
                       disabled={submitting || star === 0}
-                      className="rounded-xl bg-[#00ADB5] px-5 py-2 text-xs font-semibold text-white transition hover:bg-[#00ADB5] disabled:cursor-not-allowed disabled:opacity-50 sm:px-6 sm:py-2.5 sm:text-sm"
+                      className="rounded-xl bg-[#C8A84E] px-5 py-2 text-xs font-semibold text-white transition hover:bg-[#C8A84E] disabled:cursor-not-allowed disabled:opacity-50 sm:px-6 sm:py-2.5 sm:text-sm"
                     >
                       {submitting ? "Submitting..." : "Submit Review"}
                     </button>
@@ -422,7 +440,7 @@ const ProductDetailPage: React.FC = () => {
                       className="rounded-xl border border-[#EEEEEE] bg-white p-3.5 shadow-sm sm:rounded-2xl sm:p-5"
                     >
                       <div className="mb-1.5 flex items-center gap-2.5 sm:mb-2 sm:gap-3">
-                        <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#00ADB5] text-xs font-bold text-white sm:h-9 sm:w-9 sm:text-sm">
+                        <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#C8A84E] text-xs font-bold text-white sm:h-9 sm:w-9 sm:text-sm">
                           {review.user?.username?.charAt(0).toUpperCase() || "U"}
                         </div>
                         <div className="min-w-0">
@@ -439,7 +457,7 @@ const ProductDetailPage: React.FC = () => {
                               key={s}
                               size={12}
                               className={`sm:h-3.5 sm:w-3.5 ${s <= review.star
-                                ? "fill-[#00ADB5] text-[#222831]"
+                                ? "fill-[#C8A84E] text-[#222831]"
                                 : "text-[#222831]"
                                 }`}
                             />

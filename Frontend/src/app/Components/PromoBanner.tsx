@@ -7,30 +7,30 @@ import { ArrowRight, Sparkles } from "lucide-react";
 const promotions = [
   {
     id: 1,
-    image: "/carousel/Clothes.jpg",
-    title: "Premium T-Shirts",
-    subtitle: "Customized just for you",
-    badge: "Up to 40% OFF",
-    link: "/productsPage?category=tshirts",
-    accent: "from-sky-600/70 to-blue-900/80",
+    image: "/Azadi Collection.jpg",
+    title: "Azaadi Collection",
+    subtitle: "Celebrate freedom with style",
+    badge: "Shop Now",
+    link: "/productsPage?category=azaadi",
+    accent: "from-amber-800/70 to-yellow-900/80",
   },
   {
     id: 2,
-    image: "/carousel/Accessories.jpg",
-    title: "Accessories",
-    subtitle: "Complete your look",
-    badge: "Shop Now",
-    link: "/productsPage?category=accessories",
-    accent: "from-violet-600/70 to-purple-900/80",
+    image: "/Eid Collection Banner.jpg",
+    title: "Eid Collection",
+    subtitle: "Celebrate in style",
+    badge: "Limited Edition",
+    link: "/productsPage?category=eid",
+    accent: "from-emerald-800/70 to-teal-900/80",
   },
   {
     id: 3,
-    image: "/carousel/Decors.jpg",
-    title: "Home Decor",
-    subtitle: "Personalize your space",
-    badge: "New Arrivals",
-    link: "/productsPage?category=decor",
-    accent: "from-emerald-600/70 to-teal-900/80",
+    image: "/Pop Socket Banner.jpg",
+    title: "Customized Pop Sockets",
+    subtitle: "Personalize your grip",
+    badge: "Trending",
+    link: "/productsPage?category=pop-socket",
+    accent: "from-violet-800/70 to-purple-900/80",
   },
 ];
 
@@ -40,8 +40,8 @@ const PromoBanner: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4">
         {/* Section heading */}
         <div className="flex items-center gap-3 mb-6">
-          <Sparkles size={14} className="text-[#00ADB5]" />
-          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#00ADB5]">Limited Offers</span>
+          <Sparkles size={14} className="text-[#C8A84E]" />
+          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#C8A84E]">Limited Offers</span>
           <span className="h-px flex-1 bg-gray-100" />
         </div>
 
@@ -73,7 +73,7 @@ const PromoBanner: React.FC = () => {
                 </h3>
                 <p className="text-sm text-white/80 mb-3">{promo.subtitle}</p>
                 <div className="inline-flex items-center gap-1.5 text-white text-xs font-bold group-hover:gap-3 transition-all duration-300">
-                  <span className="border-b border-white/30 group-hover:border-[#00ADB5] transition-colors">Shop Now</span>
+                  <span className="border-b border-white/30 group-hover:border-[#C8A84E] transition-colors">Shop Now</span>
                   <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>

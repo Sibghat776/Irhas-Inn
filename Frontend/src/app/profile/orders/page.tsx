@@ -46,7 +46,7 @@ const MyOrdersPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#FFFFFF] via-white to-[#FFFFFF] px-4 pt-24 pb-6">
       <div className="max-w-4xl mx-auto">
-        <Link href="/profile" className="inline-flex items-center gap-2 text-sm font-semibold text-[#222831] hover:text-[#00ADB5] transition-colors mb-4">
+        <Link href="/profile" className="inline-flex items-center gap-2 text-sm font-semibold text-[#222831] hover:text-[#C8A84E] transition-colors mb-4">
           <ArrowLeft size={16} /> Back to Profile
         </Link>
         <h1 className="text-4xl font-black text-[#222831] tracking-tight mb-2">My Orders</h1>
@@ -62,7 +62,7 @@ const MyOrdersPage = () => {
             <Package size={48} className="mx-auto text-[#222831] mb-4" />
             <p className="text-lg font-bold text-[#222831]">No orders yet</p>
             <p className="text-sm text-[#222831] mt-1">Start shopping to see your orders here.</p>
-            <Link href="/" className="inline-block mt-6 px-6 py-3 bg-[#00ADB5] text-white rounded-xl font-semibold hover:bg-[#00ADB5] transition-colors">
+            <Link href="/" className="inline-block mt-6 px-6 py-3 bg-[#C8A84E] text-white rounded-xl font-semibold hover:bg-[#C8A84E] transition-colors">
               Browse Products
             </Link>
           </div>

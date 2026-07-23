@@ -31,8 +31,8 @@ import axios from "axios";
 const NAV_LINKS = [
   { name: "Home", href: "/" },
   { name: "Products", href: "/productsPage" },
-  { name: "About", href: "/productsPage" },
-  { name: "Contact", href: "/productsPage" },
+  { name: "About", href: "/#about", isHash: true },
+  { name: "Contact Us", href: "/#contact", isHash: true },
 ];
 
 const CATEGORIES = ["All", "Clothes", "Accessories", "Pens", "Scrubs"];
@@ -332,8 +332,8 @@ const Navbar: React.FC = () => {
       <div className="bg-[#1a1f29] text-white/90 text-[11px] border-b border-white/5">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 flex items-center justify-between h-8 sm:h-9">
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <div className="w-5 h-5 rounded-full bg-[#00ADB5]/15 flex items-center justify-center">
-              <Phone size={9} className="text-[#00ADB5]" />
+            <div className="w-5 h-5 rounded-full bg-[#C8A84E]/15 flex items-center justify-center">
+              <Phone size={9} className="text-[#C8A84E]" />
             </div>
             <a href="wa.me/923432710491" target="_blank" className="font-medium text-[11px] tracking-wide">+92 343 2710491</a>
             <span className="text-white/30 mx-1.5 hidden sm:inline">|</span>
@@ -342,7 +342,7 @@ const Navbar: React.FC = () => {
           <div className="flex items-center gap-2 sm:gap-4">
             <Link
               href="/profile"
-              className="flex items-center gap-1 hover:text-[#00ADB5] transition-all duration-300 group"
+              className="flex items-center gap-1 hover:text-[#C8A84E] transition-all duration-300 group"
             >
               <User size={10} className="group-hover:scale-110 transition-transform" />
               <span className="hidden sm:inline text-[10px] font-medium">My Account</span>
@@ -350,12 +350,12 @@ const Navbar: React.FC = () => {
             <span className="text-white/10">|</span>
             <Link
               href="/cart"
-              className="relative flex items-center gap-1 hover:text-[#00ADB5] transition-all duration-300 group"
+              className="relative flex items-center gap-1 hover:text-[#C8A84E] transition-all duration-300 group"
             >
               <ShoppingCart size={10} className="group-hover:scale-110 transition-transform" />
               <span className="hidden sm:inline text-[10px] font-medium">Cart</span>
               {cartCount > 0 && (
-                <span className="absolute -top-1.5 -right-2 sm:-top-2 sm:-right-2.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-[#00ADB5] px-0.5 text-[6px] font-bold text-white leading-none shadow-sm">
+                <span className="absolute -top-1.5 -right-2 sm:-top-2 sm:-right-2.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-[#C8A84E] px-0.5 text-[6px] font-bold text-white leading-none shadow-sm">
                   {cartCount > 99 ? "99+" : cartCount}
                 </span>
               )}
@@ -374,11 +374,11 @@ const Navbar: React.FC = () => {
               className="flex items-center gap-2 sm:gap-2.5 shrink-0 group"
             >
               <div className="relative">
-                <div className="absolute inset-0 rounded-full bg-[#00ADB5]/20 blur-sm group-hover:blur-md transition-all duration-500 scale-110" />
+                <div className="absolute inset-0 rounded-full bg-[#C8A84E]/20 blur-sm group-hover:blur-md transition-all duration-500 scale-110" />
                 <img
-                  src="/Logo.png"
+                  src="/Irha Studio-12.jpg"
                   alt="Irhas'Inn"
-                  className="relative h-7 w-7 sm:h-9 sm:w-9 rounded-full object-cover ring-2 ring-white/20 group-hover:ring-[#00ADB5]/40 transition-all duration-500"
+                  className="relative h-10 w-auto sm:h-12 object-contain"
                 />
               </div>
               <div className="flex flex-col">
@@ -399,7 +399,7 @@ const Navbar: React.FC = () => {
                   !isHomePage
                     ? "text-white/60"
                     : isScrolled
-                      ? "text-[#00ADB5]"
+                      ? "text-[#C8A84E]"
                       : "text-white/60"
                 )}>
                   Customize Product All In One
@@ -410,28 +410,60 @@ const Navbar: React.FC = () => {
             {/* ─── DESKTOP NAV LINKS ─── */}
             <div className="hidden lg:flex items-center gap-0.5">
               {NAV_LINKS.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className={clsx(
-                    "relative px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-300 group",
-                    !isHomePage
-                      ? "text-white/70 hover:text-white"
-                      : isScrolled
-                        ? "text-[#222831]/60 hover:text-[#222831]"
-                        : "text-white/70 hover:text-white",
-                  )}
-                >
-                  {link.name}
-                  <span className={clsx(
-                    "absolute bottom-0 left-2 right-2 h-[2px] rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left",
-                    !isHomePage
-                      ? "bg-white"
-                      : isScrolled
-                        ? "bg-[#00ADB5]"
-                        : "bg-white"
-                  )} />
-                </Link>
+                link.isHash ? (
+                  <button
+                    key={link.name}
+                    onClick={() => {
+                      if (isHomePage) {
+                        const el = document.getElementById(link.href.replace('/#', ''));
+                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+                      } else {
+                        router.push(link.href);
+                      }
+                    }}
+                    className={clsx(
+                      "relative px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-300 group",
+                      !isHomePage
+                        ? "text-white/70 hover:text-white"
+                        : isScrolled
+                          ? "text-[#222831]/60 hover:text-[#222831]"
+                          : "text-white/70 hover:text-white",
+                    )}
+                  >
+                    {link.name}
+                    <span className={clsx(
+                      "absolute bottom-0 left-2 right-2 h-[2px] rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left",
+                      !isHomePage
+                        ? "bg-white"
+                        : isScrolled
+                          ? "bg-[#C8A84E]"
+                          : "bg-white"
+                    )} />
+                  </button>
+                ) : (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    className={clsx(
+                      "relative px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-300 group",
+                      !isHomePage
+                        ? "text-white/70 hover:text-white"
+                        : isScrolled
+                          ? "text-[#222831]/60 hover:text-[#222831]"
+                          : "text-white/70 hover:text-white",
+                    )}
+                  >
+                    {link.name}
+                    <span className={clsx(
+                      "absolute bottom-0 left-2 right-2 h-[2px] rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left",
+                      !isHomePage
+                        ? "bg-white"
+                        : isScrolled
+                          ? "bg-[#C8A84E]"
+                          : "bg-white"
+                    )} />
+                  </Link>
+                )
               ))}
             </div>
 
@@ -440,7 +472,7 @@ const Navbar: React.FC = () => {
               <div className={clsx(
                 "flex w-full items-center rounded-xl border bg-white shadow-sm overflow-hidden transition-all duration-300",
                 searchFocused
-                  ? "border-[#00ADB5] shadow-[0_0_0_3px_rgba(0,173,181,0.1)]"
+                  ? "border-[#C8A84E] shadow-[0_0_0_3px_rgba(200,168,78,0.1)]"
                   : "border-gray-200 hover:border-gray-300 hover:shadow-md"
               )}>
                 <div className="relative" ref={categoryDropdownRef}>
@@ -464,7 +496,7 @@ const Navbar: React.FC = () => {
                           className={clsx(
                             "w-full text-left px-3.5 py-2 text-[11px] font-semibold hover:bg-gray-50 transition-colors",
                             cat === selectedCategory
-                              ? "text-[#00ADB5] bg-[#00ADB5]/5 font-bold"
+                              ? "text-[#C8A84E] bg-[#C8A84E]/5 font-bold"
                               : "text-[#222831]",
                           )}
                         >
@@ -488,7 +520,7 @@ const Navbar: React.FC = () => {
                 />
                 <button
                   onClick={() => handleSearch()}
-                  className="bg-[#00ADB5] hover:bg-[#0099a1] active:bg-[#008a92] text-white mr-2 px-2.5 rounded-full py-2 transition-all duration-200 hover:px-4"
+                  className="bg-[#C8A84E] hover:bg-[#B8943F] active:bg-[#A8882E] text-white mr-2 px-2.5 rounded-full py-2 transition-all duration-200 hover:px-4"
                 >
                   <Search size={13} strokeWidth={2.5} />
                 </button>
@@ -517,7 +549,7 @@ const Navbar: React.FC = () => {
                 />
                 {cartCount > 0 && (
                   <span className={clsx(
-                    "absolute -right-0.5 -top-0.5 flex h-[16px] min-w-[16px] items-center justify-center rounded-full bg-[#00ADB5] px-0.5 text-[7px] font-bold text-white leading-none shadow-sm transition-all duration-300",
+                    "absolute -right-0.5 -top-0.5 flex h-[16px] min-w-[16px] items-center justify-center rounded-full bg-[#C8A84E] px-0.5 text-[7px] font-bold text-white leading-none shadow-sm transition-all duration-300",
                     cartBounce && "animate-badge-pop"
                   )}>
                     {cartCount > 99 ? "99+" : cartCount}
@@ -529,7 +561,7 @@ const Navbar: React.FC = () => {
               {deferredPrompt && !isAppInstalled && (
                 <button
                   onClick={handleInstallClick}
-                  className="rounded-xl bg-gradient-to-r from-[#00ADB5] to-[#0099a1] px-3 py-1.5 text-[9px] font-bold text-white transition-all duration-300 hover:shadow-lg hover:shadow-[#00ADB5]/25 hover:scale-105 active:scale-95"
+                  className="rounded-xl bg-gradient-to-r from-[#C8A84E] to-[#B8943F] px-3 py-1.5 text-[9px] font-bold text-white transition-all duration-300 hover:shadow-lg hover:shadow-[#C8A84E]/25 hover:scale-105 active:scale-95"
                 >
                   <span className="flex items-center gap-1">
                     <Sparkles size={10} />
@@ -555,11 +587,11 @@ const Navbar: React.FC = () => {
                     {profilePic ? (
                       <img
                         src={profilePic}
-                        className="h-5 w-5 sm:h-6 sm:w-6 rounded-full object-cover ring-2 ring-[#00ADB5]/30 transition-all"
+                        className="h-5 w-5 sm:h-6 sm:w-6 rounded-full object-cover ring-2 ring-[#C8A84E]/30 transition-all"
                         alt=""
                       />
                     ) : (
-                      <div className="flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-gradient-to-br from-[#00ADB5] to-[#008a92] text-[9px] font-bold text-white shadow-sm">
+                      <div className="flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-gradient-to-br from-[#C8A84E] to-[#B8943F] text-[9px] font-bold text-white shadow-sm">
                         {username?.charAt(0).toUpperCase()}
                       </div>
                     )}
@@ -583,15 +615,15 @@ const Navbar: React.FC = () => {
                         <div className="px-4 py-3.5 border-b border-gray-50 bg-gradient-to-r from-gray-50/50 to-transparent">
                           <div className="flex items-center gap-3">
                             {profilePic ? (
-                              <img src={profilePic} className="h-9 w-9 rounded-full object-cover ring-2 ring-[#00ADB5]/20" alt="" />
+                              <img src={profilePic} className="h-9 w-9 rounded-full object-cover ring-2 ring-[#C8A84E]/20" alt="" />
                             ) : (
-                              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#00ADB5] to-[#008a92] text-sm font-bold text-white">
+                              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#C8A84E] to-[#B8943F] text-sm font-bold text-white">
                                 {username?.charAt(0).toUpperCase()}
                               </div>
                             )}
                             <div>
                               <p className="text-sm font-bold capitalize leading-tight">{username}</p>
-                              <p className="text-[10px] text-[#00ADB5] font-semibold">Verified Account</p>
+                              <p className="text-[10px] text-[#C8A84E] font-semibold">Verified Account</p>
                             </div>
                           </div>
                         </div>
@@ -601,28 +633,28 @@ const Navbar: React.FC = () => {
                           <Link
                             href="/profile"
                             onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs font-semibold hover:bg-gray-50 hover:text-[#00ADB5] transition-all group"
+                            className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs font-semibold hover:bg-gray-50 hover:text-[#C8A84E] transition-all group"
                           >
-                            <User size={14} className="text-gray-400 group-hover:text-[#00ADB5] transition-colors" />
+                            <User size={14} className="text-gray-400 group-hover:text-[#C8A84E] transition-colors" />
                             My Profile
                           </Link>
                           <Link
                             href="/profile/orders"
                             onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs font-semibold hover:bg-gray-50 hover:text-[#00ADB5] transition-all group"
+                            className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs font-semibold hover:bg-gray-50 hover:text-[#C8A84E] transition-all group"
                           >
-                            <Package size={14} className="text-gray-400 group-hover:text-[#00ADB5] transition-colors" />
+                            <Package size={14} className="text-gray-400 group-hover:text-[#C8A84E] transition-colors" />
                             My Orders
                           </Link>
                           <Link
                             href="/cart"
                             onClick={() => setUserMenuOpen(false)}
-                            className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs font-semibold hover:bg-gray-50 hover:text-[#00ADB5] transition-all group"
+                            className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs font-semibold hover:bg-gray-50 hover:text-[#C8A84E] transition-all group"
                           >
-                            <ShoppingCart size={14} className="text-gray-400 group-hover:text-[#00ADB5] transition-colors" />
+                            <ShoppingCart size={14} className="text-gray-400 group-hover:text-[#C8A84E] transition-colors" />
                             Shopping Cart
                             {cartCount > 0 && (
-                              <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-[#00ADB5] px-1.5 text-[8px] font-bold text-white">
+                              <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-[#C8A84E] px-1.5 text-[8px] font-bold text-white">
                                 {cartCount}
                               </span>
                             )}
@@ -630,9 +662,9 @@ const Navbar: React.FC = () => {
                           {isAdmin && (
                             <button
                               onClick={handleAdminPage}
-                              className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs font-semibold hover:bg-gray-50 hover:text-[#00ADB5] transition-all group"
+                              className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs font-semibold hover:bg-gray-50 hover:text-[#C8A84E] transition-all group"
                             >
-                              <LayoutDashboard size={14} className="text-gray-400 group-hover:text-[#00ADB5] transition-colors" />
+                              <LayoutDashboard size={14} className="text-gray-400 group-hover:text-[#C8A84E] transition-colors" />
                               Admin Dashboard
                             </button>
                           )}
@@ -655,7 +687,7 @@ const Navbar: React.FC = () => {
                 <div className="flex items-center gap-1.5">
                   <button
                     onClick={() => dispatch(openLogin())}
-                    className="flex items-center gap-1.5 rounded-xl bg-[#00ADB5] px-4 py-2 text-[11px] font-bold text-white transition-all duration-300 hover:bg-[#0099a1] hover:shadow-lg hover:shadow-[#00ADB5]/20 active:scale-95"
+                    className="flex items-center gap-1.5 rounded-xl bg-[#C8A84E] px-4 py-2 text-[11px] font-bold text-white transition-all duration-300 hover:bg-[#B8943F] hover:shadow-lg hover:shadow-[#C8A84E]/20 active:scale-95"
                   >
                     <LogIn size={12} />
                     Login
@@ -665,7 +697,7 @@ const Navbar: React.FC = () => {
                     className={clsx(
                       "flex items-center gap-1.5 rounded-xl px-4 py-2 text-[11px] font-bold transition-all duration-300 active:scale-95",
                       isScrolled || !isHomePage
-                        ? "bg-[#222831] text-white hover:bg-[#00ADB5] hover:shadow-lg hover:shadow-[#00ADB5]/20"
+                        ? "bg-[#222831] text-white hover:bg-[#C8A84E] hover:shadow-lg hover:shadow-[#C8A84E]/20"
                         : "border border-white/30 bg-white/10 text-white backdrop-blur-md hover:bg-white/20 hover:border-white/50",
                     )}
                   >
@@ -690,7 +722,7 @@ const Navbar: React.FC = () => {
               >
                 <ShoppingCart size={18} />
                 {cartCount > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#00ADB5] px-0.5 text-[7px] font-bold text-white shadow-sm">
+                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#C8A84E] px-0.5 text-[7px] font-bold text-white shadow-sm">
                     {cartCount > 99 ? "99+" : cartCount}
                   </span>
                 )}
@@ -728,18 +760,18 @@ const Navbar: React.FC = () => {
                 className="flex items-center gap-2.5 group"
               >
                 <div className="relative">
-                  <div className="absolute inset-0 rounded-full bg-[#00ADB5]/15 blur-sm" />
+                  <div className="absolute inset-0 rounded-full bg-[#C8A84E]/15 blur-sm" />
                   <img
-                    src="/Logo.png"
+                    src="/Irha Studio-12.jpg"
                     alt="Logo"
-                    className="relative h-9 w-9 rounded-full object-cover ring-2 ring-white"
+                    className="relative h-10 w-auto object-contain"
                   />
                 </div>
                 <div>
                   <span className="block font-bold text-sm text-[#222831] leading-tight">
                     Irhas'Inn
                   </span>
-                  <span className="text-[9px] text-[#00ADB5] font-semibold tracking-wider uppercase">
+                  <span className="text-[9px] text-[#C8A84E] font-semibold tracking-wider uppercase">
                     Premium Shopping
                   </span>
                 </div>
@@ -755,7 +787,7 @@ const Navbar: React.FC = () => {
             {/* Search */}
             <div className="border-b border-gray-100 p-4 sm:p-5">
               <form onSubmit={handleSearch}>
-                <div className="flex items-center rounded-xl border border-gray-200 bg-gray-50 p-1 focus-within:border-[#00ADB5] focus-within:bg-white focus-within:shadow-[0_0_0_3px_rgba(0,173,181,0.1)] transition-all duration-200">
+                <div className="flex items-center rounded-xl border border-gray-200 bg-gray-50 p-1 focus-within:border-[#C8A84E] focus-within:bg-white focus-within:shadow-[0_0_0_3px_rgba(200,168,78,0.1)] transition-all duration-200">
                   <Search size={14} className="ml-3 text-gray-400" />
                   <input
                     type="search"
@@ -766,7 +798,7 @@ const Navbar: React.FC = () => {
                   />
                   <button
                     type="submit"
-                    className="rounded-lg bg-[#00ADB5] px-3.5 py-2 text-[10px] font-bold text-white hover:bg-[#0099a1] transition-all active:scale-95"
+                    className="rounded-lg bg-[#C8A84E] px-3.5 py-2 text-[10px] font-bold text-white hover:bg-[#B8943F] transition-all active:scale-95"
                   >
                     Search
                   </button>
@@ -782,15 +814,34 @@ const Navbar: React.FC = () => {
                 </p>
                 <div className="space-y-0.5">
                   {NAV_LINKS.map((link) => (
-                    <Link
-                      key={link.name}
-                      href={link.href}
-                      onClick={() => setMenuOpen(false)}
-                      className="flex items-center justify-between rounded-xl px-3.5 py-3 text-sm font-semibold text-[#222831] hover:bg-gray-50 hover:text-[#00ADB5] transition-all group"
-                    >
-                      {link.name}
-                      <ChevronRight size={14} className="text-gray-300 group-hover:text-[#00ADB5] group-hover:translate-x-1 transition-all" />
-                    </Link>
+                    link.isHash ? (
+                      <button
+                        key={link.name}
+                        onClick={() => {
+                          setMenuOpen(false);
+                          if (isHomePage) {
+                            const el = document.getElementById(link.href.replace('/#', ''));
+                            if (el) el.scrollIntoView({ behavior: 'smooth' });
+                          } else {
+                            router.push(link.href);
+                          }
+                        }}
+                        className="flex w-full items-center justify-between rounded-xl px-3.5 py-3 text-sm font-semibold text-[#222831] hover:bg-gray-50 hover:text-[#C8A84E] transition-all group"
+                      >
+                        {link.name}
+                        <ChevronRight size={14} className="text-gray-300 group-hover:text-[#C8A84E] group-hover:translate-x-1 transition-all" />
+                      </button>
+                    ) : (
+                      <Link
+                        key={link.name}
+                        href={link.href}
+                        onClick={() => setMenuOpen(false)}
+                        className="flex items-center justify-between rounded-xl px-3.5 py-3 text-sm font-semibold text-[#222831] hover:bg-gray-50 hover:text-[#C8A84E] transition-all group"
+                      >
+                        {link.name}
+                        <ChevronRight size={14} className="text-gray-300 group-hover:text-[#C8A84E] group-hover:translate-x-1 transition-all" />
+                      </Link>
+                    )
                   ))}
                 </div>
               </div>
@@ -805,7 +856,7 @@ const Navbar: React.FC = () => {
                     <button
                       key={category}
                       onClick={() => handleCategoryClick(category)}
-                      className="rounded-full border border-gray-200 bg-white px-3.5 py-2 text-[11px] font-semibold text-[#222831] hover:border-[#00ADB5] hover:text-[#00ADB5] hover:bg-[#00ADB5]/5 active:scale-95 transition-all duration-200"
+                      className="rounded-full border border-gray-200 bg-white px-3.5 py-2 text-[11px] font-semibold text-[#222831] hover:border-[#C8A84E] hover:text-[#C8A84E] hover:bg-[#C8A84E]/5 active:scale-95 transition-all duration-200"
                     >
                       {category}
                     </button>
@@ -822,11 +873,11 @@ const Navbar: React.FC = () => {
                     {profilePic ? (
                       <img
                         src={profilePic}
-                        className="h-10 w-10 rounded-full object-cover ring-2 ring-[#00ADB5]/20"
+                        className="h-10 w-10 rounded-full object-cover ring-2 ring-[#C8A84E]/20"
                         alt=""
                       />
                     ) : (
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#00ADB5] to-[#008a92] font-bold text-white text-sm shadow-sm">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#C8A84E] to-[#A8882E] font-bold text-white text-sm shadow-sm">
                         {username?.charAt(0).toUpperCase()}
                       </div>
                     )}
@@ -834,8 +885,8 @@ const Navbar: React.FC = () => {
                       <p className="text-sm font-bold capitalize text-[#222831] truncate">
                         {username}
                       </p>
-                      <p className="text-[9px] font-semibold text-[#00ADB5]">
-                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#00ADB5] mr-1 align-middle" />
+                      <p className="text-[9px] font-semibold text-[#C8A84E]">
+                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#C8A84E] mr-1 align-middle" />
                         Verified Account
                       </p>
                     </div>
@@ -845,14 +896,14 @@ const Navbar: React.FC = () => {
                     <Link
                       href="/profile"
                       onClick={() => setMenuOpen(false)}
-                      className="flex items-center justify-center gap-2 rounded-xl bg-white border border-gray-100 py-2.5 text-[11px] font-semibold text-[#222831] hover:border-[#00ADB5] hover:text-[#00ADB5] transition-all active:scale-95 shadow-sm"
+                      className="flex items-center justify-center gap-2 rounded-xl bg-white border border-gray-100 py-2.5 text-[11px] font-semibold text-[#222831] hover:border-[#C8A84E] hover:text-[#C8A84E] transition-all active:scale-95 shadow-sm"
                     >
                       <User size={13} /> Profile
                     </Link>
                     <Link
                       href="/profile/orders"
                       onClick={() => setMenuOpen(false)}
-                      className="flex items-center justify-center gap-2 rounded-xl bg-white border border-gray-100 py-2.5 text-[11px] font-semibold text-[#222831] hover:border-[#00ADB5] hover:text-[#00ADB5] transition-all active:scale-95 shadow-sm"
+                      className="flex items-center justify-center gap-2 rounded-xl bg-white border border-gray-100 py-2.5 text-[11px] font-semibold text-[#222831] hover:border-[#C8A84E] hover:text-[#C8A84E] transition-all active:scale-95 shadow-sm"
                     >
                       <Package size={13} /> Orders
                     </Link>
@@ -861,7 +912,7 @@ const Navbar: React.FC = () => {
                   {deferredPrompt && !isAppInstalled && (
                     <button
                       onClick={handleInstallClick}
-                      className="w-full rounded-xl bg-gradient-to-r from-[#00ADB5] to-[#0099a1] py-3 text-xs font-bold text-white hover:shadow-lg hover:shadow-[#00ADB5]/20 transition-all active:scale-[0.98]"
+                      className="w-full rounded-xl bg-gradient-to-r from-[#C8A84E] to-[#B8943F] py-3 text-xs font-bold text-white hover:shadow-lg hover:shadow-[#C8A84E]/20 transition-all active:scale-[0.98]"
                     >
                       <span className="flex items-center justify-center gap-1.5">
                         <Sparkles size={14} />
@@ -876,7 +927,7 @@ const Navbar: React.FC = () => {
                         setMenuOpen(false);
                         window.location.href = "/editProfile";
                       }}
-                      className="rounded-xl border border-gray-200 bg-white py-2.5 text-[11px] font-semibold text-[#222831] hover:border-[#00ADB5] hover:text-[#00ADB5] transition-all active:scale-95"
+                      className="rounded-xl border border-gray-200 bg-white py-2.5 text-[11px] font-semibold text-[#222831] hover:border-[#C8A84E] hover:text-[#C8A84E] transition-all active:scale-95"
                     >
                       Edit Profile
                     </button>
@@ -886,7 +937,7 @@ const Navbar: React.FC = () => {
                           setMenuOpen(false);
                           handleAdminPage();
                         }}
-                        className="rounded-xl bg-[#222831] py-2.5 text-[11px] font-semibold text-white hover:bg-[#00ADB5] transition-all active:scale-95"
+                        className="rounded-xl bg-[#222831] py-2.5 text-[11px] font-semibold text-white hover:bg-[#C8A84E] transition-all active:scale-95"
                       >
                         Admin Panel
                       </button>
@@ -916,7 +967,7 @@ const Navbar: React.FC = () => {
                       setMenuOpen(false);
                       dispatch(openLogin());
                     }}
-                    className="flex items-center justify-center gap-2 rounded-xl bg-[#00ADB5] py-3 text-xs font-bold text-white hover:bg-[#0099a1] hover:shadow-lg hover:shadow-[#00ADB5]/20 transition-all active:scale-[0.97]"
+                    className="flex items-center justify-center gap-2 rounded-xl bg-[#C8A84E] py-3 text-xs font-bold text-white hover:bg-[#B8943F] hover:shadow-lg hover:shadow-[#C8A84E]/20 transition-all active:scale-[0.97]"
                   >
                     <LogIn size={14} /> Login
                   </button>
@@ -925,7 +976,7 @@ const Navbar: React.FC = () => {
                       setMenuOpen(false);
                       dispatch(openSignup());
                     }}
-                    className="flex items-center justify-center gap-2 rounded-xl border-2 border-gray-200 bg-white py-3 text-xs font-bold text-[#222831] hover:border-[#00ADB5] hover:text-[#00ADB5] transition-all active:scale-[0.97]"
+                    className="flex items-center justify-center gap-2 rounded-xl border-2 border-gray-200 bg-white py-3 text-xs font-bold text-[#222831] hover:border-[#C8A84E] hover:text-[#C8A84E] transition-all active:scale-[0.97]"
                   >
                     <UserPlus size={14} /> Sign Up
                   </button>
