@@ -38,12 +38,12 @@ const Footer: React.FC = () => {
               </div>
               <div className="flex items-center gap-2">
                 <Phone size={15} className="text-[#C8A84E] shrink-0" />
-                <span>+92 334 3688913</span>
+                <span>+92 343 2710491</span>
               </div>
               <div className="flex items-center gap-2">
                 <Mail size={15} className="text-[#C8A84E] shrink-0" />
-                <a href="mailto:ullahsibghat786@gmail.com" className="hover:text-[#C8A84E] transition-colors">
-                  ullahsibghat786@gmail.com
+                <a href="mailto:Irhasinn@gmail.com" className="hover:text-[#C8A84E] transition-colors">
+                  Irhasinn@gmail.com
                 </a>
               </div>
             </div>
@@ -119,7 +119,7 @@ const Footer: React.FC = () => {
             </div>
             <div className="flex gap-3">
               <Link
-                href="https://facebook.com/zeeftrendystore"
+                href="https://facebook.com/irhasinn"
                 target="_blank"
                 className="w-9 h-9 rounded-lg bg-white/10 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-[#C8A84E] hover:border-[#C8A84E] transition-all"
                 aria-label="Facebook"
@@ -127,20 +127,12 @@ const Footer: React.FC = () => {
                 <Facebook size={14} />
               </Link>
               <Link
-                href="https://instagram.com/zeeftrendystore"
+                href="https://instagram.com/irhasinn"
                 target="_blank"
                 className="w-9 h-9 rounded-lg bg-white/10 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-[#C8A84E] hover:border-[#C8A84E] transition-all"
                 aria-label="Instagram"
               >
                 <Instagram size={14} />
-              </Link>
-              <Link
-                href="https://tiktok.com/@zeeftrendystore"
-                target="_blank"
-                className="w-9 h-9 rounded-lg bg-white/10 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-[#C8A84E] hover:border-[#C8A84E] transition-all"
-                aria-label="TikTok"
-              >
-                <TikTokIcon />
               </Link>
             </div>
           </div>

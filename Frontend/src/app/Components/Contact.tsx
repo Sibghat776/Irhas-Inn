@@ -71,15 +71,7 @@ const Contact: React.FC = () => {
                     {/* Social Links */}
                     <div className="mt-8 flex gap-3 border-t border-white/10 pt-6">
                         <a
-                            href="https://www.linkedin.com/in/sibghat776/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-[#0A66C2] transition hover:scale-105 hover:bg-[#0A66C2] hover:text-white"
-                        >
-                            <Linkedin size={28} />
-                        </a>
-                        <a
-                            href="https://www.instagram.com/zeeftrendystore/"
+                            href="https://www.instagram.com/irhasinn/"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-[#E4405F] transition hover:scale-105 hover:bg-[#E4405F] hover:text-white"
@@ -87,7 +79,7 @@ const Contact: React.FC = () => {
                             <Instagram size={28} />
                         </a>
                         <a
-                            href="https://www.facebook.com/zeeftrendystore"
+                            href="https://www.facebook.com/irhasinn"
                             target="_blank"
                             className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-[#1DA1F2] transition hover:scale-105 hover:bg-[#1DA1F2] hover:text-white"
                         >
