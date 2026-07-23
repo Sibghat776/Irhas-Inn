@@ -14,6 +14,7 @@ const SUPERADMIN_ONLY_ROUTES = [
   "/Admin/Categories",
   "/Admin/Carts",
   "/Admin/Settings",
+  "/Admin/HomepageBanners",
 ];
 
 export default function AdminLayout({
@@ -72,6 +73,7 @@ export default function AdminLayout({
       overview: "Overview",
       products: "Products",
       categories: "Categories",
+      homepagebanners: "Homepage Banners",
       orders: "Orders",
       carts: "Carts",
       users: "Users",

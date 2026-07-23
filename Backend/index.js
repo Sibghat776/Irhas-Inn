@@ -12,6 +12,7 @@ import { orderRoute } from "./Routes/orderRoute.js";
 import { cartRoute } from "./Routes/cartRoute.js";
 import { analyticsRoute } from "./Routes/analyticsRoute.js";
 import { adminRoute } from "./Routes/adminRoute.js";
+import { homepageBannerRoute } from "./Routes/homepageBannerRoute.js";
 import { migrateRoles } from "./scripts/migrateRoles.js";
 
 dotenv.config();
@@ -153,6 +154,8 @@ app.use("/api/v1/cart", cartRoute);
 app.use("/api/v1/analytics", analyticsRoute);
 
 app.use("/api/v1/admin", adminRoute);
+
+app.use("/api/v1/homepage-banners", homepageBannerRoute);
 
 /*
 ===========================================================

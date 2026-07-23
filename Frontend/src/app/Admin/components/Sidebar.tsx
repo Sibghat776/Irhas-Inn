@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   BarChart3,
   ChevronRight,
+  Image as ImageIcon,
   LayoutDashboard,
   PackageSearch,
   Settings,
@@ -20,6 +21,7 @@ const sidebarLinks = [
   { name: "Overview", icon: LayoutDashboard, href: "/Admin/Overview" },
   { name: "Products", icon: PackageSearch, href: "/Admin/Products" },
   { name: "Categories", icon: Tags, href: "/Admin/Categories" },
+  { name: "Homepage Banners", icon: ImageIcon, href: "/Admin/HomepageBanners" },
   { name: "Orders", icon: ShoppingBag, href: "/Admin/Orders" },
   { name: "Carts", icon: ShoppingCart, href: "/Admin/Carts" },
   { name: "Users", icon: Users, href: "/Admin/Users" },

@@ -1,87 +1,19 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, ArrowRight, Zap, Shield } from "lucide-react";
+import axios from "axios";
+import { baseUrl } from "../utils/commonFunctions";
 
 interface Slide {
+  _id: string;
   image: string;
   tag: string;
   title: string;
   subtitle: string;
 }
-
-const slides: Slide[] = [
-  // ── Images from /carousel/ folder ──
-  {
-    image: "/carousel/Accessories.jpg",
-    tag: "New Collection",
-    title: "Premium Accessories",
-    subtitle: "Elevate your style with our latest curated collection of premium accessories",
-  },
-  {
-    image: "/carousel/Clothes.jpg",
-    tag: "Trending Now",
-    title: "Fashion Forward",
-    subtitle: "Discover the season's most sought-after fashion pieces for every occasion",
-  },
-  {
-    image: "/carousel/Decors.jpg",
-    tag: "Lifestyle Edit",
-    title: "Home Décor",
-    subtitle: "Transform your space with elegant décor pieces that tell your story",
-  },
-  {
-    image: "/carousel/Electronic Devices.jpg",
-    tag: "Tech Zone",
-    title: "Electronics",
-    subtitle: "Stay ahead with the latest gadgets and electronic essentials",
-  },
-  {
-    image: "/carousel/Home appliances.jpg",
-    tag: "Smart Home",
-    title: "Appliances",
-    subtitle: "Make life easier with modern home appliances designed for comfort",
-  },
-  // ── Loose banner images from /public/ ──
-  {
-    image: "/Azadi Collection.jpg",
-    tag: "Limited Edition",
-    title: "Azadi Collection",
-    subtitle: "Celebrate freedom with our exclusive Azadi Collection — limited stock available",
-  },
-  {
-    image: "/Eid Collection Banner.jpg",
-    tag: "Festival Special",
-    title: "Eid Collection",
-    subtitle: "Shop our curated Eid collection for the whole family — festive styles await",
-  },
-  {
-    image: "/Hajj Bannaer.jpg",
-    tag: "Sacred Journey",
-    title: "Hajj Essentials",
-    subtitle: "Find everything you need for your blessed journey with our Hajj essentials",
-  },
-  {
-    image: "/mug banner.jpg",
-    tag: "Customized",
-    title: "Premium Mugs",
-    subtitle: "Personalized mugs that make every sip special — perfect gifts for loved ones",
-  },
-  {
-    image: "/Pop Socket Banner.jpg",
-    tag: "Accessories",
-    title: "Pop Sockets",
-    subtitle: "Customize your grip with trendy pop sockets — style meets function",
-  },
-  {
-    image: "/Irha Studio-12.jpg",
-    tag: "Brand Story",
-    title: "Irha's Inn Studio",
-    subtitle: "Discover our signature collection at Irha's Inn — where style meets comfort",
-  },
-];
 
 interface PromoSlide {
   image: string;
@@ -92,111 +24,121 @@ interface PromoSlide {
   gradient: string;
 }
 
-const promoBanners: PromoSlide[] = [
-  {
-    image: "/carousel/Clothes.jpg",
-    icon: Zap,
-    title: "Free Shipping",
-    subtitle: "On orders over Rs. 2,000",
-    link: "/productsPage",
-    gradient: "from-emerald-600/60 to-teal-800/80",
-  },
-  {
-    image: "/carousel/Decors.jpg",
-    icon: Shield,
-    title: "New Collection",
-    subtitle: "Explore trending styles",
-    link: "/productsPage",
-    gradient: "from-violet-600/60 to-purple-800/80",
-  },
-  {
-    image: "/Azadi Collection.jpg",
-    icon: Zap,
-    title: "Azadi Sale",
-    subtitle: "Limited time offers",
-    link: "/productsPage",
-    gradient: "from-orange-600/60 to-red-800/80",
-  },
-  {
-    image: "/Eid Collection Banner.jpg",
-    icon: Shield,
-    title: "Eid Special",
-    subtitle: "Shop festive favourites",
-    link: "/productsPage",
-    gradient: "from-amber-600/60 to-yellow-800/80",
-  },
-  {
-    image: "/mug banner.jpg",
-    icon: Zap,
-    title: "Custom Mugs",
-    subtitle: "Personalize your drinkware",
-    link: "/productsPage",
-    gradient: "from-sky-600/60 to-blue-800/80",
-  },
-  {
-    image: "/Pop Socket Banner.jpg",
-    icon: Shield,
-    title: "Pop Sockets",
-    subtitle: "Custom grips & stands",
-    link: "/productsPage",
-    gradient: "from-pink-600/60 to-rose-800/80",
-  },
+// Static promo styling — icons and gradients cycle through available images
+const PROMO_STYLES = [
+  { icon: Zap, gradient: "from-emerald-600/60 to-teal-800/80" },
+  { icon: Shield, gradient: "from-violet-600/60 to-purple-800/80" },
+  { icon: Zap, gradient: "from-orange-600/60 to-red-800/80" },
+  { icon: Shield, gradient: "from-amber-600/60 to-yellow-800/80" },
+  { icon: Zap, gradient: "from-sky-600/60 to-blue-800/80" },
+  { icon: Shield, gradient: "from-pink-600/60 to-rose-800/80" },
 ];
 
 const Carousel = () => {
   const router = useRouter();
+  const [slides, setSlides] = useState<Slide[]>([]);
+  const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [promoOffset, setPromoOffset] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [prevIndex, setPrevIndex] = useState(0);
   const progressRef = useRef<HTMLDivElement>(null);
 
-  const updatePromo = useCallback((newIndex: number) => {
-    // Advance promo offset every other slide so promo banners rotate through
-    if (newIndex % 2 === 0) {
-      setPromoOffset((prev) => (prev + 1) % promoBanners.length);
-    }
+  // Fetch carousel banners from API
+  useEffect(() => {
+    const fetchSlides = async () => {
+      try {
+        const res = await axios.get(`${baseUrl}homepage-banners?type=carousel`);
+        const data = res.data?.data;
+        if (Array.isArray(data) && data.length > 0) {
+          setSlides(
+            data.map((banner: any) => ({
+              _id: banner._id,
+              image: banner.image,
+              tag: banner.tag || "Featured",
+              title: banner.title || "Irha's Inn",
+              subtitle:
+                banner.subtitle ||
+                "Discover our curated collection of premium products",
+            })),
+          );
+        }
+      } catch (err) {
+        console.error("Failed to fetch carousel slides:", err);
+        // Keep empty — will show fallback
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSlides();
   }, []);
 
+  // Build promo banners from slides
+  const promoBanners: PromoSlide[] = React.useMemo(() => {
+    if (slides.length === 0) return [];
+    return slides.map((slide, i) => {
+      const style = PROMO_STYLES[i % PROMO_STYLES.length];
+      return {
+        image: slide.image,
+        icon: style.icon,
+        title: slide.tag || "Featured",
+        subtitle: slide.title || "Collection",
+        link: "/productsPage",
+        gradient: style.gradient,
+      };
+    });
+  }, [slides]);
+
+  const updatePromo = useCallback((newIndex: number) => {
+    if (newIndex % 2 === 0 && promoBanners.length > 0) {
+      setPromoOffset((prev) => (prev + 1) % Math.max(1, promoBanners.length));
+    }
+  }, [promoBanners.length]);
+
   const next = useCallback(() => {
-    if (isTransitioning) return;
+    if (isTransitioning || slides.length === 0) return;
     setPrevIndex(currentIndex);
     setIsTransitioning(true);
     const nextIdx = currentIndex === slides.length - 1 ? 0 : currentIndex + 1;
     setCurrentIndex(nextIdx);
     updatePromo(nextIdx);
     setTimeout(() => setIsTransitioning(false), 700);
-  }, [currentIndex, isTransitioning, updatePromo]);
+  }, [currentIndex, isTransitioning, updatePromo, slides.length]);
 
   const prev = useCallback(() => {
-    if (isTransitioning) return;
+    if (isTransitioning || slides.length === 0) return;
     setPrevIndex(currentIndex);
     setIsTransitioning(true);
     const prevIdx = currentIndex === 0 ? slides.length - 1 : currentIndex - 1;
     setCurrentIndex(prevIdx);
     updatePromo(prevIdx);
     setTimeout(() => setIsTransitioning(false), 700);
-  }, [currentIndex, isTransitioning, updatePromo]);
+  }, [currentIndex, isTransitioning, updatePromo, slides.length]);
 
   const goToSlide = useCallback((index: number) => {
-    if (isTransitioning || index === currentIndex) return;
+    if (isTransitioning || index === currentIndex || slides.length === 0) return;
     setPrevIndex(currentIndex);
     setIsTransitioning(true);
     setCurrentIndex(index);
     updatePromo(index);
     setTimeout(() => setIsTransitioning(false), 700);
-  }, [currentIndex, isTransitioning, updatePromo]);
+  }, [currentIndex, isTransitioning, updatePromo, slides.length]);
 
-  // Derive which two promo banners to show (cycling through the pool)
-  const promoA = promoBanners[promoOffset % promoBanners.length];
-  const promoB = promoBanners[(promoOffset + 1) % promoBanners.length];
+  // Derive which two promo banners to show
+  const promoA = promoBanners.length > 0
+    ? promoBanners[promoOffset % promoBanners.length]
+    : null;
+  const promoB = promoBanners.length > 1
+    ? promoBanners[(promoOffset + 1) % promoBanners.length]
+    : null;
 
   // Auto-advance
   useEffect(() => {
+    if (slides.length <= 1) return;
     const interval = 6000;
     const timer = window.setInterval(next, interval);
     return () => window.clearInterval(timer);
-  }, [next]);
+  }, [next, slides.length]);
 
   // Reset progress bar animation on slide change
   useEffect(() => {
@@ -207,8 +149,6 @@ const Carousel = () => {
     }
   }, [currentIndex]);
 
-  const slide = slides[currentIndex];
-
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -218,6 +158,49 @@ const Carousel = () => {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [next, prev]);
+
+  // ── Loading / Empty State ──
+  if (loading) {
+    return (
+      <section className="w-full bg-white relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4 md:py-8">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-3 md:gap-5">
+            <div className="md:col-span-3 h-[300px] sm:h-[400px] md:h-[500px] rounded-2xl bg-slate-100 animate-pulse" />
+            <div className="hidden md:flex md:col-span-2 flex-col gap-4">
+              <div className="flex-1 rounded-2xl bg-slate-100 animate-pulse" />
+              <div className="flex-1 rounded-2xl bg-slate-100 animate-pulse" />
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (slides.length === 0) {
+    return (
+      <section className="w-full bg-gradient-to-br from-[#222831] to-[#1a1f29] relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:20px_20px]" />
+        <div className="relative max-w-7xl mx-auto px-3 sm:px-4 py-16 md:py-24 text-center">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-tight">
+            Welcome to{" "}
+            <span className="text-[#C8A84E]">Irha's Inn</span>
+          </h1>
+          <p className="mt-4 text-white/60 max-w-xl mx-auto">
+            Discover premium customized products — mugs, apparel, accessories, and more.
+            Browse our collection to find something unique.
+          </p>
+          <button
+            onClick={() => router.push("/productsPage")}
+            className="mt-6 inline-flex items-center gap-2 px-6 py-3 bg-[#C8A84E] hover:bg-[#B8943F] text-white font-bold rounded-xl transition-all"
+          >
+            Shop Now <ArrowRight size={16} />
+          </button>
+        </div>
+      </section>
+    );
+  }
+
+  const slide = slides[currentIndex];
 
   return (
     <section className="w-full bg-white relative overflow-hidden">
@@ -232,7 +215,7 @@ const Carousel = () => {
             onClick={() => router.push("/productsPage")}
           >
             {slides.map((s, i) => (
-              <div key={s.image} className="absolute inset-0">
+              <div key={s._id} className="absolute inset-0">
                 <div
                   className={`absolute inset-0 transition-all duration-[800ms] ease-in-out ${
                     i === currentIndex
@@ -344,58 +327,60 @@ const Carousel = () => {
           </div>
 
           {/* ─── STACKED PROMO BANNERS ─── */}
-          <div className="hidden md:flex md:col-span-2 flex-col gap-4">
-            {[promoA, promoB].map((promo, i) => {
-              const Icon = promo.icon;
-              return (
-                <button
-                  key={`${promo.title}-${i}-${promoOffset}`}
-                  onClick={() => router.push(promo.link)}
-                  className="relative flex-1 min-h-[calc(50%-8px)] rounded-2xl overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-500"
-                >
-                  {/* Background image */}
-                  <img
-                    src={promo.image}
-                    alt={promo.title}
-                    className="absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
-                  />
+          {promoA && (
+            <div className="hidden md:flex md:col-span-2 flex-col gap-4">
+              {[promoA, promoB].filter(Boolean).map((promo, i) => {
+                const Icon = promo.icon;
+                return (
+                  <button
+                    key={`${promo.title}-${i}-${promoOffset}`}
+                    onClick={() => router.push(promo.link)}
+                    className="relative flex-1 min-h-[calc(50%-8px)] rounded-2xl overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-500"
+                  >
+                    {/* Background image */}
+                    <img
+                      src={promo.image}
+                      alt={promo.title}
+                      className="absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
+                    />
 
-                  {/* Gradient overlay */}
-                  <div className={`absolute inset-0 bg-gradient-to-t ${promo.gradient} opacity-90`} />
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent" />
+                    {/* Gradient overlay */}
+                    <div className={`absolute inset-0 bg-gradient-to-t ${promo.gradient} opacity-90`} />
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent" />
 
-                  {/* Content */}
-                  <div className="absolute bottom-0 left-0 right-0 p-5 md:p-7 text-left z-10">
-                    <div className="flex items-center gap-2.5 mb-2">
-                      <div className="w-7 h-7 rounded-lg bg-white/15 backdrop-blur-sm flex items-center justify-center">
-                        <Icon size={13} className="text-[#C8A84E]" />
+                    {/* Content */}
+                    <div className="absolute bottom-0 left-0 right-0 p-5 md:p-7 text-left z-10">
+                      <div className="flex items-center gap-2.5 mb-2">
+                        <div className="w-7 h-7 rounded-lg bg-white/15 backdrop-blur-sm flex items-center justify-center">
+                          <Icon size={13} className="text-[#C8A84E]" />
+                        </div>
+                        <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-white">
+                          {promo.title}
+                        </span>
                       </div>
-                      <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-white">
-                        {promo.title}
-                      </span>
+                      <p className="text-white text-base md:text-lg font-bold leading-tight">
+                        {promo.subtitle}
+                      </p>
+                      <div className="mt-2.5 inline-flex items-center gap-1 text-white/60 text-[9px] font-bold uppercase tracking-wider group-hover:text-white transition-all group-hover:gap-2 duration-300">
+                        Learn More
+                        <ArrowRight size={11} />
+                      </div>
                     </div>
-                    <p className="text-white text-base md:text-lg font-bold leading-tight">
-                      {promo.subtitle}
-                    </p>
-                    <div className="mt-2.5 inline-flex items-center gap-1 text-white/60 text-[9px] font-bold uppercase tracking-wider group-hover:text-white transition-all group-hover:gap-2 duration-300">
-                      Learn More
-                      <ArrowRight size={11} />
+
+                    {/* Hover border */}
+                    <div className="absolute inset-0 border-[1.5px] border-transparent group-hover:border-white/20 rounded-2xl transition-all duration-500 pointer-events-none z-10" />
+
+                    {/* Corner accent */}
+                    <div className="absolute top-4 right-4 w-12 h-12 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      <svg viewBox="0 0 48 48" fill="none" className="w-full h-full">
+                        <path d="M0 48L48 48L48 0" stroke="white" strokeWidth="1.5" strokeOpacity="0.3" />
+                      </svg>
                     </div>
-                  </div>
-
-                  {/* Hover border */}
-                  <div className="absolute inset-0 border-[1.5px] border-transparent group-hover:border-white/20 rounded-2xl transition-all duration-500 pointer-events-none z-10" />
-
-                  {/* Corner accent */}
-                  <div className="absolute top-4 right-4 w-12 h-12 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    <svg viewBox="0 0 48 48" fill="none" className="w-full h-full">
-                      <path d="M0 48L48 48L48 0" stroke="white" strokeWidth="1.5" strokeOpacity="0.3" />
-                    </svg>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 

@@ -50,19 +50,21 @@ const Contact: React.FC = () => {
                         <div className="flex items-center gap-3">
                             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/5"><Mail className="text-[#C8A84E]" size={18} /></span>
                             <a
-                                href="mailto:ullahsibghat786@gmail.com"
+                                href="mailto:Irhasinn@gmail.com"
                                 className="hover:underline"
                             >
-                                ullahsibghat786@gmail.com
+                                Irhasinn@gmail.com
                             </a>
                         </div>
                         <div className="flex items-center gap-3">
                             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/5"><Phone className="text-[#C8A84E]" size={18} /></span>
-                            <span>+92 334 3688913</span>
+                            <a href="wa.me/923432710491" target="_blank" rel="noopener noreferrer" className="hover:underline">
+                                0343-2710491
+                            </a>
                         </div>
                         <div className="flex items-center gap-3">
                             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/5"><MapPin className="text-[#C8A84E]" size={18} /></span>
-                            <span>Karachi, Pakistan</span>
+                            <span>I.I. Chundrigar Road, Karachi.</span>
                         </div>
                     </div>
 
